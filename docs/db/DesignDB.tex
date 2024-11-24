@@ -1,0 +1,127 @@
+\documentclass[a4paper,12pt]{report}
+
+\usepackage[italian]{babel}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{todonotes}
+\usepackage{fancyvrb}
+
+\title{\textbf{Progettazione Database}}
+\date{\today}
+
+\begin{document}
+	\maketitle
+	\tableofcontents
+	\chapter{Analisi dei requisiti}
+	\section{Introduzione}
+	Il progetto ha come obiettivo la realizzazione di una \textbf{piattaforma e-commerce} per la gestione e la vendita di \textbf{scarpe}, con funzionalità di \textbf{tracciamento delle spedizioni}, \textbf{gestione di notifiche per gli utenti} e \textbf{strumenti avanzati di gestione ordini} per gli amministratori. L'intervista seguente esplora i \textbf{requisiti funzionali} e \textbf{non funzionali} del sistema.
+	
+	\section{Intervista}
+	Il progetto prevede la realizzazione di una \textbf{piattaforma e-commerce} che offra \textbf{funzionalità avanzate} sia per gli \textbf{utenti finali} sia per gli \textbf{amministratori del sistema}. Al centro del progetto vi è l’obiettivo di garantire agli utenti una \textbf{navigazione semplice e intuitiva}, permettendo loro di esplorare il \textbf{catalogo prodotti} in modo dettagliato. Si desidera sapere quali \textbf{informazioni devono essere raccolte durante la registrazione degli utenti}, considerando dati essenziali come \textbf{nome}, \textbf{cognome}, \textbf{email} e \textbf{preferenze per ricevere newsletter}. È necessario prevedere un \textbf{sistema che consenta di modificare i dati personali}.
+	
+	Un altro aspetto fondamentale riguarda il \textbf{catalogo prodotti}, che deve includere \textbf{informazioni complete} su ogni articolo, come il \textbf{nome}, la \textbf{descrizione}, il \textbf{prezzo}, la \textbf{disponibilità} e le \textbf{varianti} relative a \textbf{taglia} e \textbf{colore}. L’utente deve poter \textbf{filtrare} e \textbf{cercare i prodotti} in base a criteri come il \textbf{brand}, il \textbf{tipo} e la \textbf{fascia di prezzo}. La \textbf{gestione del carrello} è un elemento centrale: i prodotti nel carrello vengono mantenuti nel tempo solo per gli \textbf{utenti registrati} e come debbano essere gestiti eventuali \textbf{sconti} o \textbf{promozioni} applicabili al momento del pagamento. Inoltre, l’interfaccia deve permettere di \textbf{aggiungere}, \textbf{modificare} o \textbf{rimuovere articoli} in modo rapido e intuitivo.
+	
+	Per quanto riguarda gli \textbf{ordini}, si richiede che il sistema consenta agli utenti di \textbf{visualizzare uno storico dettagliato}, includendo informazioni sui \textbf{prodotti acquistati}, il \textbf{costo totale} e lo \textbf{stato della spedizione}. È necessario definire quali \textbf{stati debbano essere inclusi nel tracciamento delle spedizioni} e come questi cambiamenti debbano essere \textbf{notificati agli utenti}. Si richiede che le \textbf{notifiche} siano inviate non solo tramite il \textbf{portale}, ma anche via \textbf{email}, per garantire una comunicazione tempestiva, specialmente per \textbf{eventi critici} come \textbf{conferme d’ordine} o \textbf{aggiornamenti sul tracking della spedizione}.
+	
+	La piattaforma deve inoltre prevedere \textbf{funzionalità di gestione per la wishlist}, dove gli utenti possono \textbf{salvare prodotti di interesse} e \textbf{ricevere notifiche} su eventuali \textbf{cambi di prezzo} o \textbf{disponibilità}. Un’altra funzionalità richiesta è la \textbf{possibilità di recensire i prodotti acquistati}, con un \textbf{sistema che consenta di assegnare un punteggio e aggiungere commenti}, contribuendo a una \textbf{sezione di feedback} visibile ad altri utenti.
+	
+	Dal lato \textbf{amministrativo}, è necessario definire un \textbf{pannello di controllo} che permetta la \textbf{gestione completa del catalogo}, con la possibilità di \textbf{aggiungere}, \textbf{rimuovere} o \textbf{modificare prodotti}, comprese le \textbf{varianti}. Si richiede che ogni \textbf{modifica}, in particolare quelle sui \textbf{prezzi}, sia \textbf{tracciata} per garantire uno \textbf{storico dettagliato}. Per la \textbf{gestione degli ordini}, gli amministratori devono poter \textbf{visualizzare}, \textbf{aggiornare lo stato delle spedizioni} e \textbf{segnare gli ordini come completati}. Un altro aspetto rilevante è la \textbf{gestione dei codici sconto}: gli amministratori devono poter \textbf{attivare}, \textbf{modificare} e \textbf{disattivare sconti}, specificando \textbf{parametri} come la \textbf{percentuale applicabile}, la \textbf{validità} e il \textbf{limite massimo di utilizzi}.
+	
+	Infine, dal punto di vista \textbf{comunicativo}, il sistema deve consentire agli utenti di \textbf{inviare messaggi agli amministratori} tramite un \textbf{form dedicato}. Gli amministratori devono poter \textbf{visualizzare questi messaggi} e \textbf{rispondere tramite email}. È richiesto anche un \textbf{sistema di generazione di report} che consenta agli amministratori di \textbf{visualizzare statistiche} sui \textbf{ricavi}, i \textbf{prodotti più venduti} e l’\textbf{andamento generale delle vendite}.
+	
+	Un aspetto critico è la \textbf{sicurezza del sistema}, che deve garantire la \textbf{protezione dei dati degli utenti}, con misure come la \textbf{crittografia delle password}. È importante considerare anche la \textbf{scalabilità della piattaforma}, per gestire eventuali \textbf{aumenti nel numero di utenti e prodotti} in futuro.
+	
+	\section{Rielaborazione del Testo}
+	\subsection{Obiettivi finali:}
+	Il sistema deve consentire agli \textbf{utenti} di accedere alla piattaforma per \textbf{esplorare} e \textbf{acquistare scarpe}, offrendo un'esperienza \textbf{semplice e intuitiva}. Devono essere implementate \textbf{funzionalità per la gestione del catalogo prodotti}, con possibilità di \textbf{filtrare} e \textbf{cercare articoli} in base a vari criteri come \textbf{marca}, \textbf{prezzo}, \textbf{taglia} e \textbf{colore}. \\
+	Per incentivare gli utenti a interagire con la piattaforma, è prevista una \textbf{funzionalità di recensione dei prodotti}, dove gli utenti possono \textbf{valutare gli articoli acquistati} e \textbf{lasciare commenti}. Tali recensioni possono contribuire a una \textbf{sezione dedicata al feedback complessivo} sui prodotti. \\
+	Dal lato amministrativo, il sistema deve permettere la \textbf{gestione centralizzata del catalogo}, degli \textbf{ordini} e delle \textbf{promozioni}. Gli amministratori devono avere accesso a \textbf{strumenti per monitorare le vendite}, \textbf{aggiornare le informazioni sui prodotti} e \textbf{gestire i codici sconto}. Devono essere disponibili anche \textbf{statistiche} per visualizzare i \textbf{ricavi} e i \textbf{prodotti più venduti}.
+	
+	\section{Estrazione dei dati del testo rielaborato}
+	\subsection{Estrazione dati sugli utenti}
+	\textbf{Utente} $\longrightarrow$ Utente che si registra sulla piattaforma\\
+	Successivamente verranno elencati i dati da memorizzare.
+	\begin{itemize}
+		\item Password
+		\item Nome
+		\item Cognome
+		\item Email
+		\item Preferenze per la newsletter
+	\end{itemize}
+	
+	\textbf{Amministratore} $\longrightarrow$ Utente privilegiato che effettua operazioni di moderazione e gestione dei dati.\\
+	Successivamente verranno elencati i dati da memorizzare.
+	\begin{itemize}
+		\item Password
+		\item Nome
+		\item Cognome
+		\item Email
+		\item Telefono
+	\end{itemize}
+	
+	\textbf{Prodotti} $\longrightarrow$ Scarpe disponibili per la vendita.\\
+	Successivamente verranno elencati i dati da memorizzare.
+	\begin{itemize}
+		\item Nome
+		\item Descrizione
+		\item Prezzo
+		\item Taglia
+		\item Colore
+		\item Brand
+		\item Disponibilità
+	\end{itemize}
+	
+	\section{Elenco delle Azioni}
+	\subsection{Utente}
+	\begin{itemize}
+		\item \textbf{Registrarsi sulla piattaforma}.
+		\item \textbf{Accedere alla piattaforma}.
+		\item \textbf{Navigare e filtrare i prodotti} (per brand, tipo di calzatura, taglia, colore, prezzo, etc.).
+		\item \textbf{Aggiungere/consultare/modificare i prodotti in un carrello}.
+		\item \textbf{Pagare i prodotti nel carrello}.
+		\item \textbf{Consultare/modificare le notifiche} (segna come letto, elimina).
+		\item \textbf{Modificare i propri dati tramite un pannello delle impostazioni}.
+		\item \textbf{Consultare lo stato della spedizione}.
+		\item \textbf{Visualizzare lo storico degli ordini}.
+		\item \textbf{Visualizzare il grafico dell’andamento del prezzo di ogni articolo} (e prezzo più basso).
+		\item \textbf{Tracking della Spedizione}.
+		\item \textbf{Gestire la lista dei desideri}.
+		\item \textbf{Ricevere le notifiche anche nella mail}.
+		\item \textbf{Recensire i prodotti} (stelle e media + sezione con commenti).
+		\item \textbf{Contattare l’admin tramite un form}.
+		\item \textbf{Gestire l’iscrizione alla newsletter nel pannello}.
+		\item \textbf{Iscriversi alla newsletter} per ricevere email su sconti, novità etc.
+		\item \textbf{Ricevere notifiche tramite mail} al cambio dello stato di spedizione, su carrelli abbandonati, cambio prezzo di articoli in wishlist e per conferme d’ordine.
+	\end{itemize}
+	
+	\subsection{Amministratore}
+	\begin{itemize}
+		\item \textbf{Utilizzare un pannello per la gestione dei prodotti} (aggiungere/rimuovere prodotti, modificare i prezzi).
+		\item \textbf{Gestione degli ordini}.
+		\begin{itemize}
+			\item \textbf{Ordini appena ricevuti} (segnare come spediti).
+			\item \textbf{Ordini spediti} (in automatico nello storico quando ricevuti).
+			\item \textbf{Storico ordini}.
+		\end{itemize}
+		\item \textbf{Aggiornare le informazioni del venditore visualizzate sul sito} (e.g., indirizzo, numero di telefono nel footer).
+		\item \textbf{Generare statistiche sui ricavi}.
+		\item \textbf{Attivare codici sconto} (da inserire nel Database).
+		\item \textbf{Gestire i messaggi ricevuti dagli utenti} (la cui risposta dovrà essere mandata alla mail del mittente).
+	\end{itemize}
+	\chapter{Progettazione concettuale}
+	\subsection{Schema completo}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=400pt]{ER/ercompletosx.png}
+		\caption{Schema ER completo 1/2.}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=400pt]{ER/ercompletodx.png}
+		\caption{Schema ER completo 2/2.}
+	\end{figure}
+\end{document}
