@@ -111,6 +111,7 @@
 		\item \textbf{Attivare codici sconto} (da inserire nel Database).
 		\item \textbf{Gestire i messaggi ricevuti dagli utenti} (la cui risposta dovrà essere mandata alla mail del mittente).
 	\end{itemize}
+	
 	\chapter{Progettazione concettuale}
 	\subsection{Schema completo}
 	\begin{figure}[H]
@@ -123,4 +124,153 @@
 		\includegraphics[width=400pt]{ER/ercompletodx.png}
 		\caption{Schema ER completo 2/2.}
 	\end{figure}
+	
+	\chapter{Progettazione Logica}
+	\section{Stima del volume dei dati} \label{s:volumes}
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93}
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Utenti e Notifiche} \\ \hline
+			\rowcolor[HTML]{CBCEFB}
+			Concetto            & Costrutto & Volume           \\ \hline
+			UTENTE              & E         & 100000           \\ \hline
+			MESSAGGIO           & E         & 10000            \\ \hline
+			NOTIFICA            & E         & 50000            \\ \hline
+			STATO\_NOTIFICA     & E         & 3                \\ \hline
+			stato\_notifica     & R         & 50000            \\ \hline
+			inviare             & R         & 10000            \\ \hline
+			ricevere            & R         & 50000            \\ \hline
+			effettuare          & R         & 200000           \\ \hline
+			avere          		& R         & 10000            \\ \hline
+			detenere            & R         & 5000             \\ \hline
+		\end{tabular}
+		\caption{Volume dei dati per utenti e notifiche.}
+	\end{table}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93}
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Prodotti e Varianti} \\ \hline
+			\rowcolor[HTML]{CBCEFB}
+			Concetto          & Costrutto & Volume           \\ \hline
+			PRODOTTO          & E         & 10000            \\ \hline
+			VARIANTE          & E         & 30000            \\ \hline
+			STATO\_PRODOTTO   & E         & 5                \\ \hline
+			PRODOTTO\_STORICO & E         & 30000            \\ \hline
+			stato\_prodotto   & R         & 10000            \\ \hline
+			variazione        & R         & 30000            \\ \hline
+			storico           & R         & 30000            \\ \hline
+		\end{tabular}
+		\caption{Volume dei dati per prodotti e varianti.}
+	\end{table}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93}
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Ordini e Carrelli} \\ \hline
+			\rowcolor[HTML]{CBCEFB}
+			Concetto          		& Costrutto & Volume           \\ \hline
+			ORDINE            		& E         & 200000           \\ \hline
+			TRACKING\_SPEDIZIONE 	& E      	& 200000           \\ \hline
+			STATO\_SPEDIZIONE   	& E         & 5                \\ \hline
+			PRODOTTO\_ORDINE  		& R         & 600000           \\ \hline
+			CARRELLO          		& E         & 20000            \\ \hline
+			stato\_spedizione   	& R         & 200000           \\ \hline
+			ordinato				& R			& 600000 		   \\ \hline
+			comprendere       		& R         & 20000            \\ \hline
+			tracking 				& R      	& 200000           \\ \hline
+			contenere 				& R      	& 600000           \\ \hline
+		\end{tabular}
+		\caption{Volume dei dati per ordini e carrelli.}
+	\end{table}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93}
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Wishlist e Recensioni} \\ \hline
+			\rowcolor[HTML]{CBCEFB}
+			Concetto          & Costrutto & Volume           \\ \hline
+			WISHLIST          & E         & 150000           \\ \hline
+			RECENSIONE        & E         & 200000           \\ \hline
+			aggiungere        & R         & 150000           \\ \hline
+			scrivere          & R         & 200000           \\ \hline
+			recensire         & R         & 200000           \\ \hline
+		\end{tabular}
+		\caption{Volume dei dati per wishlist e recensioni.}
+	\end{table}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{|lll|}
+			\hline
+			\rowcolor[HTML]{FFCE93}
+			\multicolumn{3}{|l|}{\cellcolor[HTML]{FFCE93}Sconti e Promozioni} \\ \hline
+			\rowcolor[HTML]{CBCEFB}
+			Concetto          & Costrutto & Volume           \\ \hline
+			SCONTO            & E         & 1000             \\ \hline
+			applicato         & R         & 20000            \\ \hline
+			utilizza          & R         & 10000            \\ \hline
+		\end{tabular}
+		\caption{Volume dei dati per sconti e promozioni.}
+	\end{table}
+	\section{Operazioni e loro frequenza}
+	\subsection{Operazioni dell'utenza}
+	\begin{small}
+		\begin{longtable}[H]{|c|p{5cm}|>{\columncolor[HTML]{FFFFC7}}p{2.5cm}|p{5cm}|}
+			\hline
+			\cellcolor[HTML]{ECF4FF}Numero & 
+			\cellcolor[HTML]{ECF4FF}Operazione & 
+			\cellcolor[HTML]{ECF4FF}Frequenza / gg & 
+			\cellcolor[HTML]{ECF4FF}Dettagli \\ \hline
+			\endfirsthead
+			\endhead
+			%
+			1 & Registrazione di un nuovo utente. & 10 & Numero medio di nuovi utenti al giorno. \\ \hline
+			2 & Accesso alla piattaforma. & 100 & Stimato considerando il numero medio di utenti attivi. \\ \hline
+			3 & Navigazione e filtraggio dei prodotti. & 200 & Include filtri per brand, tipo, taglia, colore, prezzo, ecc. \\ \hline
+			4 & Aggiunta, consultazione o modifica di prodotti nel carrello. & 150 & Utenti che interagiscono con il carrello ogni giorno. \\ \hline
+			5 & Pagamento dei prodotti nel carrello. & 50 & Basato sulla conversione media degli utenti. \\ \hline
+			6 & Consultazione o modifica delle notifiche. & 80 & Utenti che interagiscono con le notifiche. \\ \hline
+			7 & Modifica dei propri dati nel pannello impostazioni. & 20 & Include aggiornamento di password, telefono, ecc. \\ \hline
+			8 & Consultazione dello stato della spedizione. & 70 & Stimato sulla base degli ordini recenti. \\ \hline
+			9 & Visualizzazione dello storico degli ordini. & 50 & Utenti che consultano i propri ordini passati. \\ \hline
+			10 & Visualizzazione del grafico dell’andamento del prezzo. & 40 & Per articoli specifici in wishlist o nel carrello. \\ \hline
+			11 & Tracking della spedizione. & 50 & Utenti che controllano lo stato aggiornato del tracking. \\ \hline
+			12 & Gestione della lista dei desideri. & 30 & Aggiunta o rimozione di articoli dalla wishlist. \\ \hline
+			13 & Ricezione delle notifiche tramite email. & 100 & Include notifiche su ordini, spedizioni, e wishlist. \\ \hline
+			14 & Recensioni dei prodotti (stelle e commenti). & 20 & Basato sugli utenti che lasciano recensioni giornalmente. \\ \hline
+			15 & Contattare l’amministratore tramite un form. & 5 & Utenti che inviano richieste o segnalazioni. \\ \hline
+			16 & Gestione dell’iscrizione alla newsletter. & 10 & Include iscrizioni e cancellazioni. \\ \hline
+			17 & Iscrizione alla newsletter. & 10 & Numero medio di nuove iscrizioni giornaliere. \\ \hline
+		\end{longtable}
+	\end{small}
+	
+	\subsection{Operazioni di amministrazione}
+	\begin{small}
+		\begin{longtable}[H]{|c|p{5cm}|>{\columncolor[HTML]{FFFFC7}}p{2.5cm}|p{5cm}|}
+			\hline
+			\cellcolor[HTML]{ECF4FF}Numero & 
+			\cellcolor[HTML]{ECF4FF}Operazione & 
+			\cellcolor[HTML]{ECF4FF}Frequenza & 
+			\cellcolor[HTML]{ECF4FF}Dettagli \\ \hline
+			\endfirsthead
+			\endhead
+			%
+			1 & Gestione dei prodotti (aggiunta/rimozione/modifica). & 5 / settimana & Operazioni su nuovi prodotti o modifica dei prezzi esistenti. \\ \hline
+			2 & Gestione degli ordini. & 50 / giorno & Include ordini appena ricevuti, spediti e storicizzati. \\ \hline
+			3 & Aggiornamento delle informazioni del venditore. & 2 / mese & Modifica di indirizzi o informazioni di contatto nel footer. \\ \hline
+			4 & Generazione di statistiche sui ricavi. & 1 / settimana & Report su ricavi e vendite complessive. \\ \hline
+			5 & Attivazione di codici sconto. & 3 / mese & Inserimento di nuove promozioni nel database. \\ \hline
+			6 & Gestione dei messaggi ricevuti dagli utenti. & 10 / giorno & Risposte inviate via mail agli utenti. \\ \hline
+		\end{longtable}
+	\end{small}
+	
 \end{document}
