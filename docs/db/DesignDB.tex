@@ -139,7 +139,11 @@
 			MESSAGGIO           & E         & 10000            \\ \hline
 			NOTIFICA            & E         & 50000            \\ \hline
 			STATO\_NOTIFICA     & E         & 3                \\ \hline
+			PAGAMENTO			& E 		& 50000			   \\ \hline
+			INDIRIZZO			& E			& 100000		   \\ \hline
 			stato\_notifica     & R         & 50000            \\ \hline
+			intestato			& R			& 50000			   \\ \hline
+			possedere			& R   		& 100000		   \\ \hline
 			inviare             & R         & 10000            \\ \hline
 			ricevere            & R         & 50000            \\ \hline
 			effettuare          & R         & 200000           \\ \hline
@@ -273,4 +277,90 @@
 		\end{longtable}
 	\end{small}
 	
+	\section{Analisi delle ridondanze}
+	Le ridondanze principali che vogliamo analizzare sono le seguenti:
+	\begin{enumerate}
+		\item Attributo "Totale\_Articoli" nell'entità CARRELLO.
+		\item Attributo "Valore\_Totale" nell'entità CARRELLO.
+	\end{enumerate}
+	
+	\subsection{Attributo 1: Totale\_Articoli}
+	\subsubsection{Operazioni interessate:}
+	\begin{itemize}
+		\item Op. 4: Aggiunta, consultazione o modifica di prodotti nel carrello.
+		\item Op. 5: Pagamento dei prodotti nel carrello.
+	\end{itemize}
+	
+	\subsubsection{Tabelle degli accessi senza ridondanza:}
+	Consideriamo il caso in cui il calcolo di "Totale\_Articoli" venga effettuato dinamicamente ogni volta che è necessario.
+	
+	\begin{itemize}
+		\item \textbf{Per operazione 4}: Per ogni modifica al carrello (aggiunta o rimozione di un prodotto), sono necessarie $150$ scritture nella relazione "comprendere" e $150$ letture per ricalcolare "Totale\_Articoli". Scritture: $150 \times 2 = 300$ accessi. Letture: $150 \times 1 = 150$ accessi. Totale: $300 + 150 = 450$ accessi/giorno.
+		\item \textbf{Per operazione 5}: Per il pagamento, vengono effettuate $50$ letture per calcolare dinamicamente "Totale\_Articoli". Letture: $50 \times 1 = 50$ accessi. Totale: $450 + 50 = 500$ accessi/giorno.
+	\end{itemize}
+	
+	\subsubsection{Tabelle degli accessi con ridondanza:}
+	Consideriamo il caso in cui si introduca un attributo ridondante "Totale\_Articoli" nell'entità CARRELLO, che viene aggiornato ogni volta che il contenuto del carrello viene modificato.
+	
+	\begin{itemize}
+		\item \textbf{Per operazione 4}: Oltre alle $150$ scritture nella relazione "comprendere", sono necessari $150$ aggiornamenti sull'entità CARRELLO. Scritture: $(150 + 150) \times 2 = 600$ accessi. Totale: $600$ accessi/giorno.
+		\item \textbf{Per operazione 5}: Per il pagamento, vengono effettuate $50$ letture dirette di "Totale\_Articoli", senza necessità di ricalcolo. Letture: $50 \times 1 = 50$ accessi. Totale: $600 + 50 = 650$ accessi/giorno.
+	\end{itemize}
+	
+	\subsubsection{Conclusione:}
+	\begin{itemize}
+		\item \textbf{Senza ridondanza}: $500$ accessi/giorno.
+		\item \textbf{Con ridondanza}: $650$ accessi/giorno.
+	\end{itemize}
+	Risulta più conveniente \textbf{eliminare la ridondanza}, poiché il costo aggiuntivo delle scritture è significativo rispetto alla riduzione delle letture.
+	
+	\subsection{Attributo 2: Valore\_Totale}
+	\subsubsection{Operazioni interessate:}
+	\begin{itemize}
+		\item Op. 4: Aggiunta, consultazione o modifica di prodotti nel carrello.
+		\item Op. 5: Pagamento dei prodotti nel carrello.
+	\end{itemize}
+	
+	\subsubsection{Tabelle degli accessi senza ridondanza:}
+	Consideriamo il caso in cui il calcolo di "Valore\_Totale" venga effettuato dinamicamente ogni volta che è necessario, sommando i prezzi di tutti i prodotti nel carrello.
+	
+	\begin{itemize}
+		\item \textbf{Per operazione 4}: Ogni modifica al carrello richiede $150$ scritture nella relazione "comprendere" e $300$ letture per ricalcolare "Valore\_Totale". Scritture: $150 \times 2 = 300$ accessi. Letture: $300 \times 1 = 300$ accessi. Totale: $300 + 300 = 600$ accessi/giorno.
+		\item \textbf{Per operazione 5}: Per il pagamento, vengono effettuate $100$ letture per calcolare dinamicamente "Valore\_Totale". Letture: $100 \times 1 = 100$ accessi. Totale: $600 + 100 = 700$ accessi/giorno.
+	\end{itemize}
+	
+	\subsubsection{Tabelle degli accessi con ridondanza:}
+	Consideriamo il caso in cui si introduca un attributo ridondante "Valore\_Totale" nell'entità CARRELLO, che viene aggiornato ogni volta che il contenuto del carrello viene modificato.
+	
+	\begin{itemize}
+		\item \textbf{Per operazione 4}: Ogni modifica al carrello comporta $150$ scritture nella relazione "comprendere" e $150$ aggiornamenti sull'entità CARRELLO. Scritture: $(150 + 150) \times 2 = 600$ accessi. Totale: $600$ accessi/giorno.
+		\item \textbf{Per operazione 5}: Per il pagamento, vengono effettuate $50$ letture dirette di "Valore\_Totale", senza necessità di ricalcolo. Letture: $50 \times 1 = 50$ accessi. Totale: $600 + 50 = 650$ accessi/giorno.
+	\end{itemize}
+	
+	\subsubsection{Conclusione:}
+	\begin{itemize}
+		\item \textbf{Senza ridondanza}: $700$ accessi/giorno.
+		\item \textbf{Con ridondanza}: $650$ accessi/giorno.
+	\end{itemize}
+	Risulta più conveniente \textbf{mantenere la ridondanza}, poiché riduce leggermente il numero totale di accessi.
+	
+	\section{Conclusioni finali sull'analisi delle ridondanze}
+	Dall'analisi delle ridondanze sui tre attributi considerati (\textbf{Totale\_Articoli} e \textbf{Valore\_Totale}, possiamo trarre le seguenti conclusioni:
+	\begin{itemize}
+		\item \textbf{Totale\_Articoli}: Risulta conveniente \textbf{eliminare la ridondanza}, poiché il costo aggiuntivo delle scritture supera il beneficio della riduzione delle letture.
+		\item \textbf{Valore\_Totale}: Risulta conveniente \textbf{mantenere la ridondanza}, poiché riduce il numero totale di accessi.
+	\end{itemize}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=400pt]{ER/erfinalesx.png}
+		\caption{Schema ER finale 1/2.}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=400pt]{ER/erfinaledx.png}
+		\caption{Schema ER finale 2/2.}
+	\end{figure}
+	
+	\section{Traduzione di entità e associazioni in relazioni}
+	\subsection{Schema tradotto}
 \end{document}
