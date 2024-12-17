@@ -1,0 +1,364 @@
+/*
+@font-face {
+    font-family: 'Beatrice Headline Trial', sans-serif;
+    src: url('beatrice_headline_trial_regular.ttf')  format('truetype'),
+         url('beatrice_headline_trial_regular.otf')  format('opentype'),
+         url('beatrice_headline_trial_regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Beatrice Headline Trial', sans-serif;
+    src: url('beatrice_headline_trial_medium.ttf')  format('truetype'),
+         url('beatrice_headline_trial_medium.otf')  format('opentype'),
+         url('beatrice_headline_trial_medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Beatrice Headline Trial', sans-serif;
+    src: url('beatrice_headline_trial_bold.ttf') format('truetype'),
+         url('beatrice_headline_trial_bold.otf')  format('opentype'),
+         url('beatrice_headline_trial_bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
+*/
+
+@import url('https://fonts.cdnfonts.com/css/beatrice-display-trial');
+                
+@font-face {
+    font-family: 'Barrio', sans-serif;
+    src: url('barrio_regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+                                                
+@font-face {
+    font-family: 'Menlo Regular', sans-serif;
+    src: url('menlo_regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* *********************************** */
+/* Resetting the default browser style */
+/* *********************************** */
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+}
+
+/* **************************************************************************** */
+/* Margin is providing space beyond the element's box and therefore won't be    */
+/* colored - it's simply space. Padding on the other hand provides space around */
+/* the inside of the element's box and is colored and affected by other styles. */
+/* **************************************************************************** */
+header {
+    text-align: center;
+    background-color: black;
+    padding: 1% 0;
+}
+
+header > h1 {
+    color: white;
+    font-family: 'Barrio', sans-serif;
+    font-size: 3em;
+}
+
+/* ********************************************************************************* */
+/* The ‘overflow’ property results in the height of the footer being enlarged so     */
+/* that it also contains the top margin of the topmost element and the bottom margin */
+/* of the bottommost element, preventing them from exiting the parent tag (footer).  */
+/* ********************************************************************************* */
+footer {
+    background-color: black;
+    font-family: 'Beatrice Headline Trial', sans-serif;
+    text-align: center;
+    overflow: hidden;
+    font-size: 80%;
+    padding: 2% 0;
+}
+
+footer a {
+    color: white;
+}
+
+/* **************************************************************** */
+/* Vertical space between lists, considering that margins collapse. */
+/* **************************************************************** */
+footer > nav {
+    margin: 2% 0;
+    text-align: center;
+}
+
+/* ********************************************************************************* */
+/* Vertical space between links within each list, considering that margins collapse. */
+/* ********************************************************************************* */
+footer > nav > ul > li {
+    margin: 2% 0;
+    text-align: center;
+}
+
+.social-media-link {
+    display: inline-block;
+    margin: 0 2%;
+}
+
+
+/* link burocrazia, piu piccoli, stessa riga */
+footer > nav:nth-child(4) > a {
+    margin: 0 5%;
+}
+
+footer > nav:nth-child(4) > p {
+    display: inline-block;
+    color: white;
+    font-size: 200%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+– [CSS] Vogliamo che il testo “a” all’interno di un bottone si illumini anche se sono sopra il bottone ma non sopra il testo con il cursore (e dunque che l’utente venga re-indirizzato quando questa parte viene cliccata), per questo motivo devo allargare l’area di “a” a tutto il “listItem” (e non gestire gli spazi con il padding internamente al “listItem”, altrimenti l’area di a rimarrebbe la stessa). Tuttavia per far ciò dovremmo cambiare la natura in-line di “a” attraverso “display: in- line block” poiché altrimenti occuperebbe solamente la larghezza del contenuto, ed impostare “height” e “width” a 100%. Anche se ci sarà del padding per centrare il testo il link si attiverà anche ai bordi.
+
+
+
+
+header a {
+    color: black;
+}
+
+footer a {
+    color: white;
+}
+
+a:visited {
+    color: black;
+}
+
+
+div ul li:hover {
+    background-color: #f2f2f2;
+}
+
+body {
+    background-color: #efefef;
+    font-family: 'Beatrice Headline Trial', sans-serif;
+}
+
+
+.off-screen-menu {
+    background-color:  rgb(255, 255, 255);
+    height: 100vh;
+    width: 100%;
+    max-width: 450px;
+    position: fixed;
+    top: 82px;
+    left: -450px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;    
+    justify-content: left;
+    text-align: left;
+    font-size: 2rem;
+    transition: .3s ease;
+}
+
+footer nav{
+    justify-content: center;
+    text-align: center;
+}
+
+.off-screen-menu.active {
+    left: 0;
+}
+
+div p {
+    justify-content: center;
+    align-items: center;    
+    text-align: center;
+} 
+
+
+
+nav {
+    padding: 1rem;
+    display: flex;
+}
+
+footer {
+    color: white;
+    background-color: black;
+}
+
+
+header {
+
+    color: white;
+    text-align: center;
+    background-color: black;
+
+}
+
+body main {
+    background-color: #efefef;
+}
+
+
+body header nav {
+    display: inline;
+    background-color: white;
+    align-items: center;
+
+}
+
+body header h1 {
+    display: inline;
+
+}
+
+.ham-menu {
+    height: 50px;
+    width: 40px;
+    margin-left: 10%;
+    position: relative;
+    display: inline;
+    background-color: green;
+}
+
+.ham-menu span {
+    height: 5px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 25px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: .3s ease;
+}
+
+.ham-menu span:nth-child(1) {
+    top: 25%;
+}
+
+.ham-menu span:nth-child(3) {
+    top: 75%;
+}
+
+.ham-menu.active span {
+    background-color: white;
+}
+
+.ham-menu.active span:nth-child(1) {
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.ham-menu.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.ham-menu.active span:nth-child(3) {
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+*/
