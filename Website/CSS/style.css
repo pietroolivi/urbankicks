@@ -1,27 +1,27 @@
 /*
 @font-face {
     font-family: 'Beatrice Headline Trial', sans-serif;
-    src: url('beatrice_headline_trial_regular.ttf')  format('truetype'),
-         url('beatrice_headline_trial_regular.otf')  format('opentype'),
-         url('beatrice_headline_trial_regular.woff') format('woff');
+    src: url('Fonts/beatrice_headline_trial_regular.ttf')  format('truetype'),
+         url('Fonts/beatrice_headline_trial_regular.otf')  format('opentype'),
+         url('Fonts/beatrice_headline_trial_regular.woff') format('woff');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Beatrice Headline Trial', sans-serif;
-    src: url('beatrice_headline_trial_medium.ttf')  format('truetype'),
-         url('beatrice_headline_trial_medium.otf')  format('opentype'),
-         url('beatrice_headline_trial_medium.woff') format('woff');
+    src: url('Fonts/beatrice_headline_trial_medium.ttf')  format('truetype'),
+         url('Fonts/beatrice_headline_trial_medium.otf')  format('opentype'),
+         url('Fonts/beatrice_headline_trial_medium.woff') format('woff');
     font-weight: 500;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Beatrice Headline Trial', sans-serif;
-    src: url('beatrice_headline_trial_bold.ttf') format('truetype'),
-         url('beatrice_headline_trial_bold.otf')  format('opentype'),
-         url('beatrice_headline_trial_bold.woff') format('woff');
+    src: url('Fonts/beatrice_headline_trial_bold.ttf') format('truetype'),
+         url('Fonts/beatrice_headline_trial_bold.otf')  format('opentype'),
+         url('Fonts/beatrice_headline_trial_bold.woff') format('woff');
     font-weight: 700;
     font-style: normal;
 }
@@ -31,14 +31,19 @@
                 
 @font-face {
     font-family: 'Barrio', sans-serif;
-    src: url('barrio_regular.ttf') format('truetype');
+    src: url('Fonts/barrio_regular.eot') format('eot');
+    src: url('Fonts/barrio_regular.ttf') format('truetype'),
+         url('Fonts/barrio_regular.otf') format('opentype'),
+         url('Fonts/barrio_regular.woff2') format('woff2'),
+         url('Fonts/barrio_regular.woff') format('woff'),
+         url('Fonts/barrio_regular.svg') format('svg');
     font-weight: 400;
     font-style: normal;
 }
-                                                
+                                       
 @font-face {
     font-family: 'Menlo Regular', sans-serif;
-    src: url('menlo_regular.woff') format('woff');
+    src: url('Fonts/menlo_regular.woff') format('woff');
     font-weight: 400;
     font-style: normal;
 }
@@ -143,10 +148,9 @@ main > div > img {
 aside p {
     color: black;
     font-family: 'Barrio', sans-serif;
+    font-size: 1.3em;
+
 }
-
-
-
 
 
 
@@ -237,6 +241,7 @@ aside p {
   translate: 0;
 }
 
+/* */
 .sidebar {
   transition: translate var(--animation-timing);
   translate: -100%;
@@ -244,6 +249,8 @@ aside p {
   color: var(--background);
   max-width: 20rem;
   min-height: 100vh;
+  position: absolute;
+
 }
 
 /* **************************************************************************** */
@@ -253,6 +260,7 @@ aside p {
 .sidebar > nav > ul > li:hover {
   background-color: #f2f2f2;
 }
+
 
 .sidebar > input {
   width: 100%;
@@ -266,23 +274,21 @@ aside p {
 /* way the whole area of <li> will remain clickable, and change colour as the cursor */
 /* passes, whereas if we had used the margins we would have generated ‘dead’ areas.  */
 /* ********************************************************************************* */
-.sidebar > nav > ul > li > a {
+.sidebar > nav > ul > li > a, .sidebar > nav > ul > li > a:visited {
+  color: black;
   display: block;
   padding: 5% 10%;
 }
-
 
 .sidebar > p {
   margin-top: 10%;
   text-align: center;
 }
 
-
-/*
-li.menu-item:not(:last-child) { 
-   margin-bottom: 3px;  
+.secondary-sidebar-nav > ul:nth-child(1) {
+  border-top: 1px solid #bfbfbf;
 }
-*/
+
 
 
 
@@ -299,37 +305,18 @@ li.menu-item:not(:last-child) {
 }
 
 .search:focus-within {
-  border: solid 1px #bfbfbf;
+  border: 1px solid #bfbfbf;
 }
 
 .search-input {
   font-size: 16px;
   font-family: 'Beatrice Headline Trial', sans-serif;
-  color: #bfbfbf;
+  color: black;
   margin-left: var(--padding);
   outline: none;
   border: none;
   background: transparent;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
