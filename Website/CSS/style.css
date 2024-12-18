@@ -155,6 +155,7 @@ aside p {
 
 
 
+
 *,
 *::after,
 *::before {
@@ -237,21 +238,50 @@ aside p {
   width: 0;
 }
 
+.hamburger-menu:has(input:checked) + .sidebar {
+  translate: 0;
+}
+
 .sidebar {
   transition: translate var(--animation-timing);
   translate: -100%;
-  padding: 0.5rem 1rem;
-  padding-top: calc(var(--hamburger-height) + var(--hamburger-margin) + 1rem);
   background-color: var(--foreground);
   color: var(--background);
   max-width: 10rem;
   min-height: 100vh;
 }
 
-.hamburger-menu:has(input:checked) + .sidebar {
-  translate: 0;
+/* **************************************************************************** */
+/* We want, similarly to the high-fidelity mockup, each <li> containing a link  */
+/* in the pop-up menu to change background colour as the cursor passes over it. */
+/* **************************************************************************** */
+.sidebar > nav > ul > li:hover {
+  background-color: #f2f2f2;
 }
 
+.sidebar > input {
+  width: 100%;
+  margin-bottom: 10%;
+}
+
+/* ********************************************************************************* */
+/* In order to space the menu items correctly, we first turn the <a> into block      */
+/* elements so that they occupy the entire area of the container (<li>), and then    */
+/* take advantage of their padding to move the text away from the borders. In this   */
+/* way the whole area of <li> will remain clickable, and change colour as the cursor */
+/* passes, whereas if we had used the margins we would have generated ‘dead’ areas.  */
+/* ********************************************************************************* */
+.sidebar > nav > ul > li > a {
+  display: block;
+  padding: 5% 10%;
+}
+
+
+/*
+li.menu-item:not(:last-child) { 
+   margin-bottom: 3px;  
+}
+*/
 
 
 
