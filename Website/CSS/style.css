@@ -151,11 +151,6 @@ aside p {
 
 
 
-
-
-
-
-
 *,
 *::after,
 *::before {
@@ -247,7 +242,7 @@ aside p {
   translate: -100%;
   background-color: var(--foreground);
   color: var(--background);
-  max-width: 10rem;
+  max-width: 20rem;
   min-height: 100vh;
 }
 
@@ -277,6 +272,12 @@ aside p {
 }
 
 
+.sidebar > p {
+  margin-top: 10%;
+  text-align: center;
+}
+
+
 /*
 li.menu-item:not(:last-child) { 
    margin-bottom: 3px;  
@@ -285,6 +286,31 @@ li.menu-item:not(:last-child) {
 
 
 
+.search {
+  --padding: 14px;
+
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: var(--padding);
+  border-radius: 0;
+  background: transparent;
+  transition: border 0.25s;
+}
+
+.search:focus-within {
+  border: solid 1px #bfbfbf;
+}
+
+.search-input {
+  font-size: 16px;
+  font-family: 'Beatrice Headline Trial', sans-serif;
+  color: #bfbfbf;
+  margin-left: var(--padding);
+  outline: none;
+  border: none;
+  background: transparent;
+}
 
 
 
