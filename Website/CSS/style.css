@@ -77,7 +77,7 @@ header {
 header > h1 {
     color: white;
     font-family: 'Barrio', sans-serif;
-    font-size: 2em;
+    font-size: 3em;
 }
 
 /* ********************************************************************************* */
@@ -145,6 +145,27 @@ main > div > img {
     height: auto;
 }
 
+main > div > a.explore-now {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12%;
+  margin-inline: auto;
+  width: fit-content;
+  padding: 1% 6%;
+  display: inline-block;
+  font-size: 1.2em;
+  color: black;
+  background-color: rgba(225, 225, 225, 0.5);
+  border: 3px solid white;
+}
+
+main > div > a.explore-now:hover {
+  border: 4px solid black;
+  color: white;
+}
+
+
 aside p {
     color: black;
     font-family: 'Barrio', sans-serif;
@@ -155,6 +176,7 @@ aside p {
 
 
 
+/* ************************SIDE BAR******************************** */
 *,
 *::after,
 *::before {
@@ -167,7 +189,7 @@ aside p {
   --hamburger-gap: 5px;
   --foreground: white;
   --background: white;
-  --hamburger-margin: 12px;
+  --hamburger-margin: 20px;
   --animation-timing: 200ms ease-in-out;
   --hamburger-height: calc(var(--bar-height) * 3 + var(--hamburger-gap) * 2);
 }
@@ -241,7 +263,8 @@ aside p {
   translate: 0;
 }
 
-/* */
+/* mettiamo z alto perche per esempio nel main dobbiamo gestire altri layering
+come quello del bottone sull'immagine etc., qunidi non cosi non ci sbagliamo. */
 .sidebar {
   transition: translate var(--animation-timing);
   translate: -100%;
@@ -250,8 +273,11 @@ aside p {
   max-width: 20rem;
   min-height: 100vh;
   position: absolute;
+  z-index: 9999;
 
 }
+/* *********************************************************** */
+
 
 /* **************************************************************************** */
 /* We want, similarly to the high-fidelity mockup, each <li> containing a link  */
@@ -291,7 +317,7 @@ aside p {
 
 
 
-
+/* ************************SEARCH BAR******************************** */
 .search {
   --padding: 14px;
 
@@ -317,7 +343,7 @@ aside p {
   border: none;
   background: transparent;
 }
-
+/* *********************************************************** */
 
 
 
