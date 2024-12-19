@@ -1,12 +1,28 @@
 
 
 //this can be generalized into a utility script (for instance listenerObjectSetting I consider it a Utility script)
-function evenListenerAppendHTML(idElement,idHTMLStructure,apiPHPfile){
-    const element = document.getElementById(idElement);
-    const idHTMLStructure =document.getElementById(idHTMLStructure);
-    element.addEventListener("click",
+/**
+ * This function add an eventListener to a button "idElement" and after the event fires off it appends
+ * the HTML structure identified by "idHTMLStructure" then, if needed, it adds other listeners from "additionalListeners"
+ * to some of the "new" HTML elements that now are visible/appended.
+ *  
+ * @param {*} idElement the html id of the element which listen
+ * @param {*} idHTMLStructure the html id of the element to append/make visible (NEED TO DISCUSS THIS)
+ * @param {*} apiPHPfile  this only if we decide to use the php to get the code
+ * @param {*} additionalListeners these are additional listeners to the event
+ */
+function eventListenerAppendHTML(idElement,idHTMLStructure,apiPHPfile,additionalListeners){
+    const button = document.getElementById(idElement);
+    const idHTMLStructure = document.getElementById(idHTMLStructure);
+    button.addEventListener("click",
         async function(){
-            const response= await fetch(apiPHPfile)
+
+            //TODO--- when we decide how to append HTML code that need to appear dynamically:
+            //should we have it hidden inside the .php file of the template or should
+            //we have it wrote here.
+            //after the html structure is appended we use this parameter "additionalListerners"
+            //to set all the listeners that depends on the click.
+            additionalListeners.forEach(lis=>lis());
         });
 }
 
@@ -57,22 +73,29 @@ function eventListenerFormInputWarning(idElement, idParagraph,bodyPrefixName, li
 }
 
 //------------------------------------------------Setting all the listeners------------------------------
-const warningParagraph = "emailFormWarning";
-const emailInput = "emailForm";
-const bodyPrefixName = "emailinsert=";
+const inputEmail = "emailForm";
+let warningParagraph = "emailFormWarning";
+let bodyPrefixName = "emailinsert=";
 const listenerEmailSetting = new listenerObjectSetting( "No Account associated", "red");
 
-eventListenerFormInputWarning(warningParagraph,emailInput,bodyPrefixName,listenerEmailSetting);
+eventListenerFormInputWarning(inputEmail,warningParagraph,bodyPrefixName,listenerEmailSetting);
 
 //Here we need to set up the listener to make the insert code structure
 //appear.
 
 
-
-warningParagraph = "codeFormError";
-emailInput = "codeFormError";
+const inputCode = "codeForm";
+warningParagraph = "codeFormWarning";
 bodyPrefixName = "codeinsert=";
 const listenerCodeErrorSetting = new listenerObjectSetting("Incorrect Code","red");
 //in this case the server may not need to query the database(the password reset code may not be modeled in the db)
 // but it should havein some associative array a cell that is created when the JS code tells it to load the insert code structure
-eventListenerFormInputWarning(warningParagraph,emailInput,bodyPrefixName,listenerCodeErrorSetting);
+
+const eventListenerFormInputWarningConfigured = () =>
+    eventListenerFormInputWarning(inputCode, warningParagraph, bodyPrefixName, listenerCodeErrorSetting);
+
+const buttonForgot = "forgotButton";
+let idHTMLStructure=""; // see eventListenerAppendHTML comments ^
+let apiPHPfile=""; // see eventListenerAppendHTML comments ^
+let additionalListeners = [eventListenerFormInputWarningConfigured];
+eventListenerAppendHTML(buttonForgot,idHTMLStructure,apiPHPfile,additionalListeners);
