@@ -70,6 +70,26 @@ function eventListenerFormInputWarning(idElement, idParagraph,bodyPrefixName, li
     return null;
 }
 
+//this is used for elements that when clicked give warning if a checkbox is not checked
+function eventListenerButtonNotCheckedWarning(idElement, idCheckbox,idParagraph, listenerParagraphSetting){
+    const button = document.getElementById(idElement);
+    const checkbox=document.getElementById(idCheckbox);
+    const error = document.getElementById(idParagraph);
+    button.addEventListener("click",
+        async function() {
+                const valueOfElement = checkbox.checked;
+                //if there's something in the input field that has been written, only then I want to execute the logic
+                // (you can't have done something wrong if you have done nothing)
+                if(!valueOfElement){
+                    error.textContent = listenerParagraphSetting.textContent;
+                    error.style.color = listenerParagraphSetting.textColor;
+                }
+    });
+    return null;
+}
+
+
+
 
 function eventListenerFormInputComparisonWarning(idFirstElement, idSecondElement, idParagraph, listenerParagraphSetting){
     const element1 = document.getElementById(idFirstElement);
@@ -90,3 +110,5 @@ function eventListenerFormInputComparisonWarning(idFirstElement, idSecondElement
 
     return null;
 }
+
+
