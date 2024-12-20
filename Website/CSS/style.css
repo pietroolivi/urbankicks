@@ -1,66 +1,70 @@
 /*
 @font-face {
-    font-family: 'Beatrice Headline Trial', sans-serif;
-    src: url('Fonts/beatrice_headline_trial_regular.ttf')  format('truetype'),
-         url('Fonts/beatrice_headline_trial_regular.otf')  format('opentype'),
-         url('Fonts/beatrice_headline_trial_regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Beatrice Headline Trial', sans-serif;
+  src: url('Fonts/beatrice_headline_trial_regular.ttf')  format('truetype'),
+        url('Fonts/beatrice_headline_trial_regular.otf')  format('opentype'),
+        url('Fonts/beatrice_headline_trial_regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Beatrice Headline Trial', sans-serif;
-    src: url('Fonts/beatrice_headline_trial_medium.ttf')  format('truetype'),
-         url('Fonts/beatrice_headline_trial_medium.otf')  format('opentype'),
-         url('Fonts/beatrice_headline_trial_medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
+  font-family: 'Beatrice Headline Trial', sans-serif;
+  src: url('Fonts/beatrice_headline_trial_medium.ttf')  format('truetype'),
+        url('Fonts/beatrice_headline_trial_medium.otf')  format('opentype'),
+        url('Fonts/beatrice_headline_trial_medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Beatrice Headline Trial', sans-serif;
-    src: url('Fonts/beatrice_headline_trial_bold.ttf') format('truetype'),
-         url('Fonts/beatrice_headline_trial_bold.otf')  format('opentype'),
-         url('Fonts/beatrice_headline_trial_bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
+  font-family: 'Beatrice Headline Trial', sans-serif;
+  src: url('Fonts/beatrice_headline_trial_bold.ttf') format('truetype'),
+        url('Fonts/beatrice_headline_trial_bold.otf')  format('opentype'),
+        url('Fonts/beatrice_headline_trial_bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
 }
 */
 
 @import url('https://fonts.cdnfonts.com/css/beatrice-display-trial');
                 
 @font-face {
-    font-family: 'Barrio', sans-serif;
-    src: url('Fonts/barrio_regular.eot') format('eot');
-    src: url('Fonts/barrio_regular.ttf') format('truetype'),
-         url('Fonts/barrio_regular.otf') format('opentype'),
-         url('Fonts/barrio_regular.woff2') format('woff2'),
-         url('Fonts/barrio_regular.woff') format('woff'),
-         url('Fonts/barrio_regular.svg') format('svg');
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Barrio', sans-serif;
+  src: url('Fonts/barrio_regular.eot') format('eot');
+  src: url('Fonts/barrio_regular.ttf') format('truetype'),
+        url('Fonts/barrio_regular.otf') format('opentype'),
+        url('Fonts/barrio_regular.woff2') format('woff2'),
+        url('Fonts/barrio_regular.woff') format('woff'),
+        url('Fonts/barrio_regular.svg') format('svg');
+  font-weight: 400;
+  font-style: normal;
 }
                                        
 @font-face {
-    font-family: 'Menlo Regular', sans-serif;
-    src: url('Fonts/menlo_regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Menlo Regular', sans-serif;
+  src: url('Fonts/menlo_regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
 }
 
 /* *********************************** */
 /* Resetting the default browser style */
 /* *********************************** */
 * {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    text-decoration: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
+}
+
+*, *::after, *::before {
+  box-sizing: border-box;
 }
 
 body {
-    background-color: #efefef;
-    font-family: 'Beatrice Headline Trial', sans-serif;
+  background-color: #efefef;
+  font-family: 'Beatrice Headline Trial', sans-serif;
 }
 
 /* **************************************************************************** */
@@ -69,15 +73,15 @@ body {
 /* the inside of the element's box and is colored and affected by other styles. */
 /* **************************************************************************** */
 header {
-    text-align: center;
-    background-color: black;
-    padding: 1% 0;
+  text-align: center;
+  background-color: black;
+  padding: 1% 0;
 }
 
 header > h1 {
-    color: white;
-    font-family: 'Barrio', sans-serif;
-    font-size: 3em;
+  color: white;
+  font-family: 'Barrio', sans-serif;
+  font-size: 3em;
 }
 
 /* ********************************************************************************* */
@@ -86,30 +90,30 @@ header > h1 {
 /* of the bottommost element, preventing them from exiting the parent tag (footer).  */
 /* ********************************************************************************* */
 footer {
-    background-color: black;
-    font-family: 'Beatrice Headline Trial', sans-serif;
-    text-align: center;
-    overflow: hidden;
-    font-size: 70%;
-    padding: 2% 0;
+  background-color: black;
+  font-family: 'Beatrice Headline Trial', sans-serif;
+  text-align: center;
+  overflow: hidden;
+  font-size: 70%;
+  padding: 2% 0;
 }
 
 footer a, footer a:visited {
-    color: white;
+  color: white;
 }
 
 /* **************************************************************** */
 /* Vertical space between lists, considering that margins collapse. */
 /* **************************************************************** */
 footer > nav > ul {
-    margin: 2% 0;
+  margin: 2% 0;
 }
 
 /* ********************************************************************************* */
 /* Vertical space between links within each list, considering that margins collapse. */
 /* ********************************************************************************* */
 footer > nav > ul > li {
-    margin: 2% 0;
+  margin: 2% 0;
 }
 
 /* ************************************************************************* */
@@ -118,34 +122,30 @@ footer > nav > ul > li {
 /* as a horizontal arrangement of these would have been unnatural.           */
 /* ************************************************************************* */
 .social-media-link {
-    display: inline-block;
-    margin: 0 2%;
+  display: inline-block;
+  margin: 0 2%;
 }
-
-
 
 /* link burocrazia, piu piccoli, stessa riga */
 footer > nav:nth-child(4) > a {
-    font-size: 60%;
+  font-size: 60%;
 }
 
 footer > nav:nth-child(4) > p {
-    display: inline-block;
-    color: white;
-    font-size: 200%;
-    text-align: center;
+  display: inline-block;
+  color: white;
+  font-size: 200%;
+  text-align: center;
 }
 
 main {
-    background-color: #efefef;
+  background-color: #efefef;
 }
 
 main > div > img {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  height: auto;
 }
-
-
 
 main > div > a.explore-now {
   position: absolute;
@@ -162,7 +162,10 @@ main > div > a.explore-now {
   border: 3px solid white;
 }
 
-/* SECONDO BORDO */
+/* ********************************************************************************************** */
+/* The inner secondary border is added with a pseudo-element. It is set with absolute positioning */
+/* and the distance from the primary one is managed with the values top, left, bottom, right.     */
+/* ********************************************************************************************** */
 main > div > a.explore-now:before {
   content: " ";
   position: absolute;
@@ -173,31 +176,23 @@ main > div > a.explore-now:before {
   border: 3px solid black;
 }
 
-
+/* **************************************************************** */
+/* As the cursor passes over the exploration button, we switch the  */
+/* colour of the two borders and change the colour of the text.     */
+/* **************************************************************** */ 
 main > div > a.explore-now:hover {
   border: 3px solid black;
   color: white;
 }
+
 main > div > a.explore-now:hover:before {
   border: 3px solid white;
 }
 
-
 aside p {
-    color: black;
-    font-family: 'Barrio', sans-serif;
-    font-size: 1.3em;
-
-}
-
-
-
-
-/* ************************SIDE BAR******************************** */
-*,
-*::after,
-*::before {
-  box-sizing: border-box;
+  color: black;
+  font-family: 'Barrio', sans-serif;
+  font-size: 1.3em;
 }
 
 :root {
@@ -208,11 +203,18 @@ aside p {
   --background: white;
   --hamburger-margin: 20px;
   --animation-timing: 200ms ease-in-out;
-  --hamburger-height: calc(var(--bar-height) * 3 + var(--hamburger-gap) * 2);
+  --hamburger-height: calc(var(--bar-height) * 3 + var(--hamburger-gap) * 2); /* Height of the 3 bars added to the 2 gaps */
 }
-
+ 
+/* ********************************************************************************************************* */
+/* By default the elements we use to create the bars are shown inline because that is the nature of the      */
+/* <label> tag, so we have to change it because we want to stack these bars on top of each other. We define  */
+/* at the beginning the width of each bar when we are in the X shape (shorter than when we are in the        */
+/* hamburger shape), so that it forms a right triangle, given the height of the hamburger that will remain   */
+/* the same. The last line will make sure that when we hover it we understand that it's a clickable element. */
+/* ********************************************************************************************************* */
 .hamburger-menu {
-  --x-width: calc(var(--hamburger-height) * 1.41421356237);
+  --x-width: calc(var(--hamburger-height) * 1.41421356237); /*The width of each bar when we are in the form X: h * sqrt(2) */
 
   display: flex;
   flex-direction: column;
@@ -237,6 +239,13 @@ aside p {
   box-shadow: 0 0 0 1px var(--foreground);
 }
 
+/* **************************************************************************************************** */
+/* How do we get the three separate lines, having specified nothing special in the HTML code for them?  */
+/* We use the <input> tag (i.e. the checkbox) inside the label ‘hamburger-menu’ and the before & after  */
+/* elements of the latter. The empty content string will allow us to display "before" and "after", and  */
+/* then we style them until they look like bars. We then modify the point around which the rotation of  */
+/* the bars occurs, which changes from their centre to their left end, to make them cross correctly.    */
+/* **************************************************************************************************** */
 .hamburger-menu::before,
 .hamburger-menu::after,
 .hamburger-menu input {
@@ -251,6 +260,13 @@ aside p {
     background-color var(--animation-timing);
 }
 
+/* *************************************************************************************************** */
+/* We want to remove the checkbox shown by default from the display, which will be replaced by         */
+/* what we have written above. We also remove any outlines as well as the default padding and margin   */
+/* to align the centre bar with those formed by ‘before’ and ‘after’. The last line ensures that we    */
+/* cannot click on the checkbox at all, as we want interactions to happen through the wrapper <label>. */
+/* In fact, clicking anywhere on the 3-line label will check and uncheck the checkbox for us.          */
+/* *************************************************************************************************** */
 .hamburger-menu input {
   appearance: none;
   padding: 0;
@@ -259,6 +275,12 @@ aside p {
   pointer-events: none;
 }
 
+/* ****************************************************************************************** */
+/* Does the hamburger menu have an input that's checked inside of it? If so then select       */
+/* the "before" element of our hamburger menu. After rotating the bars, we will realise that, */
+/* due to the fact that they have a non-negligible thickness, they will be shifted vertically */ 
+/* towards the centre of the previous perimeter, so we should bring them back to the corners. */
+/* ****************************************************************************************** */
 .hamburger-menu:has(input:checked)::before {
   rotate: 45deg;
   width: var(--x-width);
@@ -271,30 +293,40 @@ aside p {
   translate: 0 calc(var(--bar-height) / 2);
 }
 
+/* *********************************************************************************** */
+/* We make the central bar (i.e. the one formed by the <input> tag) disappear when     */
+/* the user clicks on the label (which is able to alter the state of the <input> tag). */
+/* *********************************************************************************** */
 .hamburger-menu input:checked {
   opacity: 0;
   width: 0;
 }
 
-.hamburger-menu:has(input:checked) + .sidebar {
-  translate: 0;
-}
-
-/* mettiamo z alto perche per esempio nel main dobbiamo gestire altri layering
-come quello del bottone sull'immagine etc., qunidi non cosi non ci sbagliamo. */
+/* ********************************************************************************************* */
+/* Without a transition, a transformed element would pass abruptly from one state to another.    */
+/* By applying a transition, it is possible to control the change, making it gradual. The        */
+/* translate property allows you to move an element from one point to another, similar to how    */
+/* you might think of moving an element using offsets (e.g. top, bottom, left, and right.).      */
+/* The bar will be hidden by default and will be at the side (outside) of our screen. In fact,   */
+/* -100% indicates a horizontal shift to the left by an offset equal to the width of the element */
+/* itself. We put a high z-index because we want it to prevail over every other layer.           */
+/* ********************************************************************************************* */
 .sidebar {
-  transition: translate var(--animation-timing);
+  transition: translate var(--animation-timing); /* the transition is going to be on the "translate" property" */
   translate: -100%;
   background-color: var(--foreground);
   color: var(--background);
-  max-width: 20rem;
-  min-height: 100vh;
+  max-width: 20rem;  /* no matter what size the screen is, it's always only taking up that space */ 
+  min-height: 100vh; /* that's going to fill 100% of the height */
   position: absolute;
   z-index: 9999;
-
+  
 }
-/* *********************************************************** */
 
+/* We select the sidebar directly after */
+.hamburger-menu:has(input:checked) + .sidebar {
+  translate: 0;
+}
 
 /* **************************************************************************** */
 /* We want, similarly to the high-fidelity mockup, each <li> containing a link  */
@@ -303,7 +335,6 @@ come quello del bottone sull'immagine etc., qunidi non cosi non ci sbagliamo. */
 .sidebar > nav > ul > li:hover {
   background-color: #f2f2f2;
 }
-
 
 .sidebar > input {
   width: 100%;
@@ -328,16 +359,16 @@ come quello del bottone sull'immagine etc., qunidi non cosi non ci sbagliamo. */
   text-align: center;
 }
 
+/* ************************************************************ */
+/* We need to insert a separation bar between the menu entries  */
+/* concerning footwear and those of a more bureaucratic nature. */
+/* ************************************************************ */
 .secondary-sidebar-nav > ul:nth-child(1) {
   border-top: 1px solid #bfbfbf;
 }
 
-
-
-/* ************************SEARCH BAR******************************** */
 .search {
   --padding: 14px;
-
   width: 100%;
   display: flex;
   align-items: center;
@@ -347,6 +378,12 @@ come quello del bottone sull'immagine etc., qunidi non cosi non ci sbagliamo. */
   transition: border 0.25s;
 }
 
+/* *********************************************************************************** */
+/* The :focus-within pseudo-class matches an element if the element or any of its      */ 
+/* descendants are focused. In this case we want to surround the entire search bar     */
+/* in grey if the text input part (the only child of <div> that can be focused) is     */ 
+/* clicked on, and this will take the time specified above in the transition property. */
+/* *********************************************************************************** */
 .search:focus-within {
   border: 1px solid #bfbfbf;
 }
@@ -360,7 +397,6 @@ come quello del bottone sull'immagine etc., qunidi non cosi non ci sbagliamo. */
   border: none;
   background: transparent;
 }
-/* *********************************************************** */
 
 
 
@@ -417,16 +453,14 @@ come quello del bottone sull'immagine etc., qunidi non cosi non ci sbagliamo. */
 
 
 
-
-
+ 
 /*
 – [CSS] Vogliamo che il testo “a” all’interno di un bottone si illumini anche se sono sopra il bottone ma non sopra il testo con il cursore (e dunque che l’utente venga re-indirizzato quando questa parte viene cliccata), per questo motivo devo allargare l’area di “a” a tutto il “listItem” (e non gestire gli spazi con il padding internamente al “listItem”, altrimenti l’area di a rimarrebbe la stessa). Tuttavia per far ciò dovremmo cambiare la natura in-line di “a” attraverso “display: in- line block” poiché altrimenti occuperebbe solamente la larghezza del contenuto, ed impostare “height” e “width” a 100%. Anche se ci sarà del padding per centrare il testo il link si attiverà anche ai bordi.
 
 */ 
-@media screen and (min-width:768px){
-
-    * {
-        background-color: red;
-        color: red;
-    }
+@media screen and (min-width:768px) {
+  * {
+      background-color: red;
+      color: red;
+  }
 }
