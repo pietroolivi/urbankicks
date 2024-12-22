@@ -34,7 +34,7 @@ function eventListenerFormInputWarning(idElement, idParagraph,bodyPrefixName, li
     const error = document.getElementById(idParagraph);
     element.addEventListener("blur",
         async function() {
-                const valueOfElement = element.Value;
+                const valueOfElement = element.value;
                 //if there's something in the input field that has been written, only then I want to execute the logic
                 // (you can't have done something wrong if you have done nothing)
                 if(valueOfElement){
@@ -55,7 +55,6 @@ function eventListenerFormInputWarning(idElement, idParagraph,bodyPrefixName, li
                     if (json.exists) {
                         errorParagraph.textContent = "";
                     } else {
-                        // se non esiste settiamo il paragrafo
                         error.textContent = listenerParagraphSetting.textContent;
                         error.style.color = listenerParagraphSetting.textColor;
                     }
@@ -97,8 +96,8 @@ function eventListenerFormInputComparisonWarning(idFirstElement, idSecondElement
     const error = document.getElementById(idParagraph);
     element2.addEventListener("blur",
         async function() {
-                const valueOfElement1 = element1.Value;
-                const valueOfElement2=element2.Value;
+                const valueOfElement1 = element1.value;
+                const valueOfElement2=element2.value;
                 //if there's something in the first input field that has been written, and also something in the second input field
                 //and the comparison fails, it adds the text to the error paragraph
                 if(valueOfElement1 && valueOfElement2 && (valueOfElement1 !== valueOfElement2)){
@@ -112,3 +111,66 @@ function eventListenerFormInputComparisonWarning(idFirstElement, idSecondElement
 }
 
 
+function eventListenerPasswordRules(idPassword, idParagraph, listenerParagraphSetting){
+    const passwordElement= document.getElementById(idPassword);
+    const error = document.getElementById(idParagraph);
+    passwordElement.addEventListener("blur", 
+        async function(){
+            const valueOfElement=passwordElement.value;
+            //regular expressions to check if the string contains letters and numbers and the length is correct
+            const passwordHasLetters=/[a-zA-Z]/.test(valueOfElement);
+            const emailHasNumber = /\d/.test(valueOfElement);
+            const emailRightLength=(valueOfElement)=>{return (valueOfElement.length) >=8 && (valueOfElement.length<=20)};
+            if(passwordHasLetters && emailHasNumber && emailRightLength)
+            {
+                return null;
+            }
+            else{
+                error.textContent = listenerParagraphSetting.textContent;
+                error.style.color = listenerParagraphSetting.textColor;
+            }
+
+        });
+}
+
+
+function eventListenerSideBarFocus(){
+    //document body
+    const body = document.body;
+    // this is the reference to the checkbox
+    const hamburgerMenu = document.querySelector(".hamburger-menu input");
+    //reference to the sidebar 
+    const sidebar = document.querySelector(".sidebar");
+    
+    //if we want to remove the scroll from the body through javascript, then this function can be used
+    const toggleSidebar = () => {
+        if (hamburgerMenu.checked) {
+            
+            //you need to add a no-scroll class in the style.css:
+            /*body.no-scroll {
+                overflow: hidden;
+            }*/
+
+           //classlist is a property to get the collection of classes of a DOM element.
+             body.classList.add("no-scroll");
+        //if the checkbox of the hamburger menu is unchecked, it will remove the class
+        } else {
+            body.classList.remove("no-scroll");
+        }
+    };
+    //when the checkbox change
+    hamburgerMenu.addEventListener("change", toggleSidebar);
+
+    //this was done using an event that uses the capturing phase, since
+    //document has no parents it blocks the propagation immediately.
+    //look into capturing and bubbling phases for events.
+    document.addEventListener("click", 
+        async function(event){
+            if (hamburgerMenu.checked && !sidebar.contains(event.target)){
+                event.stopPropagation(); 
+                event.preventDefault(); 
+                hamburgerMenu.checked = false; 
+                toggleSidebar(); 
+            }
+    }, true);
+}
