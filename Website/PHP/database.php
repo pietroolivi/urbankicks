@@ -14,148 +14,177 @@ class DatabaseHelper {
      * PRODUCT QUERIES *
      *******************/
 
-    // Returns product information by ID
-    public function getProductById($productId) {
-        $query = "SELECT * FROM PRODOTTO WHERE ID_Prodotto = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $productId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
-    }
+    // Returns filtered products
+    public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
+        $query = "SELECT DISTINCT p.* FROM PRODOTTO p 
+                  LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto 
+                  WHERE 1=1";
+        $params = [];
+        $types = "";
+        
+        if ($brand) {
+            $query .= " AND p.Marca = ?";
+            $params[] = $brand;
+            $types .= "s";
+        }
+        if ($type) {
+            $query .= " AND p.Tipo = ?";
+            $params[] = $type;
+            $types .= "s";
+        }
+        if ($size) {
+            $query .= " AND v.Taglia = ?";
+            $params[] = $size;
+            $types .= "d";
+        }
+        if ($color) {
+            $query .= " AND v.Colore = ?";
+            $params[] = $color;
+            $types .= "s";
+        }
+        if ($minPrice) {
+            $query .= " AND p.Prezzo >= ?";
+            $params[] = $minPrice;
+            $types .= "d";
+        }
+        if ($maxPrice) {
+            $query .= " AND p.Prezzo <= ?";
+            $params[] = $maxPrice;
+            $types .= "d";
+        }
 
-    // Returns all available product variants
-    public function getProductVariants($productId) {
-        $query = "SELECT * FROM VARIANTE WHERE ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $productId);
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Returns price history for a product
-    public function getProductPriceHistory($productId) {
-        $query = "SELECT * FROM PRODOTTO_STORICO WHERE ID_Prodotto = ? ORDER BY Data_Modifica DESC";
+    // Admin: Add new product
+    public function addProduct($productId, $name, $description, $brand, $type, $price) {
+        $query = "INSERT INTO PRODOTTO (ID_Prodotto, Nome, Descrizione, Marca, Tipo, Prezzo, Data_Aggiunta, Sta_Tipo) 
+                  VALUES (?, ?, ?, ?, ?, ?, NOW(), 'disponibile')";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssssd", $productId, $name, $description, $brand, $type, $price);
+        return $stmt->execute();
+    }
+
+    // Admin: Update product price
+    public function updateProductPrice($productId, $newPrice) {
+        // First, store the old price in history
+        $query = "INSERT INTO PRODOTTO_STORICO (ID_Prodotto, Prezzo, Data_Modifica) 
+                  SELECT ID_Prodotto, Prezzo, NOW() FROM PRODOTTO WHERE ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $productId);
         $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
 
-    /*******************
-     * USER QUERIES *
-     *******************/
-
-    // Returns user information
-    public function getUserByEmail($email) {
-        $query = "SELECT * FROM UTENTE WHERE Email = ?";
+        // Then update the current price
+        $query = "UPDATE PRODOTTO SET Prezzo = ? WHERE ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
-    }
-
-    // Register new user
-    public function registerUser($email, $nome, $cognome, $password, $telefono, $newsletter) {
-        $query = "INSERT INTO UTENTE (Email, Nome, Cognome, Password, Telefono, Data_Registrazione, Preferenze_Newsletter, Ruolo) 
-                  VALUES (?, ?, ?, ?, ?, NOW(), ?, 'user')";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ssssss", $email, $nome, $cognome, $password, $telefono, $newsletter);
+        $stmt->bind_param("ds", $newPrice, $productId);
         return $stmt->execute();
     }
 
     /*******************
-     * CART QUERIES *
+     * MESSAGE QUERIES *
      *******************/
 
-    // Get user's cart
-    public function getUserCart($email) {
-        $query = "SELECT * FROM CARRELLO WHERE Email = ?";
+    // User: Send message to admin
+    public function sendMessage($email, $subject, $body) {
+        $query = "INSERT INTO MESSAGGIO (Email, Oggetto, Corpo, Timestamp_Invio) 
+                  VALUES (?, ?, ?, NOW())";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
-    }
-
-    // Get products in cart
-    public function getCartProducts($cartId) {
-        $query = "SELECT p.*, v.*, c.Quantita 
-                  FROM comprendere c 
-                  JOIN PRODOTTO p ON c.ID_Prodotto = p.ID_Prodotto 
-                  JOIN VARIANTE v ON c.ID_Prodotto = v.ID_Prodotto 
-                     AND c.Colore = v.Colore 
-                     AND c.Taglia = v.Taglia 
-                  WHERE c.ID_Carrello = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $cartId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-
-    // Add product to cart
-    public function addToCart($cartId, $productId, $color, $size, $quantity) {
-        $query = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
-                  VALUES (?, ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssdi", $cartId, $productId, $color, $size, $quantity);
+        $stmt->bind_param("sss", $email, $subject, $body);
         return $stmt->execute();
     }
 
-    /*******************
-     * ORDER QUERIES *
-     *******************/
-
-    // Create new order
-    public function createOrder($email, $paymentMethod, $shippingType, $paymentId) {
-        $query = "INSERT INTO ORDINE (ID_Ordine, Data_Ordine, Costo_Totale, Metodo_Pagamento, Tipo, Email, IDPagamento) 
-                  VALUES (UUID(), NOW(), 0, ?, ?, ?, ?)";
+    // Admin: Get all messages
+    public function getAllMessages() {
+        $query = "SELECT m.*, u.Nome, u.Cognome 
+                  FROM MESSAGGIO m 
+                  JOIN UTENTE u ON m.Email = u.Email 
+                  ORDER BY m.Timestamp_Invio DESC";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ssss", $paymentMethod, $shippingType, $email, $paymentId);
-        $stmt->execute();
-        return $stmt->insert_id;
-    }
-
-    // Get user's orders
-    public function getUserOrders($email) {
-        $query = "SELECT * FROM ORDINE WHERE Email = ? ORDER BY Data_Ordine DESC";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Get order details
-    public function getOrderProducts($orderId) {
-        $query = "SELECT p.*, po.* 
-                  FROM PRODOTTO_ORDINE po 
-                  JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto 
-                  WHERE po.ID_Ordine = ?";
+    /*******************
+     * TRACKING QUERIES *
+     *******************/
+
+    public function getOrderTracking($orderId) {
+        $query = "SELECT o.*, t.Posizione, t.Timestamp_Aggiornamento 
+                  FROM ORDINE o 
+                  LEFT JOIN Tracking_Spedizione t ON o.ID_Ordine = t.ID_Ordine 
+                  WHERE o.ID_Ordine = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $orderId);
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
+        return $result->fetch_assoc();
+    }
+
+    public function updateOrderStatus($orderId, $newStatus, $location) {
+        // Update order status
+        $query = "UPDATE ORDINE SET Tipo = ? WHERE ID_Ordine = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ss", $newStatus, $orderId);
+        $stmt->execute();
+
+        // Update tracking
+        $query = "INSERT INTO Tracking_Spedizione (ID_Ordine, Posizione, Timestamp_Aggiornamento) 
+                  VALUES (?, ?, NOW())";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ss", $orderId, $location);
+        return $stmt->execute();
     }
 
     /*******************
-     * WISHLIST QUERIES *
+     * DISCOUNT QUERIES *
      *******************/
 
-    // Get user's wishlist products
-    public function getWishlistProducts($email) {
-        $query = "SELECT p.*, v.* 
-                  FROM aggiungere a 
-                  JOIN PRODOTTO p ON a.ID_Prodotto = p.ID_Prodotto 
-                  JOIN VARIANTE v ON a.ID_Prodotto = v.ID_Prodotto 
-                     AND a.Colore = v.Colore 
-                     AND a.Taglia = v.Taglia 
-                  WHERE a.Email = ?";
+    // Admin: Create discount code
+    public function createDiscount($discountId, $description, $type, $value, $startDate, $endDate) {
+        $query = "INSERT INTO SCONTO (ID_Sconto, Descrizione, TipoSconto, Valore, Data_Inizio, Data_Fine) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssdss", $discountId, $description, $type, $value, $startDate, $endDate);
+        return $stmt->execute();
+    }
+
+    // Check if discount is valid
+    public function validateDiscount($discountId) {
+        $query = "SELECT * FROM SCONTO 
+                  WHERE ID_Sconto = ? 
+                  AND Data_Inizio <= NOW() 
+                  AND Data_Fine >= NOW()";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $discountId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    /*******************
+     * NOTIFICATION QUERIES *
+     *******************/
+
+    // Create notification
+    public function createNotification($notificationId, $type, $message, $email) {
+        $query = "INSERT INTO NOTIFICA (ID_Notifica, TipoNotifica, Messaggio, Timestamp_Invio, Tipo, Email) 
+                  VALUES (?, ?, ?, NOW(), ?, ?)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssss", $notificationId, $type, $message, $type, $email);
+        return $stmt->execute();
+    }
+
+    // Get user notifications
+    public function getUserNotifications($email) {
+        $query = "SELECT * FROM NOTIFICA WHERE Email = ? ORDER BY Timestamp_Invio DESC";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -163,63 +192,59 @@ class DatabaseHelper {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Add product to wishlist
-    public function addToWishlist($email, $productId, $color, $size) {
-        $query = "INSERT INTO aggiungere (Email, ID_Prodotto, Colore, Taglia) 
-                  VALUES (?, ?, ?, ?)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssd", $email, $productId, $color, $size);
-        return $stmt->execute();
-    }
-
     /*******************
-     * REVIEW QUERIES *
+     * STATISTICS QUERIES *
      *******************/
 
-    // Get product reviews
-    public function getProductReviews($productId) {
-        $query = "SELECT r.*, u.Nome, u.Cognome 
-                  FROM RECENSIONE r 
-                  JOIN UTENTE u ON r.Email = u.Email 
-                  WHERE r.ID_Prodotto = ? 
-                  ORDER BY r.Data_Recensione DESC";
+    // Admin: Get revenue statistics
+    public function getRevenueStats($startDate, $endDate) {
+        $query = "SELECT DATE(Data_Ordine) as date, SUM(Costo_Totale) as revenue, COUNT(*) as orders 
+                  FROM ORDINE 
+                  WHERE Data_Ordine BETWEEN ? AND ? 
+                  GROUP BY DATE(Data_Ordine) 
+                  ORDER BY date";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $productId);
+        $stmt->bind_param("ss", $startDate, $endDate);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Add product review
-    public function addReview($productId, $email, $rating, $description) {
-        $query = "INSERT INTO RECENSIONE (ID_Prodotto, Email, Punteggio, Descrizione, Data_Recensione) 
-                  VALUES (?, ?, ?, ?, NOW())";
+    // Admin: Get product statistics
+    public function getProductStats() {
+        $query = "SELECT p.ID_Prodotto, p.Nome, p.Marca, 
+                         COUNT(DISTINCT po.ID_Ordine) as total_orders,
+                         SUM(po.Quantita) as total_quantity,
+                         AVG(r.Punteggio) as avg_rating
+                  FROM PRODOTTO p
+                  LEFT JOIN PRODOTTO_ORDINE po ON p.ID_Prodotto = po.ID_Prodotto
+                  LEFT JOIN RECENSIONE r ON p.ID_Prodotto = r.ID_Prodotto
+                  GROUP BY p.ID_Prodotto
+                  ORDER BY total_orders DESC";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ssds", $productId, $email, $rating, $description);
-        return $stmt->execute();
-    }
-
-    /*******************
-     * ADDRESS QUERIES *
-     *******************/
-
-    // Get user addresses
-    public function getUserAddresses($email) {
-        $query = "SELECT * FROM INDIRIZZO WHERE Email = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Add new address
-    public function addAddress($email, $street, $number, $zip, $city, $province, $country, $isDefault) {
-        $query = "INSERT INTO INDIRIZZO (Email, Via, NumeroCivico, CAP, Citta, Provincia, Nazione, Predefinito) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    /*******************
+     * NEWSLETTER QUERIES *
+     *******************/
+
+    public function updateNewsletterPreference($email, $preference) {
+        $query = "UPDATE UTENTE SET Preferenze_Newsletter = ? WHERE Email = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ssisssss", $email, $street, $number, $zip, $city, $province, $country, $isDefault);
+        $stmt->bind_param("ss", $preference, $email);
         return $stmt->execute();
+    }
+
+    public function getNewsletterSubscribers() {
+        $query = "SELECT Email, Nome, Cognome FROM UTENTE WHERE Preferenze_Newsletter = 'Y'";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }
+
 ?>
