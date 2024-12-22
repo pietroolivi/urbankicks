@@ -1,3 +1,14 @@
+-- *********************************************
+-- * Standard SQL generation                   
+-- *--------------------------------------------
+-- * DB-MAIN version: 11.0.2              
+-- * Generator date: Sep 14 2021              
+-- * Generation date: Thu Dec 12 14:31:47 2024 
+-- * LUN file: C:\Users\tomas\Desktop\UrbanKicks\docs\db\ER\DBDesign.lun 
+-- * Schema: UrbanKicks/SQL 
+-- ********************************************* 
+
+
 -- Database Section
 -- ________________ 
 
@@ -70,17 +81,20 @@ create table ORDINE (
      Tipo varchar(20) not null,
      Email varchar(100) not null,
      ID_Sconto char(36),
+     IDPagamento char(36) not null,
      constraint ID_ORDINE_ID primary key (ID_Ordine));
 
 create table PAGAMENTO (
-     Email varchar(100) not null,
+     IDPagamento char(36) not null,
      TipoPagamento varchar(50) not null,
-     NumeroCarta char(16) not null,
-     Circuito varchar(20) not null,
-     DataScadenza date not null,
-     CVC numeric(3) not null,
+     NumeroCarta char(16),
+     Circuito varchar(20),
+     DataScadenza date,
+     CVC numeric(3),
+     Email varchar(100),
      Predefinito char not null,
-     constraint ID_PAGAMENTO_ID primary key (Email, NumeroCarta, Circuito, DataScadenza));
+     Int_Email varchar(100) not null,
+     constraint ID_PAGAMENTO_ID primary key (IDPagamento));
 
 create table PRODOTTO (
      ID_Prodotto char(36) not null,
@@ -90,7 +104,6 @@ create table PRODOTTO (
      Tipo varchar(20) not null,
      Prezzo float(10) not null,
      Data_Aggiunta date not null,
-     ImmagineURL varchar(255) not null,
      Sta_Tipo varchar(20) not null,
      constraint ID_PRODOTTO_ID primary key (ID_Prodotto));
 
@@ -232,8 +245,12 @@ alter table ORDINE add constraint REF_ORDIN_SCONT_FK
      foreign key (ID_Sconto)
      references SCONTO;
 
-alter table PAGAMENTO add constraint REF_PAGAM_UTENT
-     foreign key (Email)
+alter table ORDINE add constraint REF_ORDIN_PAGAM_FK
+     foreign key (IDPagamento)
+     references PAGAMENTO;
+
+alter table PAGAMENTO add constraint REF_PAGAM_UTENT_FK
+     foreign key (Int_Email)
      references UTENTE;
 
 alter table PRODOTTO add constraint ID_PRODOTTO_CHK
@@ -341,8 +358,14 @@ create index REF_ORDIN_UTENT_IND
 create index REF_ORDIN_SCONT_IND
      on ORDINE (ID_Sconto);
 
+create index REF_ORDIN_PAGAM_IND
+     on ORDINE (IDPagamento);
+
 create unique index ID_PAGAMENTO_IND
-     on PAGAMENTO (Email, NumeroCarta, Circuito, DataScadenza);
+     on PAGAMENTO (IDPagamento);
+
+create index REF_PAGAM_UTENT_IND
+     on PAGAMENTO (Int_Email);
 
 create unique index ID_PRODOTTO_IND
      on PRODOTTO (ID_Prodotto);
