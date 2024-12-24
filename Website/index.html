@@ -11,7 +11,7 @@
     </head>
     <body>
         <header><h1>URBANKICKS</h1></header>
-        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state -->
+        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. -->
         <label class="hamburger-menu"><input type="checkbox"></label>
         <aside class="hamburger-sidebar">
             <form>
@@ -20,6 +20,16 @@
                     <input class="search-input" type="search" placeholder="Search within the site">
                 </div>
             </form>
+            <!-- A radio button is a great way to implement a three-state toggle switch, each corresponding to the gender for which the clothing is to be displayed, since one and only one choice is allowed at a time. -->
+            <fieldset>
+                <legend>Please select gender:</legend>
+                <input type="radio" id="man" name="gender" value="man" checked="checked">
+                <label for="man">MAN</label>
+                <input type="radio" id="woman" name="gender" value="woman">
+                <label for="woman">WOMAN</label>
+                <input type="radio" id="kids" name="gender" value="kids">
+                <label for="kids">KIDS</label>
+            </fieldset>
             <nav class="main-hamburger-nav">
                 <ul>
                     <li><a href="#">VIEW ALL</a></li>

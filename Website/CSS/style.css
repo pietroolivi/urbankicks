@@ -326,7 +326,7 @@ aside p {
   
 }
 
-/* We select the sidebar directly after */
+/* We select the adjacent sibling sidebar */
 .hamburger-menu:has(input:checked) + .hamburger-sidebar {
   translate: 0;
 }
@@ -403,22 +403,16 @@ aside p {
   background: transparent;
 }
 
-
-
-
-
-
-
-
-/* ******************************************************************************************** */
-/* We set the position to ‘fixed’, so that the element is positioned relative to the viewport,  */
-/* which means that it always remains in the same place even if the page is scrolled, since we  */
-/* want the header together with the menu icons to follow us as far as the bottom of the page,  */
-/* and not to remain at the top outside the viewport as would happen with ‘absolute’. This also */
-/* applies to the pop-up menus, which must remain out of view by default, but still move with   */
-/* scrolling. Here we place a z-index lower than that of the header because we want that during */
-/* the transition to ‘go down’ the menu does not pass above the header but rather underneath.   */
-/* ******************************************************************************************** */
+/* ***************************************************************************************** */
+/* We set the position to ‘fixed’, so that the element is positioned relative to the         */
+/* viewport, which means that it always remains in the same place even if the page is        */
+/* scrolled, since we want the header together with the menu icons to follow us as far as    */ 
+/* the bottom of the page, and not to remain at the top outside the viewport as would happen */
+/* with ‘absolute’. This also applies to the pop-up menus, which must remain out of view by  */
+/* default, but still move with scrolling. Here we place a z-index lower than that of the    */
+/* header because we want that during the transition to ‘go down’ (after the corresponding   */
+/* icon has been clicked) the menu does not pass above the header but rather underneath.     */
+/* ***************************************************************************************** */
 .profile-sidebar { 
   transition: translate var(--animation-timing); 
   translate: 0 -271px;
@@ -431,7 +425,7 @@ aside p {
   z-index: 1;
 }
 
-/* We select the sidebar directly after */
+/* We select the adjacent sibling sidebar */
 .profile-menu:has(input:checked) + .profile-sidebar {
   translate: 0;
 }
@@ -464,6 +458,29 @@ aside p {
 
 
 
+
+
+
+
+.hamburger-sidebar > fieldset {
+  border: none;
+}
+
+.hamburger-sidebar > fieldset > input[type="radio"] {
+  display: none;
+}
+
+.hamburger-sidebar > fieldset > input[type="radio"]:checked + label {
+  border-bottom: 1px solid black;
+}
+
+.hamburger-sidebar > fieldset > input[type="radio"]:not(:checked) + label {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.hamburger-sidebar > fieldset > label {
+  color: black;
+}
 
 
 
