@@ -78,6 +78,7 @@ header {
   padding: 1% 0;
   position: sticky;
   top: 0;
+  z-index: 2;
 }
 
 header > h1 {
@@ -225,7 +226,7 @@ aside p {
   position: fixed;
   top: var(--hamburger-margin);
   left: var(--hamburger-margin);
-  z-index: 9999;
+  z-index: 3;
   cursor: pointer;
 }
 
@@ -321,7 +322,7 @@ aside p {
   max-width: 20rem;  /* no matter what size the screen is, it's always only taking up that space */ 
   min-height: 100vh; /* that's going to fill 100% of the height */
   position: fixed;
-  z-index: 9999;
+  z-index: 3;
   
 }
 
@@ -409,18 +410,25 @@ aside p {
 
 
 
-
-/* MENU PROFILO UTENTE */
-
+/* ******************************************************************************************** */
+/* We set the position to ‘fixed’, so that the element is positioned relative to the viewport,  */
+/* which means that it always remains in the same place even if the page is scrolled, since we  */
+/* want the header together with the menu icons to follow us as far as the bottom of the page,  */
+/* and not to remain at the top outside the viewport as would happen with ‘absolute’. This also */
+/* applies to the pop-up menus, which must remain out of view by default, but still move with   */
+/* scrolling. Here we place a z-index lower than that of the header because we want that during */
+/* the transition to ‘go down’ the menu does not pass above the header but rather underneath.   */
+/* ******************************************************************************************** */
 .profile-sidebar { 
   transition: translate var(--animation-timing); 
   translate: 0 -271px;
   background-color: var(--foreground);
-  color: var(--background); 
+  color: var(--background);
   text-align: center;
   position: fixed;
   min-width: 100%;
   min-height: max-content;
+  z-index: 1;
 }
 
 /* We select the sidebar directly after */
@@ -442,6 +450,7 @@ aside p {
   cursor: pointer;
   background: url("./Images/Icons/user_profile.svg") no-repeat;
   /* background-size: cover; */
+  z-index: 3;
 }
 
 .profile-sidebar > nav > ul > li > a,
