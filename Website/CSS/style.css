@@ -323,7 +323,6 @@ aside p {
   min-height: 100vh; /* that's going to fill 100% of the height */
   position: fixed;
   z-index: 3;
-  
 }
 
 /* We select the adjacent sibling sidebar */
@@ -454,19 +453,22 @@ aside p {
   padding: 2% 10%;
 }
 
-
-
-
-
-
-
-
-
+/* ************************************************************************************** */
+/* We have eliminated the radio button dots for design reasons, so now the only clickable */
+/* elements (which change the value of the boolean attribute ‘checked’ relative to each   */
+/* <input> tag) remain the associated labels, which we convert to block elements so       */
+/* that the underlining of the 3 labels appears as a single line, whereas it would        */
+/* have appeared dashed if the <label> container had been as wide as the text it holds.   */
+/* ************************************************************************************** */
 .hamburger-sidebar > fieldset {
   border: none;
+  width: 100%;
+  text-align: center;
+  padding-top: 5%;
 }
 
-.hamburger-sidebar > fieldset > input[type="radio"] {
+.hamburger-sidebar > fieldset > input[type="radio"], 
+.hamburger-sidebar > fieldset > legend {
   display: none;
 }
 
@@ -480,6 +482,9 @@ aside p {
 
 .hamburger-sidebar > fieldset > label {
   color: black;
+  display: inline-block;
+  width: 33.3%;
+  cursor: pointer;
 }
 
 
