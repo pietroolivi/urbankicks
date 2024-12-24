@@ -174,3 +174,65 @@ function eventListenerSideBarFocus(){
             }
     }, true);
 }
+
+//used both for when a heart of the whishlist is clicked on the home,
+//and for the star swipe
+function toggleImage(idImageToggled, idImageNotToggled){
+
+}
+
+/**
+ * @param {*} classHeartImg the class of all the <img> heart elements on the products in the home
+ */
+function eventListenerItemWish(classCheckboxHeart){
+
+    const allCheckboxHeart=document.getElementsByClassName(classCheckboxHeart);
+    allCheckboxHeart.forEach(heart=>{heart.addEventListener("click",
+        async function(){
+            if(heart.checked){
+                //TODO: understand where the id of the product is stored in the html.
+            }
+        }
+    )});
+}
+
+/**
+ * 
+ * @param {*} idScrollElement element I need to scroll to
+ * @param {*} idButton the button that triggers this listener
+ * @param {*} idElement the element that is like the <select> having all the choices
+ * @param {*} idParagraph the element that is the paragraph of the warning
+ */
+function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idElement,idParagraph,listenerParagraphSetting) {
+
+    const button=document.getElementById(idButton);
+
+    button.addEventListener("click",
+        ()=>{
+            const scrollElement = document.getElementById(idScrollElement);
+            const paragraph = document.getElementById(idParagraph);
+            const element = document.getElementById(idElement);
+            const selectedValue=element.value;
+            if(element.value===""){
+                //if we want to scroll to the element while the user cannot scroll it's again useful to have a class like this:
+                /*body.no-scroll {
+                    overflow: hidden;
+                }*/
+                const body = document.body;
+                body.classList.add("no-scroll");
+                //this simulates the length of the animation (0.5 sec) at the end it will remove the class that disables the scroll.
+                setTimeout(() => {
+                    body.classList.remove("no-scroll");
+                  }, 500);
+                //it should scroll the element into view, behavior smooth for a smmoth animation, and block:center to have it centered.
+                scrollElement.scrollIntoView({
+                    behavior: 'smooth', 
+                    block: 'center',   
+                });
+                paragraph.textContent=listenerParagraphSetting.textContent;
+                paragraph.style.textColor=listenerParagraphSetting.textColor;
+
+            }
+
+        });
+}

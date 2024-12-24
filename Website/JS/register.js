@@ -2,7 +2,7 @@
 //____________Listener For the "email already in use" attached to the email input_______________________
 let inputEmail = "emailForm";
 let paragraphWarning = "emailFormWarning";
-let bodyPrefixName = "emailinsert=";
+let bodyPrefixName = "emailinsert="; //PHP: given this in the $_POST return me a boolean if it exist in the emails
 const listenerEmailSetting = new listenerObjectSetting( "Email already used", "red");
 eventListenerFormInputWarning(inputEmail,paragraphWarning,bodyPrefixName,listenerEmailSetting);
 
