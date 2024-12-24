@@ -76,6 +76,8 @@ header {
   text-align: center;
   background-color: black;
   padding: 1% 0;
+  position: sticky;
+  top: 0;
 }
 
 header > h1 {
@@ -220,10 +222,10 @@ aside p {
   flex-direction: column;
   gap: var(--hamburger-gap);
   width: max-content;
-  position: absolute;
+  position: fixed;
   top: var(--hamburger-margin);
   left: var(--hamburger-margin);
-  z-index: 2;
+  z-index: 9999;
   cursor: pointer;
 }
 
@@ -311,20 +313,20 @@ aside p {
 /* -100% indicates a horizontal shift to the left by an offset equal to the width of the element */
 /* itself. We put a high z-index because we want it to prevail over every other layer.           */
 /* ********************************************************************************************* */
-.sidebar {
+.hamburger-sidebar {
   transition: translate var(--animation-timing); /* the transition is going to be on the "translate" property" */
   translate: -100%;
   background-color: var(--foreground);
   color: var(--background);
   max-width: 20rem;  /* no matter what size the screen is, it's always only taking up that space */ 
   min-height: 100vh; /* that's going to fill 100% of the height */
-  position: absolute;
+  position: fixed;
   z-index: 9999;
   
 }
 
 /* We select the sidebar directly after */
-.hamburger-menu:has(input:checked) + .sidebar {
+.hamburger-menu:has(input:checked) + .hamburger-sidebar {
   translate: 0;
 }
 
@@ -332,11 +334,12 @@ aside p {
 /* We want, similarly to the high-fidelity mockup, each <li> containing a link  */
 /* in the pop-up menu to change background colour as the cursor passes over it. */
 /* **************************************************************************** */
-.sidebar > nav > ul > li:hover {
+.hamburger-sidebar > nav > ul > li:hover,
+.profile-sidebar > nav > ul > li:hover {
   background-color: #f2f2f2;
 }
 
-.sidebar > input {
+.hamburger-sidebar > input {
   width: 100%;
   margin-bottom: 10%;
 }
@@ -348,13 +351,14 @@ aside p {
 /* way the whole area of <li> will remain clickable, and change colour as the cursor */
 /* passes, whereas if we had used the margins we would have generated ‘dead’ areas.  */
 /* ********************************************************************************* */
-.sidebar > nav > ul > li > a, .sidebar > nav > ul > li > a:visited {
+.hamburger-sidebar > nav > ul > li > a, 
+.hamburger-sidebar > nav > ul > li > a:visited {
   color: black;
   display: block;
   padding: 5% 10%;
 }
 
-.sidebar > p {
+.hamburger-sidebar > p {
   margin-top: 10%;
   text-align: center;
 }
@@ -363,7 +367,7 @@ aside p {
 /* We need to insert a separation bar between the menu entries  */
 /* concerning footwear and those of a more bureaucratic nature. */
 /* ************************************************************ */
-.secondary-sidebar-nav > ul:nth-child(1) {
+.secondary-hamburger-nav > ul:nth-child(1) {
   border-top: 1px solid #bfbfbf;
 }
 
@@ -406,7 +410,46 @@ aside p {
 
 
 
+/* MENU PROFILO UTENTE */
 
+.profile-sidebar { 
+  transition: translate var(--animation-timing); 
+  translate: 0 -271px;
+  background-color: var(--foreground);
+  color: var(--background); 
+  text-align: center;
+  position: fixed;
+  min-width: 100%;
+  min-height: max-content;
+}
+
+/* We select the sidebar directly after */
+.profile-menu:has(input:checked) + .profile-sidebar {
+  translate: 0;
+}
+
+.profile-menu > input[type=checkbox] {
+  display: none;
+}
+
+.profile-menu {
+  width: var(--bar-width);
+  height: var(--bar-width);
+  transform: scale(1.1);
+  position: fixed;
+  top: calc(var(--hamburger-margin) * 0.7);
+  right: calc(var(--hamburger-margin) * 5);
+  cursor: pointer;
+  background: url("./Images/Icons/user_profile.svg") no-repeat;
+  /* background-size: cover; */
+}
+
+.profile-sidebar > nav > ul > li > a,
+.profile-sidebar > nav > ul > li > a:visited {
+  color: black;
+  display: block;
+  padding: 2% 10%;
+}
 
 
 
