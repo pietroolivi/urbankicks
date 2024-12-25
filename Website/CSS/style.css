@@ -509,11 +509,16 @@ aside p {
   padding-bottom: 2%;
 }
 
-
-
-
-
-
+.cart-icon{
+  width: var(--bar-width);
+  height: var(--bar-width);
+  transform: scale(1.1);
+  position: fixed;
+  top: calc(var(--hamburger-margin) * 0.8);
+  right: calc(var(--hamburger-margin) * 2);
+  cursor: pointer;
+  z-index: 3;
+}
 
 
 

@@ -10,7 +10,16 @@
         <title>UrbanKicks - Home</title>
     </head>
     <body>
-        <header><h1>URBANKICKS</h1></header>
+        <!-- 
+        Although the hamburger icon and the profile icon are rendered in the <header> container, we put them in 
+        <body> because in CSS we should be able to select sidebars when there is a change of state in the respective 
+        checkboxes, and this can only be done via a selector if the <label>,<aside> pairs have at least a sibling 
+        relationship, so separating them in <header> and <body> we would then fail to retrieve the sidebar via combinators.
+        -->
+        <header>
+            <h1>URBANKICKS</h1>
+            <a class="cart-icon" href="#"><img src="CSS/Images/Icons/cart.svg" alt=""></a>
+        </header>
         <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. -->
         <label class="hamburger-menu"><input type="checkbox"></label>
         <aside class="hamburger-sidebar">
