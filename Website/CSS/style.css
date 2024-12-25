@@ -97,7 +97,7 @@ footer {
   font-family: 'Beatrice Headline Trial', sans-serif;
   text-align: center;
   overflow: hidden;
-  font-size: 70%;
+  font-size: 90%;
   padding: 2% 0;
 }
 
@@ -105,40 +105,61 @@ footer a, footer a:visited {
   color: white;
 }
 
-/* **************************************************************** */
-/* Vertical space between lists, considering that margins collapse. */
-/* **************************************************************** */
-footer > nav > ul {
-  margin: 2% 0;
+/* ********************************************************************************* */
+/* Vertical space between lists, not doubled because assigned to every second <nav>. */
+/* ********************************************************************************* */
+footer > nav:nth-child(2n) {
+  padding: 3% 0;
 }
 
-/* ********************************************************************************* */
-/* Vertical space between links within each list, considering that margins collapse. */
-/* ********************************************************************************* */
-footer > nav > ul > li {
-  margin: 2% 0;
+/* *********************************************************************** */
+/* Vertical space between elements of the same list. Set for the only list */
+/* with elements on different rows, since in lists with elements side by   */
+/* side it would have resulted in increased space between different lists  */
+/* *********************************************************************** */
+footer > nav:nth-child(2) > ul > li:not(:first-child) {
+  padding-top: 3%;
 }
 
 /* ************************************************************************* */
-/* Here we convert the social-media-related list items into in-line elements */ 
-/* so that their content, i.e. the icons/links, can be placed side-by-side,  */ 
-/* as a horizontal arrangement of these would have been unnatural.           */
+/* Here we convert the social-media-related list items into in-line elements */
+/* so that their content, i.e. the icons/links, can be placed side-by-side,  */
+/* as a vertical arrangement of these would have been unnatural.             */
 /* ************************************************************************* */
 .social-media-link {
   display: inline-block;
   margin: 0 2%;
 }
 
-/* link burocrazia, piu piccoli, stessa riga */
-footer > nav:nth-child(4) > a {
-  font-size: 60%;
+/* *************************************************************************************** */
+/* What we want to do is arrange the links of the last list horizontally and separate      */
+/* them with a centered bar intended as a design element. Since the two strings are of     */
+/* different lengths, the interposed bar, which we model as the right edge of the first    */
+/* <li>, would not be aligned with the center of the page but would be moved to the right, */
+/* and we solve the problem by forcing the width of both <li> containers to 40% & aligning */ 
+/* the links to the right and left respectively. To separate this list from the others we  */
+/* do not use padding but the margin because, being the first type of space inside the     */
+/* container, the separator bar would widen vertically, differing from the mock-up.        */
+/* *************************************************************************************** */
+footer > nav:nth-child(4) > ul {
+  display: flex;
+  justify-content: center;
 }
 
-footer > nav:nth-child(4) > p {
-  display: inline-block;
-  color: white;
-  font-size: 200%;
-  text-align: center;
+footer > nav:nth-child(4) > ul > li {
+  padding: 0 5%;
+  margin: 1.5% 0;
+  width: 40%;
+}
+
+footer > nav:nth-child(4) > ul > li:nth-child(1) {
+  border-right: 1px solid white;
+  box-sizing: border-box;
+  text-align: right;
+}
+
+footer > nav:nth-child(4) > ul > li:nth-child(2) {
+  text-align: left;
 }
 
 main {
@@ -485,11 +506,8 @@ aside p {
   display: inline-block;
   width: 33.3%;
   cursor: pointer;
+  padding-bottom: 2%;
 }
-
-
-
-
 
 
 
