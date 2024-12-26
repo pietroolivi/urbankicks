@@ -520,6 +520,32 @@ aside p {
   z-index: 3;
 }
 
+.brands {
+  text-align: center;
+  margin: 5% 0;
+}
+
+.brands > h2 {
+  font-size: 2em;
+  margin-bottom: 3%;
+}
+
+.brands > ul > li {
+  display: inline-block;
+  margin: 0 2%;
+}
+
+.brands > ul > li > a {
+  display: inline-block;
+}
+
+.brands > ul > li > a > img,
+.brands > ul > li > a,
+.brands > ul > li {
+  width: 80px;
+  height: 80px;
+}
+
 
 
 
