@@ -526,7 +526,6 @@ aside p {
 }
 
 .brands > h2 {
-  font-size: 2em;
   margin-bottom: 3%;
 }
 
@@ -544,6 +543,45 @@ aside p {
 .brands > ul > li {
   width: 80px;
   height: 80px;
+}
+
+h2 {
+  margin-top: 3%;
+  text-align: center;
+  font-size: 2em;
+}
+
+/* Style the list */
+.breadcrumb > ol {
+  padding: 2% 2%;
+  list-style: none;
+  text-align: center;
+  font-family: 'Menlo Regular', sans-serif;
+}
+
+/* Display list items side by side */
+.breadcrumb > ol > li {
+  display: inline;
+  font-size: 0.8em;
+}
+
+/* Add a slash symbol (/) before/behind each list item */
+.breadcrumb > ol > li + li:before {
+  padding: 8px;
+  color: black;
+  content: "/\00a0";
+}
+
+/* Add a color to all links inside the list */
+.breadcrumb > ol > li > a {
+  color: #0275d8;
+  text-decoration: none;
+}
+
+/* Add a color on mouse-over */
+.breadcrumb > ol > li > a:hover {
+  color: #01447e;
+  text-decoration: underline;
 }
 
 
