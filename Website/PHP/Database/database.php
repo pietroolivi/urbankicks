@@ -245,6 +245,108 @@ class DatabaseHelper {
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    /********************
+     * AUTH QUERIES *
+     ********************/
+
+    // Check if user exists
+    public function isUserRegistered($email) {
+        $query = "SELECT Email FROM UTENTE WHERE Email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        return $stmt->get_result()->num_rows > 0;
+    }
+
+    // User registration
+    public function registerUser($email, $firstName, $lastName, $password, $phone = null) {
+        // Check if user already exists
+        if (isUserRegistered($email)) {
+            return false; // User already exists
+        }
+
+        // Hash password
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        
+        // Insert new user
+        $query = "INSERT INTO UTENTE (Email, Nome, Cognome, Password, Telefono, Data_Registrazione, Preferenze_Newsletter, Ruolo) 
+                VALUES (?, ?, ?, ?, ?, NOW(), 'N', 'customer')";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssss", $email, $firstName, $lastName, $hashedPassword, $phone);
+        
+        if ($stmt->execute()) {
+            // Create cart for new user
+            $cartQuery = "INSERT INTO CARRELLO (Email, Data_Creazione, Data_Modifica, Valore_Totale) 
+                        VALUES (?, NOW(), NOW(), 0)";
+            $cartStmt = $this->db->prepare($cartQuery);
+            $cartStmt->bind_param("s", $email);
+            $cartStmt->execute();
+
+            // Create wishlist for new user
+            $wishlistQuery = "INSERT INTO WISHLIST (Email, Data_Creazione) VALUES (?, NOW())";
+            $wishlistStmt = $this->db->prepare($wishlistQuery);
+            $wishlistStmt->bind_param("s", $email);
+            $wishlistStmt->execute();
+
+            return true;
+        }
+        return false;
+    }
+
+    // User login
+    public function loginUser($email, $password) {
+        $query = "SELECT Email, Password, Nome, Cognome, Ruolo FROM UTENTE WHERE Email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user['Password'])) {
+                // Remove password from array before returning
+                unset($user['Password']);
+                return $user;
+            }
+        }
+        return false;
+    }
+
+    // Change password
+    public function changePassword($email, $currentPassword, $newPassword) {
+        // First verify current password
+        $query = "SELECT Password FROM UTENTE WHERE Email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
+            if (password_verify($currentPassword, $user['Password'])) {
+                // Update to new password
+                $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                $updateQuery = "UPDATE UTENTE SET Password = ? WHERE Email = ?";
+                $updateStmt = $this->db->prepare($updateQuery);
+                $updateStmt->bind_param("ss", $hashedNewPassword, $email);
+                return $updateStmt->execute();
+            }
+        }
+        return false;
+    }
+
+    // Get user profile
+    public function getUserProfile($email) {
+        $query = "SELECT Email, Nome, Cognome, Telefono, Data_Registrazione, Preferenze_Newsletter, Ruolo 
+                FROM UTENTE 
+                WHERE Email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
 }
 
 ?>
