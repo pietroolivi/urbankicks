@@ -45,7 +45,7 @@ function eventListenerFormInputWarning(idElement, idParagraph,bodyPrefixName, li
                         method: "POST",
                         //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
                         //questo metodo encodeURIComponent
-                        body: bodyPrefixName + encodeURIComponent(email)
+                        body: bodyPrefixName + encodeURIComponent(valueOfElement)
                     });
                     if (!response.ok) {
                         throw new Error("Errore nella risposta del server.");
@@ -235,4 +235,41 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
             }
 
         });
+}
+
+
+//the different filter names are get by the value attribute of the <input>, the category is contained in the name attribute.
+//additional listener are the listener for each checkbox.
+//This function can be used for the filters in the home, the PHP server should have an array of the current value of
+//each category of the filters. like array={"adidas", "40-50 euro", "green"}, in this function when I POST my selection
+//of the radio button to the server, the server should use that array to give me the right products.
+function eventListenerCheckList(category,bodyPrefixName,additionalListener){
+    const elementsRadioButton= document.getElementsByName(category);
+    elementsRadioButton.array.forEach(element => {
+        element.addEventListener("click",async function(){
+            if (radio.checked) {
+                try{
+                    const response= await fetch("api-home",{
+                        method:"POST",
+                        body: bodyPrefixName + encodeURIComponent(valueOfElement)
+
+                    }
+                    );
+                    if(!response.ok){
+                        throw new Error("Errore nella risposta del server.");
+                    }
+                    const json = await response.json();
+
+                    if (json.exists) {
+                    }
+                }
+                catch(error){
+                    console.error("Errore:", error);
+                }
+                //the server sends the json with the value of parameters to automatically append
+                //some HTML code.
+            }
+        })
+    });
+
 }
