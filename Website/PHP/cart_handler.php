@@ -23,10 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     throw new Exception('Size and color are required');
                 }
                 
-                if ($db->addToWishlist($email, $productId, $color, $size)) {
+                if ($dbh->addToWishlist($email, $productId, $color, $size)) {
                     // Remove from cart after successful addition to wishlist
-                    $cartId = getCartId($db, $email);
-                    $db->removeFromCart($cartId, $productId, $color, $size);
+                    $cartId = getCartId($dbh, $email);
+                    $dbh->removeFromCart($cartId, $productId, $color, $size);
                     $response['success'] = true;
                     $response['message'] = 'Item moved to wishlist';
                 }
@@ -41,8 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 throw new Exception('Missing required parameters');
             }
             
-            $cartId = getCartId($db, $email);
-            if ($db->removeFromCart($cartId, $productId, $color, $size)) {
+            $cartId = getCartId($dbh, $email);
+            if ($dbh->removeFromCart($cartId, $productId, $color, $size)) {
                 $response['success'] = true;
                 $response['message'] = 'Item removed from cart';
             }
@@ -57,11 +57,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 throw new Exception('Missing required parameters');
             }
             
-            $cartId = getCartId($db, $email);
-            if ($db->adjustCartQuantity($cartId, $productId, $color, $size, $adjustment)) {
+            $cartId = getCartId($dbh, $email);
+            if ($dbh->adjustCartQuantity($cartId, $productId, $color, $size, $adjustment)) {
                 $response['success'] = true;
                 $response['message'] = 'Quantity adjusted';
-                $response['newTotal'] = calculateCartTotal($db, $cartId);
+                $response['newTotal'] = calculateCartTotal($dbh, $cartId);
             }
         } else if (isset($_POST['updateSize'])) {
             $productId = $_POST['updateSize'];
@@ -73,8 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 throw new Exception('Missing required parameters');
             }
             
-            $cartId = getCartId($db, $email);
-            if ($db->updateCartItemSize($cartId, $productId, $color, $newSize)) {
+            $cartId = getCartId($dbh, $email);
+            if ($dbh->updateCartItemSize($cartId, $productId, $color, $newSize)) {
                 $response['success'] = true;
                 $response['message'] = 'Size updated';
             }
@@ -88,8 +88,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 throw new Exception('Missing required parameters');
             }
             
-            $cartId = getCartId($db, $email);
-            if ($db->updateCartItemColor($cartId, $productId, $newColor, $size)) {
+            $cartId = getCartId($dbh, $email);
+            if ($dbh->updateCartItemColor($cartId, $productId, $newColor, $size)) {
                 $response['success'] = true;
                 $response['message'] = 'Color updated';
             }
@@ -104,16 +104,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 // Helper Functions
-function getCartId(DatabaseHelper $db, string $email): int {
-    $cartInfo = $db->getCartByEmail($email);
+function getCartId(DatabaseHelper $dbh, string $email): int {
+    $cartInfo = $dbh->getCartByEmail($email);
     if (!$cartInfo) {
         throw new Exception('Cart not found');
     }
     return $cartInfo['ID_Carrello'];
 }
 
-function calculateCartTotal(DatabaseHelper $db, int $cartId): float {
-    $items = $db->getCartItems($cartId);
+function calculateCartTotal(DatabaseHelper $dbh, int $cartId): float {
+    $items = $dbh->getCartItems($cartId);
     $total = 0.0;
     foreach ($items as $item) {
         $total += $item['Prezzo'] * $item['Quantita'];

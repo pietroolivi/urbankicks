@@ -192,6 +192,161 @@ class DatabaseHelper {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    // Create a stock notification when a product is back in stocl
+    public function createStockNotification($productId, $size, $color) {
+        $query = "SELECT p.Nome, v.Taglia, v.Colore 
+                 FROM PRODOTTO p 
+                 JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto 
+                 WHERE p.ID_Prodotto = ? AND v.Taglia = ? AND v.Colore = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ids", $productId, $size, $color);
+        $stmt->execute();
+        $product = $stmt->get_result()->fetch_assoc();
+        
+        // Get users who have this item in their wishlist
+        $wishlistQuery = "SELECT DISTINCT w.Email 
+                         FROM aggiungere w 
+                         WHERE w.ID_Prodotto = ? AND w.Taglia = ? AND w.Colore = ?";
+        $wishlistStmt = $this->db->prepare($wishlistQuery);
+        $wishlistStmt->bind_param("ids", $productId, $size, $color);
+        $wishlistStmt->execute();
+        $users = $wishlistStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($users as $user) {
+            $message = "Great news! The size {$size} of the {$product['Nome']} is back in stock";
+            $this->createNotification(
+                uniqid('stock_'),
+                'product_stock',
+                $message,
+                $user['Email']
+            );
+        }
+    }
+
+    // Create an order status notification
+    public function createOrderNotification($orderId, $status) {
+        $query = "SELECT o.Email, o.ID_Ordine 
+                 FROM ORDINE o 
+                 WHERE o.ID_Ordine = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $orderId);
+        $stmt->execute();
+        $order = $stmt->get_result()->fetch_assoc();
+
+        $messages = [
+            'placed' => "Your payment has been successfully processed and we are starting to prepare your order",
+            'shipped' => "Your order #{$orderId} was handed over to the SDA express courier",
+            'delivered' => "Your order #{$orderId} has been delivered"
+        ];
+
+        if (isset($messages[$status])) {
+            $this->createNotification(
+                uniqid('order_'),
+                'order_status',
+                $messages[$status],
+                $order['Email']
+            );
+        }
+    }
+
+    // Create a sale notification for specific products
+    public function createSaleNotification($productId, $discountPercentage) {
+        $query = "SELECT p.Nome, p.Marca 
+                 FROM PRODOTTO p 
+                 WHERE p.ID_Prodotto = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        $product = $stmt->get_result()->fetch_assoc();
+
+        // Get users who have this item in their wishlist
+        $wishlistQuery = "SELECT DISTINCT w.Email 
+                         FROM aggiungere w 
+                         WHERE w.ID_Prodotto = ?";
+        $wishlistStmt = $this->db->prepare($wishlistQuery);
+        $wishlistStmt->bind_param("i", $productId);
+        $wishlistStmt->execute();
+        $users = $wishlistStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($users as $user) {
+            $message = "Your favorite product {$product['Nome']} is now {$discountPercentage}% off for a short time";
+            $this->createNotification(
+                uniqid('sale_'),
+                'flash_sale',
+                $message,
+                $user['Email']
+            );
+        }
+    }
+
+    // Create a cart reminder notification
+    public function createCartReminderNotification($email) {
+        $query = "SELECT c.ID_Carrello, COUNT(*) as count 
+                 FROM CARRELLO c 
+                 JOIN comprendere co ON c.ID_Carrello = co.ID_Carrello 
+                 WHERE c.Email = ?
+                 GROUP BY c.ID_Carrello";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+
+        if ($result && $result['count'] > 0) {
+            $message = "You spend a lot of time browsing but, just spend a minute to make them yours!";
+            $this->createNotification(
+                uniqid('cart_'),
+                'cart_reminder',
+                $message,
+                $email
+            );
+        }
+    }
+
+    // Create a review request notification
+    public function createReviewRequestNotification($orderId) {
+        $query = "SELECT o.Email, p.Nome 
+                 FROM ORDINE o 
+                 JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine 
+                 JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto 
+                 WHERE o.ID_Ordine = ? 
+                 AND NOT EXISTS (
+                     SELECT 1 FROM RECENSIONE r 
+                     WHERE r.ID_Prodotto = po.ID_Prodotto 
+                     AND r.Email = o.Email
+                 )";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $orderId);
+        $stmt->execute();
+        $items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($items as $item) {
+            $message = "How do you like your {$item['Nome']}? Share your experience!";
+            $this->createNotification(
+                uniqid('review_'),
+                'review_request',
+                $message,
+                $item['Email']
+            );
+        }
+    }
+
+    // Mark notifications as read
+    public function markNotificationsAsRead($email, $notificationIds = null) {
+        $query = "UPDATE NOTIFICA SET Tipo = 'read' WHERE Email = ?";
+        $params = [$email];
+        $types = "s";
+
+        if ($notificationIds) {
+            $query .= " AND ID_Notifica IN (" . str_repeat("?,", count($notificationIds) - 1) . "?)";
+            $params = array_merge($params, $notificationIds);
+            $types .= str_repeat("i", count($notificationIds));
+        }
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param($types, ...$params);
+        return $stmt->execute();
+    }
+
     /*******************
      * STATISTICS QUERIES *
      *******************/
