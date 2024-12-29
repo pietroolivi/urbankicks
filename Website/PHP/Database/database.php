@@ -347,6 +347,184 @@ class DatabaseHelper {
         $result = $stmt->get_result();
         return $result->fetch_assoc();
     }
+
+    /*******************
+     * WISHLIST QUERIES *
+     *******************/
+
+    // Get user's wishlist items
+    public function getWishlistItems($email) {
+        $query = "SELECT p.*, v.Colore, v.Taglia, v.Quantita 
+                  FROM PRODOTTO p
+                  JOIN aggiungere a ON p.ID_Prodotto = a.ID_Prodotto
+                  JOIN VARIANTE v ON (a.ID_Prodotto = v.ID_Prodotto 
+                                    AND a.Colore = v.Colore 
+                                    AND a.Taglia = v.Taglia)
+                  WHERE a.Email = ?
+                  ORDER BY p.Nome";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Add item to wishlist
+    public function addToWishlist($email, $productId, $color, $size) {
+        // Check if item already exists in wishlist
+        $checkQuery = "SELECT 1 FROM aggiungere 
+                      WHERE Email = ? AND ID_Prodotto = ? 
+                      AND Colore = ? AND Taglia = ?";
+        $checkStmt = $this->db->prepare($checkQuery);
+        $checkStmt->bind_param("sssd", $email, $productId, $color, $size);
+        $checkStmt->execute();
+        if ($checkStmt->get_result()->num_rows > 0) {
+            return false; // Item already in wishlist
+        }
+
+        // Add item to wishlist
+        $query = "INSERT INTO aggiungere (Email, ID_Prodotto, Colore, Taglia) 
+                  VALUES (?, ?, ?, ?)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        return $stmt->execute();
+    }
+
+    // Remove item from wishlist
+    public function removeFromWishlist($email, $productId, $color, $size) {
+        $query = "DELETE FROM aggiungere 
+                  WHERE Email = ? AND ID_Prodotto = ? 
+                  AND Colore = ? AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        return $stmt->execute();
+    }
+
+    // Clear entire wishlist
+    public function clearWishlist($email) {
+        $query = "DELETE FROM aggiungere WHERE Email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        return $stmt->execute();
+    }
+
+    // Get wishlist count
+    public function getWishlistCount($email) {
+        $query = "SELECT COUNT(*) as count FROM aggiungere WHERE Email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc()['count'];
+    }
+
+    // Check if item is in wishlist
+    public function isInWishlist($email, $productId, $color, $size) {
+        $query = "SELECT 1 FROM aggiungere 
+                  WHERE Email = ? AND ID_Prodotto = ? 
+                  AND Colore = ? AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        $stmt->execute();
+        return $stmt->get_result()->num_rows > 0;
+    }
+
+    // Move item from wishlist to cart
+    public function moveToCart($email, $productId, $color, $size, $quantity = 1) {
+        $this->db->begin_transaction();
+        try {
+            // Get user's cart ID
+            $cartQuery = "SELECT ID_Carrello FROM CARRELLO WHERE Email = ?";
+            $cartStmt = $this->db->prepare($cartQuery);
+            $cartStmt->bind_param("s", $email);
+            $cartStmt->execute();
+            $cartId = $cartStmt->get_result()->fetch_assoc()['ID_Carrello'];
+
+            // Add to cart
+            $addToCartQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
+                              VALUES (?, ?, ?, ?, ?)";
+            $addToCartStmt = $this->db->prepare($addToCartQuery);
+            $addToCartStmt->bind_param("issdi", $cartId, $productId, $color, $size, $quantity);
+            $addToCartStmt->execute();
+
+            // Remove from wishlist
+            $this->removeFromWishlist($email, $productId, $color, $size);
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            return false;
+        }
+    }
+
+    /*******************
+     * CART QUERIES *
+     *******************/
+
+    // Remove item from cart
+    public function removeFromCart($cartId, $productId, $color, $size) {
+        $query = "DELETE FROM comprendere 
+                  WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                  AND Colore = ? AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("issd", $cartId, $productId, $color, $size);
+        return $stmt->execute();
+    }
+
+    // Adjust item quantity in cart
+    public function adjustCartQuantity($cartId, $productId, $color, $size, $adjustment) {
+        $query = "UPDATE comprendere 
+                  SET Quantita = GREATEST(1, Quantita + ?) 
+                  WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                  AND Colore = ? AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("iissd", $adjustment, $cartId, $productId, $color, $size);
+        return $stmt->execute();
+    }
+
+    // Update item size in cart
+    public function updateCartItemSize($cartId, $productId, $color, $newSize) {
+        $query = "UPDATE comprendere 
+                  SET Taglia = ? 
+                  WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                  AND Colore = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("disc", $newSize, $cartId, $productId, $color);
+        return $stmt->execute();
+    }
+
+    // Update item color in cart
+    public function updateCartItemColor($cartId, $productId, $newColor, $size) {
+        $query = "UPDATE comprendere 
+                  SET Colore = ? 
+                  WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                  AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sisd", $newColor, $cartId, $productId, $size);
+        return $stmt->execute();
+    }
+
+    // Get all items in cart
+    public function getCartItems($cartId) {
+        $query = "SELECT c.*, p.Prezzo, p.Nome 
+                  FROM comprendere c 
+                  JOIN PRODOTTO p ON c.ID_Prodotto = p.ID_Prodotto 
+                  WHERE c.ID_Carrello = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $cartId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get cart by user email
+    public function getCartByEmail($email) {
+        $query = "SELECT * FROM CARRELLO WHERE Email = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
 }
 
 ?>
