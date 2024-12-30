@@ -9,7 +9,7 @@
  * to some of the "new" HTML elements that now are visible/appended.
  *  
  * @param {*} idElement the html id of the element which listen
- * @param {*} idHTMLStructure the html id of the element to append/make visible (NEED TO DISCUSS THIS)
+ * @param {*} idHTMLStructure I just make it visible, this is no longer needed
  * @param {*} apiPHPfile  this only if we decide to use the php to get the code
  * @param {*} additionalListeners these are additional listeners to the event
  */
@@ -29,7 +29,7 @@ function eventListenerAppendHTML(idElement,idHTMLStructure,apiPHPfile,additional
 }
 
 
-function eventListenerFormInputWarning(idElement, idParagraph,bodyPrefixName, listenerParagraphSetting){
+function eventListenerFormInputWarning(idElement, idParagraph,apiPHPfile,bodyPrefixName, listenerParagraphSetting){
     const element = document.getElementById(idElement);
     const error = document.getElementById(idParagraph);
     element.addEventListener("blur",
@@ -41,11 +41,15 @@ function eventListenerFormInputWarning(idElement, idParagraph,bodyPrefixName, li
                     try{
                         //the callback is a fetch with POST because we want to send to the server
                         //what is inside the element.
-                    const response = await fetch("api-login.php", { //richiesta POST HTTP alla pagina login-api.php
+                    const response = await fetch(apiPHPfile, { //richiesta POST HTTP alla pagina login-api.php
                         method: "POST",
+                        //method to use to have the content of this message inside $_POST[bodyPrefixName]
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
                         //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
                         //questo metodo encodeURIComponent
-                        body: bodyPrefixName + encodeURIComponent(valueOfElement)
+                        body: bodyPrefixName + encodeURIComponent(id)
                     });
                     if (!response.ok) {
                         throw new Error("Errore nella risposta del server.");
@@ -168,8 +172,9 @@ function eventListenerSideBarFocus(){
         async function(event){
             if (hamburgerMenu.checked && !sidebar.contains(event.target)){
                 event.stopPropagation(); 
-                event.preventDefault(); 
-                hamburgerMenu.checked = false; 
+                event.preventDefault();
+                //behavior to consider 
+                //hamburgerMenu.checked = false; 
                 toggleSidebar(); 
             }
     }, true);
@@ -182,15 +187,33 @@ function toggleImage(idImageToggled, idImageNotToggled){
 }
 
 /**
+ * id article is in the id of the <article>
  * @param {*} classHeartImg the class of all the <img> heart elements on the products in the home
+ * @param {*} apiPHPfile the php file of the home. the PHP server should check if it was already in the wish list, if so, removes it.
  */
-function eventListenerItemWish(classCheckboxHeart){
+function eventListenerItemWish(classCheckboxHeart,apiPHPfile){
 
     const allCheckboxHeart=document.getElementsByClassName(classCheckboxHeart);
     allCheckboxHeart.forEach(heart=>{heart.addEventListener("click",
         async function(){
-            if(heart.checked){
-                //TODO: understand where the id of the product is stored in the html.
+            try{
+            //it gets the closest parent of the type article of the heart and get the id.
+                const idProdotto= heart.closest("article").id;
+                if(heart.checked){
+                    const response= await fetch(apiPHPfile,{
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: bodyPrefixName + encodeURIComponent(id)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Errore nella risposta del server.");
+                    }
+                }
+            }catch(error){
+                console.error(error);
             }
         }
     )});
@@ -212,7 +235,7 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
             const scrollElement = document.getElementById(idScrollElement);
             const paragraph = document.getElementById(idParagraph);
             const element = document.getElementById(idElement);
-            const selectedValue=element.value;
+           // const selectedValue=element.value;
             if(element.value===""){
                 //if we want to scroll to the element while the user cannot scroll it's again useful to have a class like this:
                 /*body.no-scroll {
@@ -238,14 +261,72 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
 }
 
 
+
+//there will be less than 50 products, I can set the filters of a single category from this function.
+//I consider the products as inside an <article> and they have a class.
+
+//the different filter names are get by the value attribute of the <input>, the category is contained in the name attribute.
+//additional listener are the listener for each checkbox.
+//I click on a checkbox of a category like designers and the listenerObjectFilters is updated.
+function eventListenerCheckListFilter(category,additionalListener){
+    const elementsCheckButton= document.getElementsByName(category);
+    elementsCheckButton.array.forEach(element => {
+        element.addEventListener("click",()=>{
+           
+            if(element.checked){
+                objectFilters.addCategoryFilterToCategoryName(element.name,element.value);
+            }
+            else{
+                objectFilters.removeCategoryFilterToCategoryName(element.name,element.value);
+            }
+        })
+    });
+
+}
+
+
+//same logic of updating the objectFilters as eventListenerCheckListFilter, only that here
+//we have a slider. is this too hard?
+function eventListenerPriceFilter(){
+    //TODO............
+}
+
+//I need to know how the article data is passed to me. I suppose since asking for a query for each product's
+//size, color, designers is too computational heavy, in the HTML we have data attributes for them
+function eventListenerApplyFilters(){
+    const applyFiltersButton=document.getElementsById("applyFilterButton");
+    
+    applyFiltersButton.addEventListener("click",()=>{
+        const allArticles=document.querySelectorAll("article");
+        allArticles.forEach(element => {
+            //non si può più fare con dataset bisogna avere un oggetto json passato da php
+            //con tutte le informazioni sui prodotti caricati nella home, designer, le taglie possibili,
+            //colori possibili. è impossibile usare data-size1, data-size2, data-size3 nel tag di ciascun prodotto.
+            const size = element.dataset.size; 
+            const color = element.dataset.color;
+            const designers = element.dataset.designers;
+            //TODO(?) price filter.
+
+            if (objectFilters.areFilterEmpty || 
+                (objectFilters.designers.includes() !== sizeFilter || color !== colorFilter) ) {
+                //hides them from display
+                element.style.display = 'none';
+              } else {
+                //return to default display
+                element.style.display = '';
+              }
+        });
+    })
+}
+
 //the different filter names are get by the value attribute of the <input>, the category is contained in the name attribute.
 //additional listener are the listener for each checkbox.
 //This function can be used for the filters in the home, the PHP server should have an array of the current value of
-//each category of the filters. like array={"adidas", "40-50 euro", "green"}, in this function when I POST my selection
+//each category of the filters. like array={arraymarca={"adidas","nike"}, "40-50 euro", "green"}, in this function when I POST my selection
 //of the radio button to the server, the server should use that array to give me the right products.
-function eventListenerCheckList(category,bodyPrefixName,additionalListener){
-    const elementsRadioButton= document.getElementsByName(category);
-    elementsRadioButton.array.forEach(element => {
+/*function eventListenerCheckList(category,bodyPrefixName,additionalListener){
+    const elementsCheckButton= document.getElementsByName(category);
+    elementsCheckButton.array.forEach(element => {
         element.addEventListener("click",async function(){
             if (radio.checked) {
                 try{
@@ -272,4 +353,4 @@ function eventListenerCheckList(category,bodyPrefixName,additionalListener){
         })
     });
 
-}
+}*/

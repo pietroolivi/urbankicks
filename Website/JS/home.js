@@ -1,7 +1,12 @@
+//-------------------------------------------Objects used by this script------------------------------------------------------
+//________________Object for the filters______________________________________________________________________________________
+const objectFilters= new ListenerObjectFilters();
+objectFilters.loadFromSession();
+
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //______________Listener for the home navigation tab___________________________________________
 let idButton="idButton";
-let apiHome="";// see eventListenerAppendHTML comments in JS/Functions/listeners.js
+let apiPHPfile="home_handler";// see eventListenerAppendHTML comments in JS/Functions/listeners.js
 let idHTMLStructure="";// see eventListenerAppendHTML comments in JS/Functions/listeners.js
 eventListenerAppendHTML(idButton,idHTMLStructure,apiHome);
 
