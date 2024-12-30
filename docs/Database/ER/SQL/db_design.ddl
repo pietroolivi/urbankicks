@@ -144,6 +144,7 @@ CREATE TABLE IF NOT EXISTS ORDINE (
      Data_Ordine DATE NOT NULL,
      Costo_Totale DECIMAL(10,2) NOT NULL,
      Metodo_Pagamento VARCHAR(50) NOT NULL,
+     Regalo TINYINT(1) NOT NULL,
      Tipo VARCHAR(20) NOT NULL,
      Email VARCHAR(100) NOT NULL,
      ID_Sconto INT,
