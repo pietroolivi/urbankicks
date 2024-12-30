@@ -41,8 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 throw new Exception('Missing required parameters');
             }
             
-            $cartId = getCartId($dbh, $email);
-            if ($dbh->removeFromCart($cartId, $productId, $color, $size)) {
+            if ($dbh->removeFromCart($email, $productId, $color, $size)) {
                 $response['success'] = true;
                 $response['message'] = 'Item removed from cart';
             }

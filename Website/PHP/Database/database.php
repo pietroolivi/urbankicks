@@ -617,8 +617,53 @@ class DatabaseHelper {
      * CART QUERIES *
      *******************/
 
-    // Remove item from cart
-    public function removeFromCart($cartId, $productId, $color, $size) {
+    // Add product to cart
+    public function addToCart($email, $productId, $color, $size, $quantity = 1) {
+        // First get the cart ID
+        $cartInfo = $dbh->getCartByEmail($email);
+        if (!$cartInfo) {
+            return false;
+        }
+        $cartId = $cartInfo['ID_Carrello'];
+        
+        // Check if item already exists in cart
+        $checkQuery = "SELECT Quantita FROM comprendere 
+                    WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                    AND Colore = ? AND Taglia = ?";
+        $checkStmt = $this->db->prepare($checkQuery);
+        $checkStmt->bind_param("issd", $cartId, $productId, $color, $size);
+        $checkStmt->execute();
+        $existingItem = $checkStmt->get_result()->fetch_assoc();
+        
+        if ($existingItem) {
+            // Update quantity if item exists
+            $newQuantity = $existingItem['Quantita'] + $quantity;
+            $updateQuery = "UPDATE comprendere 
+                        SET Quantita = ? 
+                        WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                        AND Colore = ? AND Taglia = ?";
+            $updateStmt = $this->db->prepare($updateQuery);
+            $updateStmt->bind_param("iissd", $newQuantity, $cartId, $productId, $color, $size);
+            return $updateStmt->execute();
+        } else {
+            // Add new item if it doesn't exist
+            $insertQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
+                        VALUES (?, ?, ?, ?, ?)";
+            $insertStmt = $this->db->prepare($insertQuery);
+            $insertStmt->bind_param("issdi", $cartId, $productId, $color, $size, $quantity);
+            return $insertStmt->execute();
+        }
+    }
+    
+     // Remove item from cart
+    public function removeFromCart($email, $productId, $color, $size) {
+        // First get the cart ID
+        $cartInfo = $dbh->getCartByEmail($email);
+        if (!$cartInfo) {
+            return false;
+        }
+        $cartId = $cartInfo['ID_Carrello'];
+        
         $query = "DELETE FROM comprendere 
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                   AND Colore = ? AND Taglia = ?";
@@ -679,6 +724,83 @@ class DatabaseHelper {
         $stmt->bind_param("s", $email);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
+    }
+
+    /*********************
+     * REVIEW FUNCTIONS *
+     *********************/
+
+    // Add new review
+    public function addReview($email, $productId, $rating, $comment) {
+        // Check if user has already reviewed this product
+        $checkQuery = "SELECT 1 FROM RECENSIONE 
+                    WHERE Email = ? AND ID_Prodotto = ?";
+        $checkStmt = $this->db->prepare($checkQuery);
+        $checkStmt->bind_param("ss", $email, $productId);
+        $checkStmt->execute();
+        
+        if ($checkStmt->get_result()->num_rows > 0) {
+            // Update existing review
+            $query = "UPDATE RECENSIONE 
+                    SET Punteggio = ?, Testo = ?, Data_Recensione = NOW() 
+                    WHERE Email = ? AND ID_Prodotto = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("isss", $rating, $comment, $email, $productId);
+        } else {
+            // Add new review
+            $query = "INSERT INTO RECENSIONE (Email, ID_Prodotto, Punteggio, Testo, Data_Recensione) 
+                    VALUES (?, ?, ?, ?, NOW())";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("ssis", $email, $productId, $rating, $comment);
+        }
+        
+        return $stmt->execute();
+    }
+
+    // Get product reviews
+    public function getProductReviews($productId) {
+        $query = "SELECT r.*, u.Nome, u.Cognome 
+                FROM RECENSIONE r 
+                JOIN UTENTE u ON r.Email = u.Email 
+                WHERE r.ID_Prodotto = ? 
+                ORDER BY r.Data_Recensione DESC";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Delete review
+    public function deleteReview($email, $productId) {
+        $query = "DELETE FROM RECENSIONE 
+                WHERE Email = ? AND ID_Prodotto = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ss", $email, $productId);
+        return $stmt->execute();
+    }
+
+    // Get average product rating
+    public function getProductRating($productId) {
+        $query = "SELECT AVG(Punteggio) as avg_rating, COUNT(*) as review_count 
+                FROM RECENSIONE 
+                WHERE ID_Prodotto = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    // Check if user can review (has purchased the product)
+    public function canUserReview($email, $productId) {
+        $query = "SELECT 1 
+                FROM ORDINE o 
+                JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine 
+                WHERE o.Email = ? AND po.ID_Prodotto = ? 
+                AND o.Tipo = 'delivered'";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ss", $email, $productId);
+        $stmt->execute();
+        return $stmt->get_result()->num_rows > 0;
     }
 }
 
