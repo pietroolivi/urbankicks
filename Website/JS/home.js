@@ -3,15 +3,25 @@
 const objectFilters= new ListenerObjectFilters();
 objectFilters.loadFromSession();
 
-//------------------------------------------------Setting all the listeners----------------------------------------------------------
+//------------------------------------------------Setting all the listeners----------------------------------------------------
 //______________Listener for the home navigation tab___________________________________________
 let idButton="idButton";
 let apiPHPfile="home_handler";// see eventListenerAppendHTML comments in JS/Functions/listeners.js
 let idHTMLStructure="";// see eventListenerAppendHTML comments in JS/Functions/listeners.js
 eventListenerAppendHTML(idButton,idHTMLStructure,apiHome);
 
-//i bottoni con
+//_______________Listener for applying the filters____________________________________________________________________________
+eventListenerApplyFilters();
+
+//_______________Listener for checklist "designers" to set the filters_____________________________________________________
 let category="designers";
-let bodyPrefixName="filtername";  //it depends on how
-let additionalListeners= ""; //if additional listeners are needed.
-eventListenerCheckList(category,bodyPrefixName,additionalListeners);
+eventListenerCheckListFilter(category);
+
+//_______________Listener for checklist "size" to set the filters__________________________________________________________
+category="size";
+eventListenerCheckListFilter(category);
+
+//_______________Listener for checklist "color" to set the filters__________________________________________________________
+category="color";
+eventListenerCheckListFilter(category);
+

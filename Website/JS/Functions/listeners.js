@@ -28,11 +28,23 @@ function eventListenerAppendHTML(idElement,idHTMLStructure,apiPHPfile,additional
         });
 }
 
+/**
+ * 
+ * @param {*} idElement the html element that both fires the event and has the value to check
+ * @param {*} idParagraph the paragraph where to show the result of the check to the user
+ * @param {*} typeOfEvent the type of the event to put in the addEventListener like: "blur", "click"
+ * @param {*} apiPHPfile the php file that is used as server for this check request
+ * @param {*} bodyPrefixName the field that will be passed in the $_POST super global variable, example: "emailinsert"
+ * @param {*} listenerParagraphSetting how the paragraph content and style is set
+ * @param {*} listenerJsonDataExpected the expected values for the json response
+ * @returns 
+ */
+function eventListenerFormInputWarning(idElement, idParagraph, typeOfEvent, apiPHPfile, bodyPrefixName, 
+    listenerParagraphSetting, listenerJsonDataExpected){
 
-function eventListenerFormInputWarning(idElement, idParagraph,apiPHPfile,bodyPrefixName, listenerParagraphSetting){
     const element = document.getElementById(idElement);
     const error = document.getElementById(idParagraph);
-    element.addEventListener("blur",
+    element.addEventListener(typeOfEvent,
         async function() {
                 const valueOfElement = element.value;
                 //if there's something in the input field that has been written, only then I want to execute the logic
@@ -43,35 +55,79 @@ function eventListenerFormInputWarning(idElement, idParagraph,apiPHPfile,bodyPre
                         //what is inside the element.
                     const response = await fetch(apiPHPfile, { //richiesta POST HTTP alla pagina login-api.php
                         method: "POST",
-                        //method to use to have the content of this message inside $_POST[bodyPrefixName]
+                        //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded"
                         },
                         //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
                         //questo metodo encodeURIComponent
-                        body: bodyPrefixName + encodeURIComponent(id)
+                        body: bodyPrefixName + encodeURIComponent(valueOfElement)
                     });
                     if (!response.ok) {
                         throw new Error("Errore nella risposta del server.");
                     }
                     const json = await response.json();
 
-                    if (json.exists) {
-                        errorParagraph.textContent = "";
+                    if (json.success && json[listenerJsonDataExpected.textContent]===listenerJsonDataExpected.jsonExpectedValue) {
+                        error.textContent = listenerJsonDataExpected.jsonExpectedValue;
+                        error.style.color = "green";
                     } else {
                         error.textContent = listenerParagraphSetting.textContent;
                         error.style.color = listenerParagraphSetting.textColor;
                     }
-                    } catch (error) {
-                        console.error("Errore:", error);
-                        errorParagraph.textContent = "Errore, riprova";
+                    } catch (errorEx) {
+                        console.error("Errore:", errorEx);
                     }
                 }
     });
-
-
     return null;
 }
+
+//the same logic of eventListenerFormInputWarning but the event and the value to be checked
+//are into two different HTML element (used for example to check a input field of a form, after the pressing of a button.)
+function eventListenerFormInputButtonWarning(idElement, idForward, idParagraph, typeOfEvent, apiPHPfile, bodyPrefixName, 
+    listenerParagraphSetting, listenerJsonDataExpected){
+    const element = document.getElementById(idElement);
+    const elementForward= document.getElementById(idForward);
+    const error = document.getElementById(idParagraph);
+    elementForward.addEventListener(typeOfEvent,
+        async function() {
+                const valueOfElement = element.value;
+                //if there's something in the input field that has been written, only then I want to execute the logic
+                // (you can't have done something wrong if you have done nothing)
+                if(valueOfElement){
+                    try{
+                        //the callback is a fetch with POST because we want to send to the server
+                        //what is inside the element.
+                    const response = await fetch(apiPHPfile, { //richiesta POST HTTP alla pagina login-api.php
+                        method: "POST",
+                        //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
+                        //questo metodo encodeURIComponent
+                        body: bodyPrefixName + encodeURIComponent(valueOfElement)
+                    });
+                    if (!response.ok) {
+                        throw new Error("Errore nella risposta del server.");
+                    }
+                    const json = await response.json();
+
+                    if (json.success && json[listenerJsonDataExpected.textContent]===listenerJsonDataExpected.jsonExpectedValue) {
+                        error.textContent = listenerJsonDataExpected.jsonExpectedValue;
+                        error.style.color = "green";
+                    } else {
+                        error.textContent = listenerParagraphSetting.textContent;
+                        error.style.color = listenerParagraphSetting.textColor;
+                    }
+                    } catch (errorEx) {
+                        console.error("Errore:", errorEx);
+                    }
+                }
+    });
+}
+
 
 //this is used for elements that when clicked give warning if a checkbox is not checked
 function eventListenerButtonNotCheckedWarning(idElement, idCheckbox,idParagraph, listenerParagraphSetting){
@@ -211,6 +267,13 @@ function eventListenerItemWish(classCheckboxHeart,apiPHPfile){
                     if (!response.ok) {
                         throw new Error("Errore nella risposta del server.");
                     }
+
+                    const json = await response.json();
+
+                    if (!json.added) {
+                        //does this also disable the graphic effect? -> does the heart becomes empty?
+                        heart.checked=false;
+                    }
                 }
             }catch(error){
                 console.error(error);
@@ -268,7 +331,7 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
 //the different filter names are get by the value attribute of the <input>, the category is contained in the name attribute.
 //additional listener are the listener for each checkbox.
 //I click on a checkbox of a category like designers and the listenerObjectFilters is updated.
-function eventListenerCheckListFilter(category,additionalListener){
+function eventListenerCheckListFilter(category){
     const elementsCheckButton= document.getElementsByName(category);
     elementsCheckButton.array.forEach(element => {
         element.addEventListener("click",()=>{

@@ -8,6 +8,11 @@ function listenerObjectSetting(textContent,textColor) {
     this.textColor=textColor;
   }
 
+  //__________________Object used for the field and response I expect from a JSON response____________
+function ListenerJsonDataExpected(jsonField, jsonExpectedValue){
+  this.jsonField=jsonField;
+  this.jsonExpectedValue=jsonExpectedValue;
+}
 
 
   //__________________Object used for for filter caching and evaluation_________________________________
@@ -83,11 +88,11 @@ function listenerObjectSetting(textContent,textColor) {
 
   ListenerObjectFilters.prototype.doesElementPassFilters = function (product) {
     return (
+      //DISCUSS: I need an object with backend data for all products shown in the home.
+      //how can I have the colors, size and designer??
       (this.designers.length === 0 || this.designers.includes(product.dataset.designers)) &&
       (this.size.length === 0 || this.size.includes(product.dataset.size)) &&
       (this.color.length === 0 || this.color.includes(product.dataset.color)) &&
-      this.size.length === 0 &&
-      this.color.length === 0 &&
       this.priceMin === 0 &&
       this.priceMax === Infinity
     );

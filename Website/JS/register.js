@@ -3,9 +3,11 @@
 let inputEmail = "emailForm";
 let paragraphWarning = "emailFormWarning";
 let apiPHPfile="register_handler";
+let typeOfEvent="blur";
 let bodyPrefixName = "emailinsert="; //PHP: given this in the $_POST return me a boolean if it exist in the emails
 const listenerEmailSetting = new listenerObjectSetting( "Email already used", "red");
-eventListenerFormInputWarning(inputEmail,paragraphWarning,apiPHPfile,bodyPrefixName,listenerEmailSetting);
+eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
+    listenerEmailSetting);
 
 //____________Listener For the "passwords don't match" attached to the password confirmation_______________________
 const inputPassword = "passForm";
