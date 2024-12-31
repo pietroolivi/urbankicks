@@ -14,7 +14,13 @@ function ListenerJsonDataExpected(jsonField, jsonExpectedValue){
   this.jsonExpectedValue=jsonExpectedValue;
 }
 
+//__________________Object used for caching the category filter that is exclusive_________________________
+  function exclusiveCategoryObjectFilter(){
+    this.target="";
+    this.shoeType="";
+  }
 
+  
   //__________________Object used for for filter caching and evaluation_________________________________
   function ListenerObjectFilters(){
     this.designers =[];

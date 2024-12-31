@@ -351,6 +351,7 @@ function eventListenerPriceFilter(){
     //TODO............
 }
 
+
 //I need to know how the article data is passed to me. I suppose since asking for a query for each product's
 //size, color, designers is too computational heavy, in the HTML we have data attributes for them
 function eventListenerApplyFilters(){
@@ -378,6 +379,36 @@ function eventListenerApplyFilters(){
         });
     })
 }
+
+//for the category filter that is exclusive, example: MAN > Sandals or WOMAN > Sliders. only one of each of these filter
+//can exists at the same time
+/**
+ * 
+ * @param {*} idNavigationParagraph this is used for setting the text of the navigation, like to show that when MEN > Sneakers is
+ *                            clicked, we are in Home > Products > Men > Sneakers 
+ */
+function eventListenerExclusiveCategoryFilter(idNavigationParagraph){
+    const targets = document.getElementsByName("target");
+    const shoeTypes = document.getElementsByName("shoeType");
+    shoeTypes.forEach(shoeType => {
+        shoeType.addEventListener("click",()=>{
+            objectExclusiveCategoryFilter.shoeType=shoeType;
+            if(objectExclusiveCategoryFilter.target)
+                objectExclusiveCategoryFilter.target="man";
+
+            //TODO: usa objectExclusiveCategory per filtrare solo i prodotti in allArticles che lo rispettano.
+
+            const allArticles=document.querySelectorAll("article");
+            allArticles.forEach(element => {/*do filter*/});
+            if (selectedNavigation) {
+                const selectedTarget = selectedNavigation.value;
+                idNavigationParagraph.textContent="Home > Products > "+selectedTarget+" > "+shoeType.value;
+            }
+        })
+        
+    });
+}
+
 
 //the different filter names are get by the value attribute of the <input>, the category is contained in the name attribute.
 //additional listener are the listener for each checkbox.

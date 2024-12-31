@@ -1,14 +1,13 @@
 //-------------------------------------------Objects used by this script------------------------------------------------------
 //________________Object for the filters______________________________________________________________________________________
 const objectFilters= new ListenerObjectFilters();
+const objectExclusiveCategoryFilter = new exclusiveCategoryObjectFilter();
 objectFilters.loadFromSession();
 
 //------------------------------------------------Setting all the listeners----------------------------------------------------
-//______________Listener for the home navigation tab___________________________________________
-let idButton="idButton";
-let apiPHPfile="home_handler";// see eventListenerAppendHTML comments in JS/Functions/listeners.js
-let idHTMLStructure="";// see eventListenerAppendHTML comments in JS/Functions/listeners.js
-eventListenerAppendHTML(idButton,idHTMLStructure,apiHome);
+//______________Listener for the button of exclusive category filters___________________________________________
+const idNavigationParagraph="navigationPar"
+eventListenerExclusiveCategoryFilter(idNavigationParagraph);
 
 //_______________Listener for applying the filters____________________________________________________________________________
 eventListenerApplyFilters();
