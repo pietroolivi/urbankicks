@@ -356,7 +356,9 @@ aside p {
 /* in the pop-up menu to change background colour as the cursor passes over it. */
 /* **************************************************************************** */
 .hamburger-sidebar > nav > ul > li:hover,
-.profile-sidebar > nav > ul > li:hover {
+.profile-sidebar > nav > ul > li:hover,
+.sort-sidebar > fieldset > label:hover,
+.sort-sidebar > fieldset > input:checked + label {
   background-color: #f2f2f2;
 }
 
@@ -588,20 +590,184 @@ h2 {
 
 
 
+/* ********************************************************************************************************************** 
+This represents the outer container of the oval 3-state-switch with a grey background. But why do we need a nested 
+<fieldset> and <div> rather than using just one of the two? Because for aesthetic reasons we do not want the 
+inner sliding oval (which highlights the current selection) to touch the edge of the outer oval, so rather than 
+calculating the positions from which to start/finish it and the offsets, which must also take into account the fact 
+that the 3 strings are not of equal length, we will reason more easily with the full 100% width of the inner <div>.
+*/
+
+
+main > .filters-and-sorters {
+  width: 100%;
+  text-align: center;
+}
+
+main > .filters-and-sorters > .category-switch {
+  width: 50%;
+  text-align: center;
+  background-color: #D9D9D9;
+  border: 0;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+  padding: 1% 0;
+  margin: 2% 0;
+  left: 23%;
+  right: 23%;
+}
+
+legend {
+  display: none;
+}
+
+main > .filters-and-sorters > .category-switch > input[type="radio"],
+main > .filters-and-sorters > .category-switch > input[type="checkbox"],
+main > .filters-and-sorters > .sort-menu > input[type="checkbox"],
+main > .filters-and-sorters > .sort-sidebar > .sort-switch > input[type="radio"] {
+  display: none;
+  cursor: pointer;
+}
+
+label{
+  cursor: pointer;
+}
+
+/*
+main > .filters-and-sorters > .category-switch {
+  position: relative;
+  height: 50px;
+  display:flex;
+  justify-content: space-around;
+}
+*/
+
+.category-switch > label {
+  padding: 1rem;
+  z-index: 1;
+}
+
+.category-switch::before{
+  content: '';
+  position: absolute;
+  left:0;
+  width: 27%;
+  height: 70%;
+  top: 15%;
+  bottom: 15%;
+  background: #fff;
+  border: 1px solid #fff;
+  border-radius: 20px;
+  opacity: 0.3;
+  transition: .5s left ease;
+}
+
+.category-switch:has(#popular:checked)::before {
+  left: 2%;
+}
+.category-switch:has(#discounted:checked)::before {
+  width: 35%;
+  left: 31%;
+}
+.category-switch:has(#novelties:checked)::before {
+  left: 70%; /* calcola che rimanga 2% dalla fine */
+}
+
+#popular:checked + label,
+#discounted:checked + label,
+#novelties:checked + label {
+  color: black;
+}
+
+#popular:not(:checked) + label,
+#discounted:not(:checked) + label ,
+#novelties:not(:checked) + label {
+  color: white;
+}
 
 
 
 
 
+.sort-menu {
+  width: var(--bar-width);
+  height: var(--bar-width);
+  transform: scale(1.1);
+  position: absolute; /*
+  top: calc(var(--hamburger-margin) * 5);
+  right: calc(var(--hamburger-margin) * 3);*/
+  cursor: pointer;
+  background: url("./Images/Icons/sort.svg") no-repeat;
+  /* background-size: cover; */
+  z-index: 3;
+}
+
+.sort-sidebar {
+  transition: translate var(--animation-timing); /* the transition is going to be on the "translate" property" */
+  translate: 0 100%;
+  width: 100%;
+  background-color: var(--foreground);
+  color: var(--background);
+  text-align: center;
+  position: fixed;
+  min-width: 100%;
+  min-height: max-content;
+  z-index: 1;
+  bottom: 0;
+}
+
+.sort-switch {
+  border: none;
+}
+
+.sort-menu:has(input:checked) + .sort-sidebar {
+  translate: 0;
+}
+
+.sort-sidebar > fieldset > label {
+  color: black;
+  display: block;
+  width: 100%;
+  padding: 2% 10%;
+}
+
+.sort-sidebar > fieldset > input:checked + label {
+  border: 1px solid black;
+
+}
 
 
 
 
 
+.filter-menu {
+  width: var(--bar-width);
+  height: var(--bar-width);
+  transform: scale(1.1);
+  position: fixed; /*
+  top: calc(var(--hamburger-margin) * 5);
+  right: calc(var(--hamburger-margin) * 3);*/
+  cursor: pointer;
+  background: url("./Images/Icons/filter.svg") no-repeat;
+  /* background-size: cover; */
+  z-index: 1;
+}
 
+.filter-sidebar {
+  transition: translate var(--animation-timing); /* the transition is going to be on the "translate" property" */
+  translate: 0 100%;
+  background-color: var(--foreground);
+  color: var(--background);
+  max-width: 20rem;  /* no matter what size the screen is, it's always only taking up that space */ 
+  min-height: 100vh; /* that's going to fill 100% of the height */
+  position: fixed;
+  z-index: 3;
+}
 
-
-
+.filter-menu:has(input:checked) + .filter-sidebar {
+  translate: 0;
+}
 
 
 
