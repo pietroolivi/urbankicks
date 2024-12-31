@@ -9,21 +9,18 @@
  * to some of the "new" HTML elements that now are visible/appended.
  *  
  * @param {*} idElement the html id of the element which listen
- * @param {*} idHTMLStructure I just make it visible, this is no longer needed
+ * @param {*} idHTMLStructure the id of the <section>/<article>/<div> I make visible
  * @param {*} apiPHPfile  this only if we decide to use the php to get the code
  * @param {*} additionalListeners these are additional listeners to the event
  */
-function eventListenerAppendHTML(idElement,idHTMLStructure,apiPHPfile,additionalListeners){
+function eventListenerAppendHTML(idElement,idHTMLStructure,additionalListeners){
     const button = document.getElementById(idElement);
-    const idHTMLStructure = document.getElementById(idHTMLStructure);
+    const HTMLStructure = document.getElementById(idHTMLStructure);
     button.addEventListener("click",
         async function(){
-
-            //TODO--- when we decide how to append HTML code that need to appear dynamically:
-            //should we have it hidden inside the .php file of the template or should
-            //we have it wrote here.
-            //after the html structure is appended we use this parameter "additionalListerners"
-            //to set all the listeners that depends on the click.
+            //I suppose the hidden elements have a class that hides them
+            //called hidden.
+            HTMLStructure.classList.remove("hidden");
             additionalListeners.forEach(lis=>lis());
         });
 }

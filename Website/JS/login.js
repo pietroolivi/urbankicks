@@ -37,4 +37,4 @@ const eventListenerFormInputWarningConfigured = () =>
 const buttonForgot = "forgotButton";
 let idHTMLStructure="forgotStructure"; // see eventListenerAppendHTML comments in JS/Functions/listeners.js
 let additionalListeners = [eventListenerFormInputWarningConfigured];
-eventListenerAppendHTML(buttonForgot,idHTMLStructure,apiPHPfile,additionalListeners);
+eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners);
