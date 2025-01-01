@@ -8,8 +8,6 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Barrio&display=swap" rel="stylesheet">
         <title>UrbanKicks - Home</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     </head>
     <body>
         <!-- 
@@ -73,25 +71,20 @@
                 <legend>Please select whether you want to log in (if you already have an account) or register:</legend>
                 <input type="radio" id="login" name="authentication" value="login"><label for="login">LOGIN</label><input type="radio" id="register" name="authentication" value="register" checked="checked"><label for="register">REGISTER</label>
             </fieldset>
-            <h2>Elevate your Style</h2>
-            <p>Be a part of the newest fashion trends. Urbankicks' sneakers make heads turn.</p>
+            <h2>Mario, almost there</h2>
+            <p>Never miss out on a hot release again with our latest's drops newsletter! You'll also receive personalized shopping reminders about your Wishlist and Shopping Bag. You may unsubscribe at any time from the personal area.</p>
             <form action="#" method="POST">
                 <ul>
                     <li>
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+                        <label for="newsletter">I agree to subscribe to the newsletter.</label>
+                        <input type="checkbox" id="newsletter" name="newsletter">
                     </li>
                     <li>
-                        <label for="confirm-password">Confirm Password</label>
-                        <input type="password" id="confirm-password" name="confirm-password" required>
+                        <label for="last-name">I agree to Urbankicks' <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.</label>
+                        <input type="checkbox" id="terms-and-privacy" name="terms-and-privacy" required>
                     </li>
                     <li>
-                        <label for="phone">Mobile Phone</label>
-                        <input type="tel" id="phone" name="phone">
-                    </li>
-                    <li>
-                        <!-- torna indietro -->
-                        <input type="submit" name="submit" value="Next">
+                        <input type="submit" name="submit" value="Register">
                     </li>
                 </ul>
             </form>
@@ -123,11 +116,4 @@
             </nav>
         </footer>
     </body>
-    <script>
-        const phoneInputField = document.querySelector("#phone");
-        const phoneInput = window.intlTelInput(phoneInputField, {
-          utilsScript:
-            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-    </script>
 </html>
