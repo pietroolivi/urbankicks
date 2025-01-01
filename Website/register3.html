@@ -73,7 +73,7 @@
             </fieldset>
             <h2>Mario, almost there</h2>
             <p>Never miss out on a hot release again with our latest's drops newsletter! You'll also receive personalized shopping reminders about your Wishlist and Shopping Bag. You may unsubscribe at any time from the personal area.</p>
-            <form action="#" method="POST">
+            <form id="register-consents" action="#" method="POST">
                 <ul>
                     <li>
                         <label for="newsletter">I agree to subscribe to the newsletter.</label>
@@ -84,7 +84,8 @@
                         <input type="checkbox" id="terms-and-privacy" name="terms-and-privacy" required>
                     </li>
                     <li>
-                        <input type="submit" name="submit" value="Register">
+                        <button type="button" onclick="window.history.back()">Back</button>
+                        <button type="submit" form="register-consents">Register</button>
                     </li>
                 </ul>
             </form>
