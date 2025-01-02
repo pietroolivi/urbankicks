@@ -69,36 +69,31 @@
             </nav>
         </aside>
         <main>
-            <div>
-                <img src="CSS/Images/Illustrations/skater.svg" alt="">
-                <a href="#" class="explore-now">Explore Now</a>
-            </div>
+            <!-- The most suitable option for modelling the switch between ‘Login’ and ‘Register’ consists of a two-option radio button, since we only want one selection at a time, and the choice selected by default will be ‘Login’. The structure is similar to that of the 3-state gender selector above. -->
+            <fieldset>
+                <legend>Please select whether you want to log in (if you already have an account) or register:</legend>
+                <input type="radio" id="login" name="authentication" value="login" checked="checked"><label for="login">LOGIN</label><input type="radio" id="register" name="authentication" value="register"><label for="register">REGISTER</label>
+            </fieldset>
+            <h2>Welcome Back</h2>
+            <p>Happy to see you again. Please Login Here</p>
+            <form id="access-credentials" action="#" method="POST">
+                <ul>
+                    <li>
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" autocomplete="email" required>
+                    </li>
+                    <li>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" autocomplete="current-password" required>
+                        <a href="#">Forgot Password?</a>
+                    </li>
+                    <li>
+                        <button type="submit" form="access-credentials">Login</button>
+                        <p>Don't have an account? <a href="#">Register Here</a></p>
+                    </li>
+                </ul>
+            </form>
         </main>
-        <nav class="brands">
-            <h2>Our Brands</h2>
-            <ul>
-                <li><a href=""><img src="CSS/Images/Icons/adidas.svg" alt="Adidas products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/new_balance.svg" alt="New Balance products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/sergio_tacchini.svg" alt="Sergio Tacchini products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/crocs.svg" alt="Crocs products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/fila.svg" alt="Fila products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/converse.svg" alt="Converse products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/asics.svg" alt="Asics products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/hoka.svg" alt="Hoka products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/lacoste.svg" alt="Lacoste products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/on.svg" alt="On products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/puma.svg" alt="Puma products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/reebok.svg" alt="Reebok products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/salomon.svg" alt="Salomon products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/ugg.svg" alt="Ugg products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/saucony.svg" alt="Saucony products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/vans.svg" alt="Vans products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/havaianas.svg" alt="Havaianas products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/kappa.svg" alt="Kappa products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/under_armour.svg" alt="Under Armour products."></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/diadora.svg" alt="Diadora products."></a></li>
-            </ul>
-        </nav>
         <footer>
             <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
             <nav>
