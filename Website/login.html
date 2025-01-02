@@ -18,15 +18,17 @@
         -->
         <header>
             <h1>URBANKICKS</h1>
-            <a class="cart-icon" href="#"><img src="CSS/Images/Icons/cart.svg" alt=""></a>
+            <a class="cart-icon" href="#"><img src="CSS/Images/Icons/cart.svg" alt="My shopping cart."></a>
         </header>
-        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. -->
-        <label class="hamburger-menu"><input type="checkbox"></label>
+        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. The first label is placed to perform its normal function & pass the accessibility check, while the second is used as a checkbox container, and will come in particularly handy in the style sheet. -->
+        <label for="hamburger-icon">Open/close the pop-up sidebar.</label>
+        <label class="hamburger-menu"><input id="hamburger-icon" type="checkbox"></label>
         <aside class="hamburger-sidebar">
             <form>
                 <div class="search">
-                    <span class="search-icon"><img src="CSS/Images/Icons/search.svg" alt=""></span>
-                    <input class="search-input" type="search" placeholder="Search within the site">
+                    <span class="search-icon"><img src="CSS/Images/Icons/search.svg" alt="Execute search."></span>
+                    <label for="search">Please, type the words that will be searched among the product names and descriptions.</label>
+                    <input id="search" class="search-input" type="search" placeholder="Search within the site">
                 </div>
             </form>
             <!-- A radio button is a great way to implement a three-state toggle switch, each corresponding to the gender for which the clothing is to be displayed, since one and only one choice is allowed at a time. -->
@@ -53,8 +55,9 @@
             </nav>
             <p>URBANKICKS</p>
         </aside>
-        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. -->
-        <label class="profile-menu"><input type="checkbox"></label>
+        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. The first label is placed to perform its normal function & pass the accessibility check, while the second is used as a checkbox container, and will come in particularly handy in the style sheet. -->
+        <label for="profile-icon">Open/close the pop-up user menu.</label>
+        <label class="profile-menu"><input id="profile-icon" type="checkbox"></label>
         <aside class="profile-sidebar">
             <nav>
                 <ul>
@@ -66,8 +69,6 @@
             </nav>
         </aside>
         <main>
-            
-
             <!-- The most suitable option for modelling the switch between ‘Login’ and ‘Register’ consists of a two-option radio button, since we only want one selection at a time, and the choice selected by default will be ‘Login’. The structure is similar to that of the 3-state gender selector above. -->
             <fieldset>
                 <legend>Please select whether you want to log in (if you already have an account) or register:</legend>
@@ -75,7 +76,7 @@
             </fieldset>
             <h2>Welcome Back</h2>
             <p>Happy to see you again. Please Login Here</p>
-            <form id="login" action="#" method="POST">
+            <form id="access-credentials" action="#" method="POST">
                 <ul>
                     <li>
                         <label for="email">Email Address</label>
@@ -87,15 +88,16 @@
                         <a href="#">Forgot Password?</a>
                     </li>
                     <li>
-                        <button type="submit" form="login">Login</button>
+                        <button type="submit" form="access-credentials">Login</button>
                         <p>Don't have an account? <a href="#">Register Here</a></p>
                     </li>
                 </ul>
             </form>
         </main>
         <footer>
+            <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
             <nav>
-                <a href="#"><img src="CSS/Images/Icons/anchor.svg"></a>
+                <a href="#"><img src="CSS/Images/Icons/anchor.svg" alt="Top of the page."></a>
             </nav>
             <nav>
                 <ul>
@@ -107,9 +109,9 @@
             </nav>
             <nav>
                 <ul>
-                    <li class="social-media-link"><a href="https://www.facebook.com"><img src="CSS/Images/Icons/facebook.svg"></a></li>
-                    <li class="social-media-link"><a href="https://www.instagram.com"><img src="CSS/Images/Icons/instagram.svg"></a></li>
-                    <li class="social-media-link"><a href="https://www.whatsapp.com"><img src="CSS/Images/Icons/whatsapp.svg"></a></li>
+                    <li class="social-media-link"><a href="https://www.facebook.com"><img src="CSS/Images/Icons/facebook.svg" alt="Facebook"></a></li>
+                    <li class="social-media-link"><a href="https://www.instagram.com"><img src="CSS/Images/Icons/instagram.svg" alt="Instagram"></a></li>
+                    <li class="social-media-link"><a href="https://www.whatsapp.com"><img src="CSS/Images/Icons/whatsapp.svg" alt="Whatsapp"></a></li>
                 </ul>
             </nav>
             <nav>

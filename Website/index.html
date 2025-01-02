@@ -18,15 +18,17 @@
         -->
         <header>
             <h1>URBANKICKS</h1>
-            <a class="cart-icon" href="#"><img src="CSS/Images/Icons/cart.svg" alt=""></a>
+            <a class="cart-icon" href="#"><img src="CSS/Images/Icons/cart.svg" alt="My shopping cart."></a>
         </header>
-        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. -->
-        <label class="hamburger-menu"><input type="checkbox"></label>
+        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. The first label is placed to perform its normal function & pass the accessibility check, while the second is used as a checkbox container, and will come in particularly handy in the style sheet. -->
+        <label for="hamburger-icon">Open/close the pop-up sidebar.</label>
+        <label class="hamburger-menu"><input id="hamburger-icon" type="checkbox"></label>
         <aside class="hamburger-sidebar">
             <form>
                 <div class="search">
-                    <span class="search-icon"><img src="CSS/Images/Icons/search.svg" alt=""></span>
-                    <input class="search-input" type="search" placeholder="Search within the site">
+                    <span class="search-icon"><img src="CSS/Images/Icons/search.svg" alt="Execute search."></span>
+                    <label for="search">Please, type the words that will be searched among the product names and descriptions.</label>
+                    <input id="search" class="search-input" type="search" placeholder="Search within the site">
                 </div>
             </form>
             <!-- A radio button is a great way to implement a three-state toggle switch, each corresponding to the gender for which the clothing is to be displayed, since one and only one choice is allowed at a time. -->
@@ -53,8 +55,9 @@
             </nav>
             <p>URBANKICKS</p>
         </aside>
-        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state -->
-        <label class="profile-menu"><input type="checkbox"></label>
+        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. The first label is placed to perform its normal function & pass the accessibility check, while the second is used as a checkbox container, and will come in particularly handy in the style sheet. -->
+        <label for="profile-icon">Open/close the pop-up user menu.</label>
+        <label class="profile-menu"><input id="profile-icon" type="checkbox"></label>
         <aside class="profile-sidebar">
             <nav>
                 <ul>
@@ -74,32 +77,32 @@
         <nav class="brands">
             <h2>Our Brands</h2>
             <ul>
-                <li><a href=""><img src="CSS/Images/Icons/adidas.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/new_balance.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/sergio_tacchini.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/crocs.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/fila.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/converse.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/asics.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/hoka.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/lacoste.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/on.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/puma.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/reebok.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/salomon.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/ugg.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/saucony.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/vans.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/havaianas.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/kappa.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/under_armour.svg" alt=""></a></li>
-                <li><a href=""><img src="CSS/Images/Icons/diadora.svg" alt=""></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/adidas.svg" alt="Adidas products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/new_balance.svg" alt="New Balance products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/sergio_tacchini.svg" alt="Sergio Tacchini products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/crocs.svg" alt="Crocs products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/fila.svg" alt="Fila products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/converse.svg" alt="Converse products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/asics.svg" alt="Asics products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/hoka.svg" alt="Hoka products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/lacoste.svg" alt="Lacoste products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/on.svg" alt="On products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/puma.svg" alt="Puma products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/reebok.svg" alt="Reebok products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/salomon.svg" alt="Salomon products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/ugg.svg" alt="Ugg products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/saucony.svg" alt="Saucony products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/vans.svg" alt="Vans products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/havaianas.svg" alt="Havaianas products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/kappa.svg" alt="Kappa products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/under_armour.svg" alt="Under Armour products."></a></li>
+                <li><a href=""><img src="CSS/Images/Icons/diadora.svg" alt="Diadora products."></a></li>
             </ul>
         </nav>
-
         <footer>
+            <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
             <nav>
-                <a href="#"><img src="CSS/Images/Icons/anchor.svg"></a>
+                <a href="#"><img src="CSS/Images/Icons/anchor.svg" alt="Top of the page."></a>
             </nav>
             <nav>
                 <ul>
@@ -111,9 +114,9 @@
             </nav>
             <nav>
                 <ul>
-                    <li class="social-media-link"><a href="https://www.facebook.com"><img src="CSS/Images/Icons/facebook.svg"></a></li>
-                    <li class="social-media-link"><a href="https://www.instagram.com"><img src="CSS/Images/Icons/instagram.svg"></a></li>
-                    <li class="social-media-link"><a href="https://www.whatsapp.com"><img src="CSS/Images/Icons/whatsapp.svg"></a></li>
+                    <li class="social-media-link"><a href="https://www.facebook.com"><img src="CSS/Images/Icons/facebook.svg" alt="Facebook"></a></li>
+                    <li class="social-media-link"><a href="https://www.instagram.com"><img src="CSS/Images/Icons/instagram.svg" alt="Instagram"></a></li>
+                    <li class="social-media-link"><a href="https://www.whatsapp.com"><img src="CSS/Images/Icons/whatsapp.svg" alt="Whatsapp"></a></li>
                 </ul>
             </nav>
             <nav>

@@ -251,6 +251,12 @@ aside p {
   cursor: pointer;
 }
 
+label[for="hamburger-icon"],
+label[for="profile-icon"],
+label[for="sort-icon"] {
+  display: none;
+}
+
 .hamburger-menu:has(input:checked) {
   --foreground: white;
   --background: #333;
@@ -403,6 +409,10 @@ aside p {
   border-radius: 0;
   background: transparent;
   transition: border 0.25s;
+}
+
+.search > label {
+  display: none;
 }
 
 /* *********************************************************************************** */
@@ -590,14 +600,7 @@ h2 {
 
 
 
-/* ********************************************************************************************************************** 
-This represents the outer container of the oval 3-state-switch with a grey background. But why do we need a nested 
-<fieldset> and <div> rather than using just one of the two? Because for aesthetic reasons we do not want the 
-inner sliding oval (which highlights the current selection) to touch the edge of the outer oval, so rather than 
-calculating the positions from which to start/finish it and the offsets, which must also take into account the fact 
-that the 3 strings are not of equal length, we will reason more easily with the full 100% width of the inner <div>.
-*/
-
+/* ************************** SVILUPPO SOSPESO A FAVORE DELLA PARTE DI LOGIN ******************************* */
 
 main > .filters-and-sorters {
   width: 100%;
@@ -686,10 +689,6 @@ main > .filters-and-sorters > .category-switch {
   color: white;
 }
 
-
-
-
-
 .sort-menu {
   width: var(--bar-width);
   height: var(--bar-width);
@@ -737,10 +736,6 @@ main > .filters-and-sorters > .category-switch {
 
 }
 
-
-
-
-
 .filter-menu {
   width: var(--bar-width);
   height: var(--bar-width);
@@ -768,6 +763,38 @@ main > .filters-and-sorters > .category-switch {
 .filter-menu:has(input:checked) + .filter-sidebar {
   translate: 0;
 }
+
+/* ************************** SVILUPPO SOSPESO A FAVORE DELLA PARTE DI LOGIN ******************************* */
+
+
+/* **************************************************************************************************** */
+/* The otp class is responsible for holding the OTP input fields. We've set its display property        */
+/* to flex to align and center the child elements both horizontally and vertically. We've also added    */
+/* a 1rem gap between each input field for visual separation, making it easier for users to enter their */
+/* OTP code. On the other hand, the otp__input class is used to refer to the input fields in the OTP    */
+/* container. This class uses the text-align property to center the text within the input fields.       */
+/* **************************************************************************************************** */
+.otp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.otp-input {
+  border: 1px solid black;
+  font-size: 1rem;
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  text-align: center;
+  width: 2rem;
+}
+
+.otp label {
+  display: none;
+}
+
+
 
 
 
