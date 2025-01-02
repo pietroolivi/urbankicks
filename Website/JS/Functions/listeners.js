@@ -391,6 +391,8 @@ function eventListenerApplyFilters(){
     })
 }
 
+
+//THIS IS NOT NEEDED LIKE THIS.
 //for the category filter that is exclusive, example: MAN > Sandals or WOMAN > Sliders. only one of each of these filter
 //can exists at the same time
 /**
@@ -398,7 +400,7 @@ function eventListenerApplyFilters(){
  * @param {*} idNavigationParagraph this is used for setting the text of the navigation, like to show that when MEN > Sneakers is
  *                            clicked, we are in Home > Products > Men > Sneakers 
  */
-function eventListenerExclusiveCategoryFilter(idNavigationParagraph){
+/*function eventListenerExclusiveCategoryFilter(idNavigationParagraph){
     const targets = document.getElementsByName("target");
     const shoeTypes = document.getElementsByName("shoeType");
     shoeTypes.forEach(shoeType => {
@@ -410,15 +412,15 @@ function eventListenerExclusiveCategoryFilter(idNavigationParagraph){
             //TODO: usa objectExclusiveCategory per filtrare solo i prodotti in allArticles che lo rispettano.
 
             const allArticles=document.querySelectorAll("article");
-            allArticles.forEach(element => {/*do filter*/});
-            if (selectedNavigation) {
+            allArticles.forEach(element => {/*do filter*/ /*});
+           if (selectedNavigation) {
                 const selectedTarget = selectedNavigation.value;
                 idNavigationParagraph.textContent="Home > Products > "+selectedTarget+" > "+shoeType.value;
             }
         })
         
     });
-}
+}*/
 
 
 //the different filter names are get by the value attribute of the <input>, the category is contained in the name attribute.
