@@ -9,10 +9,22 @@ const listenerEmailSetting = new listenerObjectSetting( "Email already used", "r
 eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
     listenerEmailSetting);
 
+//___________Listener for the passwords rules_______________________________________________________
+let inputPassword="passForm";
+const warningListClass="passRules";
+const listenerPassSetting = new listenerObjectSetting(  [
+                                                            "8 to 20 characters long",
+                                                            "Contains both letters and numbers",
+                                                            "One symbols !\"#$%&'()*+,-./:;<=>?"
+                                                        ], 
+                                                        "red");
+eventListenerPasswordRules(inputPasswords,warningListClass,listenerPassSetting);
+
+
 //____________Listener For the "passwords don't match" attached to the password confirmation_______________________
-const inputPassword = "passForm";
+inputPassword = "passForm";
 const inputPassword2 = "passForm2"; 
-paragraphWarning = "passDontMatch";
+paragraphWarning = "passWarning";
 const listenerPassMatch = new listenerObjectSetting( "Passwords don't match", "red");
 eventListenerFormInputComparisonWarning(inputPassword,inputPassword2,paragraphWarning,listenerPassMatch);
 

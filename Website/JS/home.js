@@ -1,12 +1,12 @@
 //-------------------------------------------Objects used by this script------------------------------------------------------
 //________________Object for the filters______________________________________________________________________________________
-const objectFilters= new ListenerObjectFilters();
+const objectFilters = new ListenerObjectFilters();
 const objectExclusiveCategoryFilter = new exclusiveCategoryObjectFilter();
 objectFilters.loadFromSession();
 
 //------------------------------------------------Setting all the listeners----------------------------------------------------
 //______________Listener for the button of exclusive category filters___________________________________________
-const idNavigationParagraph="navigationPar"
+const idNavigationParagraph="navigationPar";
 eventListenerExclusiveCategoryFilter(idNavigationParagraph);
 
 //_______________Listener for applying the filters____________________________________________________________________________

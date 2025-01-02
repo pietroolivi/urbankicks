@@ -168,9 +168,8 @@ function eventListenerFormInputComparisonWarning(idFirstElement, idSecondElement
 }
 
 
-function eventListenerPasswordRules(idPassword, idParagraph, listenerParagraphSetting){
+function eventListenerPasswordRules(idPassword,warningListClass,listenerParagraphSetting){
     const passwordElement= document.getElementById(idPassword);
-    const error = document.getElementById(idParagraph);
     passwordElement.addEventListener("blur", 
         async function(){
             const valueOfElement=passwordElement.value;
@@ -178,13 +177,23 @@ function eventListenerPasswordRules(idPassword, idParagraph, listenerParagraphSe
             const passwordHasLetters=/[a-zA-Z]/.test(valueOfElement);
             const emailHasNumber = /\d/.test(valueOfElement);
             const emailRightLength=(valueOfElement)=>{return (valueOfElement.length) >=8 && (valueOfElement.length<=20)};
-            if(passwordHasLetters && emailHasNumber && emailRightLength)
+            const passwordHasSpecialCharacter = /[!"#$%&'()*+,-./:;<=>?]/.test(valueOfElement);
+            if(passwordHasLetters && emailHasNumber && emailRightLength && passwordHasSpecialCharacter)
             {
+                //need to think if we need to make it visible or not.
+                const warningElements = document.getElementsByClassName(warningListClass);
+                for (let i = 0; i < warningElements.length; i++) {
+                    warningElements[i].textContent="";
+                    warningElements[i].color="";
+                }
                 return null;
             }
             else{
-                error.textContent = listenerParagraphSetting.textContent;
-                error.style.color = listenerParagraphSetting.textColor;
+                const warningElements = document.getElementsByClassName(warningListClass);
+                for (let i = 0; i < warningElements.length; i++) {
+                    warningElements[i].textContent="• "+listenerParagraphSetting[i].textContent;
+                    warningElements[i].color=listenerParagraphSetting[i].textColor;
+                }
             }
 
         });
