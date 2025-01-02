@@ -12,8 +12,9 @@
  * @param {*} idHTMLStructure the id of the <section>/<article>/<div> I make visible
  * @param {*} apiPHPfile  this only if we decide to use the php to get the code
  * @param {*} additionalListeners these are additional listeners to the event
+ * @param {Function} [optionalAsyncCallback] an additional function containing an http request to the server
  */
-function eventListenerAppendHTML(idElement,idHTMLStructure,additionalListeners){
+function eventListenerAppendHTML(idElement,idHTMLStructure,additionalListeners,optionalAsyncCallback){
     const button = document.getElementById(idElement);
     const HTMLStructure = document.getElementById(idHTMLStructure);
     button.addEventListener("click",
@@ -21,6 +22,7 @@ function eventListenerAppendHTML(idElement,idHTMLStructure,additionalListeners){
             //I suppose the hidden elements have a class that hides them
             //called hidden.
             HTMLStructure.classList.remove("hidden");
+            await optionalAsyncCallback();
             additionalListeners.forEach(lis=>lis());
         });
 }

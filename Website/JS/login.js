@@ -18,16 +18,28 @@ eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile
 const inputCode = "codeForm";
 const buttonVerify="verifyButton";
 paragraphWarning = "codeFormWarning";
-bodyPrefixName = "codeinsert = ";
+bodyPrefixName = "reset_code = ";
 typeOfEvent="click";
 const listenerJsonCodeWarning = new ListenerJsonDataExpected("message", "Password updated successfully");
 const listenerCodeErrorSetting = new listenerObjectSetting("Incorrect Code","red");
 //in this case the server may not need to query the database(the password reset code may not be modeled in the db)
 // but it should havein some associative array a cell that is created when the JS code tells it to load the insert code structure
-const eventListenerFormInputWarningConfigured = () =>
+const preloadEventListenerFormInputWarning = () =>{  //TODO: valutare come gestire il feedback di codice inserito correttamente
+                                                    //potrebbe aver senso non mostrarlo per non chiara specifica dai mockup.
     eventListenerFormInputButtonWarning(inputCode,buttonVerify, paragraphWarning,typeOfEvent, apiPHPfile, bodyPrefixName,
-        listenerCodeErrorSetting,listenerJsonCodeWarning);
+        listenerCodeErrorSetting,listenerJsonCodeWarning); 
+}
 
+//__________Async function added to the recover password button to make the server generate a reset code.
+const listenerJsonCodeReceivedErrorSetting = new ListenerJsonDataExpected("Error while sending the code","red");
+const optionalAsyncCallback = preloadSendAppendedHTMLIsReady(
+            apiPHPfile,
+            true,
+            "generate_reset_code = ",
+            paragraphWarning,
+            listenerJsonCodeSetting,
+            null
+          );
 
 //____________Listener for the recover password button________________________________________________
 
@@ -36,5 +48,5 @@ const eventListenerFormInputWarningConfigured = () =>
 //the idHTMLStructure It's hidden until forgot button is clicked.
 const buttonForgot = "forgotButton";
 let idHTMLStructure="forgotStructure"; // see eventListenerAppendHTML comments in JS/Functions/listeners.js
-let additionalListeners = [eventListenerFormInputWarningConfigured];
-eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners);
+let additionalListeners = [preloadEventListenerFormInputWarning];
+eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
