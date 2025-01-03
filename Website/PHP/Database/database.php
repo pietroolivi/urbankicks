@@ -416,11 +416,6 @@ class DatabaseHelper {
 
     // User registration
     public function registerUser($email, $firstName, $lastName, $password, $phone = null) {
-        // Check if user already exists
-        if (isUserRegistered($email)) {
-            return false; // User already exists
-        }
-
         // Hash password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         
