@@ -1,7 +1,7 @@
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //____________Listener For the "email already in use" attached to the email input_______________________
-let inputEmail = "emailForm";
-let paragraphWarning = "emailFormWarning";
+let inputEmail = "email"; //from register1.html
+let paragraphWarning = "emailFormWarning"; //where it is?
 let apiPHPfile="register_handler";
 let typeOfEvent="blur";
 let bodyPrefixName = "emailinsert="; //PHP: given this in the $_POST return me a boolean if it exist in the emails
@@ -10,7 +10,7 @@ eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile
     listenerEmailSetting);
 
 //___________Listener for the passwords rules_______________________________________________________
-let inputPassword="passForm";
+let inputPassword="password";
 const warningListClass="passRules";
 const listenerPassSetting = new listenerObjectSetting(  [
                                                             "8 to 20 characters long",
@@ -22,22 +22,22 @@ eventListenerPasswordRules(inputPasswords,warningListClass,listenerPassSetting);
 
 
 //____________Listener For the "passwords don't match" attached to the password confirmation_______________________
-inputPassword = "passForm";
-const inputPassword2 = "passForm2"; 
+inputPassword = "password"; //from register2.html
+const inputPassword2 = "confirm-password"; //from register2.html
 paragraphWarning = "passWarning";
 const listenerPassMatch = new listenerObjectSetting( "Passwords don't match", "red");
 eventListenerFormInputComparisonWarning(inputPassword,inputPassword2,paragraphWarning,listenerPassMatch);
 
 //____________Listener For the "emails don't match" attached to the email confirmation_______________________
-inputEmail = "emailForm";
-const inputEmail2 = "emailForm2";
-paragraphWarning="emailDontMatch";
+inputEmail = "email"; //from register1.html
+const inputEmail2 = "emailForm2"; //where it is?
+paragraphWarning="emailDontMatch"; 
 const listenerEmailMatch = new listenerObjectSetting( "Emails don't match", "red");
 eventListenerFormInputComparisonWarning(inputEmail,inputEmail2,paragraphWarning,listenerEmailMatch);
 
 //____________Listener For the privacy policy not checked attached to the button Register_______________________
-const buttonRegister= "registerButton";
-const checkPrivacyPolicy = "privacyCheck";
-paragraphWarning = "checkWarning";
+const buttonRegister= "register-button"; //from register3.html
+const checkPrivacyPolicy = "terms-and-privacy"; //from register3.html
+paragraphWarning = "checkWarning"; 
 const listenerCheckSetting = new listenerObjectSetting( "You must check the box to proceed", "red");
 eventListenerButtonNotCheckedWarning(buttonRegister,checkPrivacyPolicy, paragraphWarning,listenerCheckSetting);

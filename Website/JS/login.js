@@ -1,7 +1,7 @@
 
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //____________Listener For the "no account associated" attached to the email input_______________________
-const inputEmail = "emailForm";
+const inputEmail = "email";
 let paragraphWarning = "emailFormWarning";
 let apiPHPfile="login_handler";
 let bodyPrefixName = "emailinsert = ";// PHP: given this in the $_POST return me a boolean if it exist in the emails
