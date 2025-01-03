@@ -69,32 +69,65 @@
             </nav>
         </aside>
         <main>
-            <!-- The most suitable option for modelling the switch between ‘Login’ and ‘Register’ consists of a two-option radio button, since we only want one selection at a time, and the choice selected by default will be ‘Login’. The structure is similar to that of the 3-state gender selector above. -->
-            <fieldset>
-                <legend>Please select whether you want to log in (if you already have an account) or register:</legend>
-                <input type="radio" id="login" name="authentication" value="login"><label for="login">LOGIN</label><input type="radio" id="register" name="authentication" value="register" checked="checked"><label for="register">REGISTER</label>
-            </fieldset>
-            <div><img src="CSS/Images/Illustrations/progress_bar3.svg" alt="Third of three steps for registration."></div>
-            <h2>Mario, almost there</h2>
-            <p>Never miss out on a hot release again with our latest's drops newsletter! You'll also receive personalized shopping reminders about your Wishlist and Shopping Bag. You may unsubscribe at any time from the personal area.</p>
-            <form id="register-consents" action="#" method="POST">
+            <nav>
                 <ul>
                     <li>
-                        <label for="newsletter">I agree to subscribe to the newsletter.</label>
-                        <input type="checkbox" id="newsletter" name="newsletter">
+                        <a href="#">
+                            <article>
+                                <h3>ADIDAS SPEZIAL</h3>
+                                <img>
+                                <p id="btn" onclick="myfunction()">&#10084;</p>
+                                <p></p>
+                            </article>
+                        </a>
                     </li>
                     <li>
-                        <label for="terms-and-privacy">I agree to Urbankicks' <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.</label>
-                        <input type="checkbox" id="terms-and-privacy" name="terms-and-privacy" required>
+                        <a href="#">
+                            <article>
+                                <h3>CONVERSE CHUCK 70 HIGH</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
                     </li>
                     <li>
-                        <button type="button" onclick="window.history.back()">Back</button>
+                        <a href="#">
+                            <article>
+                                <h3>NEW BALANCE 740</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
                     </li>
                     <li>
-                        <button type="submit" id="register-button" form="register-consents">Register</button>
+                        <a href="#">
+                            <article>
+                                <h3>JORDAN AJ1 MID</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <article>
+                                <h3>JORDAN 1 RETRO HIGH OG</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <article>
+                                <h3>NIKE LUNAR ROAM</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
                     </li>
                 </ul>
-            </form>
+            </nav>
         </main>
         <footer>
             <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
@@ -123,5 +156,17 @@
                 </ul>
             </nav>
         </footer>
+        <script>
+            var clicked = false;
+            function myfunction() {
+                clicked = !clicked;
+                const el = document.getElementById("btn");
+                if (clicked) {
+                    el.style.color = "red"
+                } else {
+                    el.style.color = "black"
+                }
+            }
+        </script>
     </body>
 </html>
