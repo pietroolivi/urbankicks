@@ -15,8 +15,9 @@ eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile
 
 
 //____________Listener for the incorrect code in the paragraph attached to the recover code input_______________________
-const inputCode = "codeForm";
-const buttonVerify="submit-code"; 
+const inputCode = "codeForm"; // not needed, html should already send the code with the submit, need to fix the function I use to
+                            //not send the code wrote by the user
+const buttonVerify="submit-code"; //from password-forgotten2.html
 paragraphWarning = "codeFormWarning";
 bodyPrefixName = "reset_code = ";
 typeOfEvent="click";
@@ -50,3 +51,11 @@ const buttonForgot = "forgot-password"; //from login.html
 let idHTMLStructure="pswd-recovery-mail"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
 let additionalListeners = [preloadEventListenerFormInputWarning];
 eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
+
+
+//____________Listener For the "passwords don't match" attached to the new password confirmation_______________________
+inputPassword = "password"; //from register2.html
+const inputPassword2 = "confirm-password"; //from register2.html
+paragraphWarning = "passWarning";
+const listenerPassMatch = new listenerObjectSetting( "Passwords don't match", "red");
+eventListenerFormInputComparisonWarning(inputPassword,inputPassword2,paragraphWarning,listenerPassMatch);
