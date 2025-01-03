@@ -69,7 +69,7 @@ function eventListenerFormInputWarning(idElement, idParagraph, typeOfEvent, apiP
                     }
                     const json = await response.json();
 
-                    if (json.success) {
+                    if (json.exists) {
                         error.textContent = listenerJsonDataExpected.jsonExpectedValue;
                         error.style.color = "green";
                     } else {
