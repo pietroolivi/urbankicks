@@ -3,7 +3,7 @@
 //____________Listener For the "no account associated" attached to the email input_______________________
 const inputEmail = "email"; //from login.html
 let paragraphWarning = "email-error-login"; //where it is?
-let apiPHPfile="login_handler.php";
+let apiPHPfile="PHP/login_handler.php";
 let bodyPrefixName = "emailinsert";// PHP: given this in the $_POST return me a boolean if it exist in the emails
 let typeOfEvent="blur";
 const listenerJsonEmailWarning = new ListenerJsonDataExpected("exists", true);
