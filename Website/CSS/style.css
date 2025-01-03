@@ -801,7 +801,9 @@ main > .filters-and-sorters > .category-switch {
 
 
 
-
+#email-error-login {
+  display: none;
+}
 
 
 

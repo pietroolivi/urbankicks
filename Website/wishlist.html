@@ -69,32 +69,65 @@
             </nav>
         </aside>
         <main>
-            <!-- The most suitable option for modelling the switch between ‘Login’ and ‘Register’ consists of a two-option radio button, since we only want one selection at a time, and the choice selected by default will be ‘Login’. The structure is similar to that of the 3-state gender selector above. -->
-            <fieldset>
-                <legend>Please select whether you want to log in (if you already have an account) or register:</legend>
-                <input type="radio" id="login" name="authentication" value="login" checked="checked"><label for="login">LOGIN</label><input type="radio" id="register" name="authentication" value="register"><label for="register">REGISTER</label>
-            </fieldset>
-            <h2>Welcome Back</h2>
-            <p>Happy to see you again. Please Login Here</p>
-            <form id="access-credentials" action="#" method="POST">
+            <nav>
                 <ul>
                     <li>
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" autocomplete="email" required>
-                        <p id="email-error-login">No account associated!</p>
+                        <a href="#">
+                            <article>
+                                <h3>ADIDAS SPEZIAL</h3>
+                                <img>
+                                <p id="btn" onclick="myfunction()">&#10084;</p>
+                                <p></p>
+                            </article>
+                        </a>
                     </li>
                     <li>
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" autocomplete="current-password" required>
-                        <p></p>
-                        <a href="password_forgotten1.html" id="forgot-password">Forgot Password?</a>
+                        <a href="#">
+                            <article>
+                                <h3>CONVERSE CHUCK 70 HIGH</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
                     </li>
                     <li>
-                        <button type="submit" form="access-credentials">Login</button>
-                        <p>Don't have an account? <a href="register1.html">Register Here</a></p>
+                        <a href="#">
+                            <article>
+                                <h3>NEW BALANCE 740</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <article>
+                                <h3>JORDAN AJ1 MID</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <article>
+                                <h3>JORDAN 1 RETRO HIGH OG</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <article>
+                                <h3>NIKE LUNAR ROAM</h3>
+                                <img>
+                                <p></p>
+                            </article>
+                        </a>
                     </li>
                 </ul>
-            </form>
+            </nav>
         </main>
         <footer>
             <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
@@ -123,8 +156,17 @@
                 </ul>
             </nav>
         </footer>
-    <script src="JS/Objects/listenerObjectSetting.js" type="text/javascript"></script>
-    <script src='JS/Functions/listeners.js' type="text/javascript"></script>
-    <script src="JS/login.js" type="text/javascript"></script>
+        <script>
+            var clicked = false;
+            function myfunction() {
+                clicked = !clicked;
+                const el = document.getElementById("btn");
+                if (clicked) {
+                    el.style.color = "red"
+                } else {
+                    el.style.color = "black"
+                }
+            }
+        </script>
     </body>
 </html>

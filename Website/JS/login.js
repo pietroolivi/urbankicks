@@ -2,9 +2,9 @@
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //____________Listener For the "no account associated" attached to the email input_______________________
 const inputEmail = "email"; //from login.html
-let paragraphWarning = "emailFormWarning"; //where it is?
-let apiPHPfile="login_handler";
-let bodyPrefixName = "emailinsert = ";// PHP: given this in the $_POST return me a boolean if it exist in the emails
+let paragraphWarning = "email-error-login"; //where it is?
+let apiPHPfile="login_handler.php";
+let bodyPrefixName = "emailinsert";// PHP: given this in the $_POST return me a boolean if it exist in the emails
 let typeOfEvent="blur";
 const listenerJsonEmailWarning = new ListenerJsonDataExpected("exists", true);
 const listenerEmailSetting = new listenerObjectSetting( "No Account associated", "red");
@@ -12,8 +12,10 @@ const listenerEmailSetting = new listenerObjectSetting( "No Account associated",
 eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
     listenerEmailSetting,listenerJsonEmailWarning);
 
-
-
+/*************************** */
+/*NOT NEEDED FROM JAVASCRIPT**
+/*********************** */
+/*
 //____________Listener for the incorrect code in the paragraph attached to the recover code input_______________________
 const inputCode = "codeForm"; // not needed, html should already send the code with the submit, need to fix the function I use to
                             //not send the code wrote by the user
@@ -51,11 +53,12 @@ const buttonForgot = "forgot-password"; //from login.html
 let idHTMLStructure="pswd-recovery-mail"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
 let additionalListeners = [preloadEventListenerFormInputWarning];
 eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
+*/
 
-
+/*
 //____________Listener For the "passwords don't match" attached to the new password confirmation_______________________
 inputPassword = "password"; //from register2.html
 const inputPassword2 = "confirm-password"; //from register2.html
 paragraphWarning = "passWarning";
 const listenerPassMatch = new listenerObjectSetting( "Passwords don't match", "red");
-eventListenerFormInputComparisonWarning(inputPassword,inputPassword2,paragraphWarning,listenerPassMatch);
+eventListenerFormInputComparisonWarning(inputPassword,inputPassword2,paragraphWarning,listenerPassMatch);*/
