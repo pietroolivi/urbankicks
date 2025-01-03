@@ -1,8 +1,8 @@
 
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //____________Listener For the "no account associated" attached to the email input_______________________
-const inputEmail = "email";
-let paragraphWarning = "emailFormWarning";
+const inputEmail = "email"; //from login.html
+let paragraphWarning = "emailFormWarning"; //where it is?
 let apiPHPfile="login_handler";
 let bodyPrefixName = "emailinsert = ";// PHP: given this in the $_POST return me a boolean if it exist in the emails
 let typeOfEvent="blur";
@@ -14,9 +14,9 @@ eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile
 
 
 
-//____________Listener for the incorrect code attached to the recover code input_______________________
+//____________Listener for the incorrect code in the paragraph attached to the recover code input_______________________
 const inputCode = "codeForm";
-const buttonVerify="verifyButton";
+const buttonVerify="submit-code"; 
 paragraphWarning = "codeFormWarning";
 bodyPrefixName = "reset_code = ";
 typeOfEvent="click";
@@ -46,7 +46,7 @@ const optionalAsyncCallback = preloadSendAppendedHTMLIsReady(
 //this listener has as the parameter additionalListener the array defined on the previous istener definition
 //since the incorrect code listener is added only when the incorrect code html and logic is enabled in thje document. 
 //the idHTMLStructure It's hidden until forgot button is clicked.
-const buttonForgot = "forgotButton";
-let idHTMLStructure="forgotStructure"; // see eventListenerAppendHTML comments in JS/Functions/listeners.js
+const buttonForgot = "forgot-password"; //from login.html
+let idHTMLStructure="pswd-recovery-mail"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
 let additionalListeners = [preloadEventListenerFormInputWarning];
 eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
