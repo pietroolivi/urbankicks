@@ -56,22 +56,26 @@ const optionalAsyncCallback = preloadSendAppendedHTMLIsReady(
             listenerJsonCodeSetting,
             null
           );
-
+*/
 //____________Listener for the recover password button________________________________________________
 
 //this listener has as the parameter additionalListener the array defined on the previous istener definition
 //since the incorrect code listener is added only when the incorrect code html and logic is enabled in thje document. 
 //the idHTMLStructure It's hidden until forgot button is clicked.
-const buttonForgot = "forgot-password"; //from login.html
-let idHTMLStructure="pswd-recovery-mail"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
+let buttonForgot = "forgot-password-1"; //from login.html
+let idsHTMLStructures="id-div1"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
 let additionalListeners = [preloadEventListenerFormInputWarning];
 eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
-*/
+buttonForgot = "forgot-password-2";
+idsHTMLStructures="id-div2";
+eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
+buttonForgot = "forgot-password-3";
+idsHTMLStructures="id-div2";
+eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
 
-/*
 //____________Listener For the "passwords don't match" attached to the new password confirmation_______________________
 inputPassword = "password"; //from register2.html
 const inputPassword2 = "confirm-password"; //from register2.html
 paragraphWarning = "passWarning";
 const listenerPassMatch = new listenerObjectSetting( "Passwords don't match", "red");
-eventListenerFormInputComparisonWarning(inputPassword,inputPassword2,paragraphWarning,listenerPassMatch);*/
+eventListenerFormInputComparisonWarning(inputPassword,inputPassword2,paragraphWarning,listenerPassMatch);
