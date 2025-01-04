@@ -87,7 +87,7 @@ function eventListenerFormLoginWarning(idElement, idParagraph, typeOfEvent, apiP
 
 function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, apiPHPfile, bodyPrefixName, 
     listenerParagraphSetting, listenerJsonDataExpected){
-
+    
     const element = document.getElementById(idElement);
     const error = document.getElementById(idParagraph);
     element.addEventListener(typeOfEvent,
@@ -117,6 +117,7 @@ function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, a
                     const json = await response.json();
 
                     if (json.success) {
+                        document.getElementById("submit1").disabled = false;
                         error.textContent = listenerJsonDataExpected.jsonExpectedValue;
                         error.style.color = "green";
                     } else {
@@ -130,6 +131,7 @@ function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, a
                     }
                 }
                 else{
+                  //  document.getElementById("submit1").disabled = true;
                     error.style.display = 'block';
                     error.style.color = listenerParagraphSetting.textColor;
                 }
@@ -140,6 +142,7 @@ function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, a
 
 function eventListenerInputTextEmptyWarning(idElement, idParagraph, typeOfEvent,
     listenerParagraphSetting, listenerJsonDataExpected){
+    //document.getElementById("submit1").disabled = true;
     const element = document.getElementById(idElement);
     const error = document.getElementById(idParagraph);
     element.addEventListener(typeOfEvent,
@@ -148,21 +151,13 @@ function eventListenerInputTextEmptyWarning(idElement, idParagraph, typeOfEvent,
                 //if there's something in the input field that has been written, only then I want to execute the logic
                 // (you can't have done something wrong if you have done nothing)
                 if(valueOfElement.length==0){
-                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&${"check_email_only"}=${encodeURIComponent("true")}`;
-                    if (!response.ok) {
-                        throw new Error("Errore nella risposta del server.");
-                    }
-                    const json = await response.json();
-
-                    if (json.success) {
-                        error.textContent = listenerJsonDataExpected.jsonExpectedValue;
-                        error.style.color = "green";
-                    } else {
                         document.getElementById("submit1").disabled = true;
                         error.style.display = 'block';
                         error.textContent = json.message;
                         error.style.color = listenerParagraphSetting.textColor;
-                    }
+                }
+                else{
+                        document.getElementById("submit1").disabled = false;
                 }
     });
     return null;
