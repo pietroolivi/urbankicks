@@ -35,9 +35,9 @@ try {
         
         $user = $dbh->loginUser($email, $_POST["password"]);
         if ($user) {
-            $response = ["success" => true, "message" => "Login successful"];
+            $response = ["success" => true, "exists" => true,"message" => "Login successful"];
         } else {
-            throw new Exception("Invalid email or password");
+            $response = ["success" => false, "exists" => false,"message" => "Invalid email or password"];
         }
     }
     else if (isset($_POST["generate_reset_code"]) && $_POST["generate_reset_code"] === "true") {
