@@ -1,8 +1,6 @@
 <?php
 require_once("bootstrap.php");
 
-header('Content-Type: application/json');
-
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     echo json_encode(["success" => false, "message" => "Invalid request method"]);
     exit();
@@ -51,10 +49,12 @@ try {
     $registered = $dbh->registerUser($email, $firstName, $lastName, $password, $phone);
     if (!$registered) {
         throw new Exception("Failed to register user");
+    } else {
+        header("Location: home.php");
+        exit();
     }
-
-    $response = ["success" => true, "message" => "User registered successfully"];
 } catch (Exception $e) {
+    header('Content-Type: application/json');
     $response = ["success" => false, "message" => $e->getMessage()];
 }
 
