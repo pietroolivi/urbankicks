@@ -1,7 +1,7 @@
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //____________Listener For the "email already in use" attached to the email input_______________________
 let inputEmail = "email"; //from register1.html
-let paragraphWarning = "email-error-register"; //where it is?
+let paragraphWarning = "email-register-error"; //where it is?
 let apiPHPfile="register_handler.php";
 let typeOfEvent="blur";
 let bodyPrefixName = "emailinsert"; //PHP: given this in the $_POST return me a boolean if it exist in the emails

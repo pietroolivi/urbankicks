@@ -11,7 +11,7 @@
             <li>
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" autocomplete="email" required>
-                <p id="email-error-login">No account associated!</p>
+                <p id="email-login-error">No account associated!</p>
             </li>
             <li>
                 <label for="password">Password</label>
