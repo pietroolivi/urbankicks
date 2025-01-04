@@ -1,16 +1,16 @@
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //____________Listener For the "email already in use" attached to the email input_______________________
 let inputEmail = "email"; //from register1.html
-let paragraphWarning = "emailFormWarning"; //where it is?
-let apiPHPfile="register_handler";
+let paragraphWarning = "email-error-register"; //where it is?
+let apiPHPfile="register_handler.php";
 let typeOfEvent="blur";
-let bodyPrefixName = "emailinsert="; //PHP: given this in the $_POST return me a boolean if it exist in the emails
-const listenerEmailSetting = new listenerObjectSetting( "Email already used", "red");
-eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
+let bodyPrefixName = "emailinsert"; //PHP: given this in the $_POST return me a boolean if it exist in the emails
+const listenerEmailSetting = new listenerObjectSetting( "Email already in use", "red");
+eventListenerFormRegisterWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
     listenerEmailSetting);
 
 //___________Listener for the passwords rules_______________________________________________________
-let inputPassword="password";
+let inputPassword="password-register";
 const warningListClass="passRules";
 const listenerPassSetting = new listenerObjectSetting(  [
                                                             "8 to 20 characters long",

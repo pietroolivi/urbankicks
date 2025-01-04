@@ -82,18 +82,21 @@
             <form id="register-pswd-tel" action="#" method="POST">
                 <ul>
                     <li>
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" autocomplete="new-password" required>
+                        <label for="password-register">Password</label>
+                        <input type="password" id="password-register" name="password-register" autocomplete="new-password" required>
+                        <p class="pswd-format-error">8 to 20 characters long</p>
+                        <p class="pswd-format-error">Contains both letters and numbers</p>
+                        <p class="pswd-format-error">One symbols !\"#$%&'()*+,-./:;&lt;=>?</p>
                     </li>
                     <li>
                         <label for="confirm-password">Confirm Password</label>
                         <!-- Add an autocomplete attribute with a value of new-password for the password field on sign-up and change-password forms. If you require the user to type their password twice during sign-up or password update, add the new-password autocomplete attribute on both fields [The Chromium Projects]. The confirmation input gets filled with the same value instantly. -->
-                        <input type="password" id="confirm-password" name="confirm-password" autocomplete="new-password" required>
+                        <input type="password" id="confirm-password-register" name="confirm-password-register" autocomplete="new-password" required>
                     </li>
                     <li>
-                        <label for="phone">Mobile Phone</label>
+                        <label for="phone-register">Mobile Phone</label>
                         <!-- We use “tel-national” as the autocomplete value because we handle the country-code seprately by appending it after the user has chosen the one for the appropiate country via a drop-down list. -->
-                        <input type="text" id="phone" name="phone" autocomplete="tel-national">
+                        <input type="text" id="phone-register" name="phone-register" autocomplete="tel-national">
                         <script>
                             const phoneInputField = document.querySelector("#phone");
                             const phoneInput = window.intlTelInput(phoneInputField, {

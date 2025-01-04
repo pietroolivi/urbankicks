@@ -1,16 +1,29 @@
 
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //____________Listener For the "no account associated" attached to the email input_______________________
-const inputEmail = "email"; //from login.html
+const inputEmail = "email-login"; //from login.html
 let paragraphWarning = "email-error-login"; //where it is?
-let apiPHPfile="PHP/login_handler.php";
+let apiPHPfile="login_handler.php";
 let bodyPrefixName = "emailinsert";// PHP: given this in the $_POST return me a boolean if it exist in the emails
 let typeOfEvent="blur";
 const listenerJsonEmailWarning = new ListenerJsonDataExpected("exists", true);
 const listenerEmailSetting = new listenerObjectSetting( "No Account associated", "red");
 
-eventListenerFormInputWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
+eventListenerFormLoginWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
     listenerEmailSetting,listenerJsonEmailWarning);
+/*
+//____________Listener For the "no account associated" attached to the password input_____________________
+const inputPassword = "password-login"; //from login.html
+paragraphWarning = "pswd-error-login"; //where it is?
+bodyPrefixName = "passwordinsert";// PHP: given this in the $_POST return me a boolean if it exist in the emails
+typeOfEvent="blur";
+const listenerJsonPassWarning = new ListenerJsonDataExpected("exists", true);
+const listenerPasswordSetting = new listenerObjectSetting( "No Account associated", "red");
+
+eventListenerFormLoginWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
+    listenerEmailSetting,listenerJsonEmailWarning);
+*/
+
 
 /*************************** */
 /*NOT NEEDED FROM JAVASCRIPT**

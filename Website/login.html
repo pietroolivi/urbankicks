@@ -76,21 +76,22 @@
             </fieldset>
             <h2>Welcome Back</h2>
             <p>Happy to see you again. Please Login Here</p>
-            <form id="access-credentials" action="#" method="POST">
+            <form id="login-email-pswd" action="#" method="POST">
                 <ul>
                     <li>
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" autocomplete="email" required>
-                        <p id="email-error-login">No account associated!</p>
+                        <input type="email" id="email-login" name="email-login" autocomplete="email" required>
+                        <p id="email-error-login" class="authentication-error">No account associated!</p>
                     </li>
                     <li>
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" autocomplete="current-password" required>
+                        <input type="password" id="password-login" name="password-login" autocomplete="current-password" required>
                         <span><img id="eye-icon" src="CSS/Images/Icons/eye_open.svg" alt="Makes the password visible."></span>
                         <a href="password_forgotten1.html" id="forgot-password">Forgot Password?</a>
+                        <p id="pswd-error-login" class="authentication-error">Incorrect password!</p>
                     </li>
                     <li>
-                        <button type="submit" form="access-credentials">Login</button>
+                        <button type="submit" form="login-email-pswd">Login</button>
                         <p>Don't have an account? <a href="register1.html">Register Here</a></p>
                     </li>
                 </ul>
@@ -128,7 +129,7 @@
     <script src="JS/login.js"></script>
     <script>
         let eyeIcon = document.getElementById("eye-icon");
-        let password = document.getElementById("password");
+        let password = document.getElementById("password-login");
 
         eyeIcon.onclick = function() {
             if (password.type == "password") {

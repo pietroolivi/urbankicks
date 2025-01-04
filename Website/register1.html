@@ -89,7 +89,8 @@
                     </li>
                     <li>
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" autocomplete="email" required>
+                        <input type="email" id="email-register" name="email-register" autocomplete="email" required>
+                        <p id="email-register-error" class="authentication-error">Email already in use!</p>
                     </li>
                     <li>
                         <button type="submit" form="register-name-mail">Next</button>
@@ -124,5 +125,8 @@
                 </ul>
             </nav>
         </footer>
+        <script src="JS/Objects/listenerObjectSetting.js"></script>
+        <script src="JS/Functions/listeners.js"></script>
+        <script src="JS/register.js"></script>
     </body>
 </html>

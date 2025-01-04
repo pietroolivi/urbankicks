@@ -38,7 +38,7 @@ function eventListenerAppendHTML(idElement,idHTMLStructure,additionalListeners,o
  * @param {*} listenerJsonDataExpected the expected values for the json response
  * @returns 
  */
-function eventListenerFormInputWarning(idElement, idParagraph, typeOfEvent, apiPHPfile, bodyPrefixName, 
+function eventListenerFormLoginWarning(idElement, idParagraph, typeOfEvent, apiPHPfile, bodyPrefixName, 
     listenerParagraphSetting, listenerJsonDataExpected){
 
     const element = document.getElementById(idElement);
@@ -73,7 +73,6 @@ function eventListenerFormInputWarning(idElement, idParagraph, typeOfEvent, apiP
                         error.textContent = listenerJsonDataExpected.jsonExpectedValue;
                         error.style.color = "green";
                     } else {
-                        console.error("email does not exists");
                         error.style.display = 'block';
                         error.textContent = listenerParagraphSetting.textContent;
                         error.style.color = listenerParagraphSetting.textColor;
@@ -85,6 +84,55 @@ function eventListenerFormInputWarning(idElement, idParagraph, typeOfEvent, apiP
     });
     return null;
 }
+
+function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, apiPHPfile, bodyPrefixName, 
+    listenerParagraphSetting, listenerJsonDataExpected){
+
+    const element = document.getElementById(idElement);
+    const error = document.getElementById(idParagraph);
+    element.addEventListener(typeOfEvent,
+        async function() {
+                const valueOfElement = element.value;
+                //if there's something in the input field that has been written, only then I want to execute the logic
+                // (you can't have done something wrong if you have done nothing)
+                if(valueOfElement.length!==0){
+                    console.log("string is not empty");
+                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&${"check_email_only"}=${encodeURIComponent("true")}`;
+                    try{
+                        //the callback is a fetch with POST because we want to send to the server
+                        //what is inside the element.
+                    const response = await fetch(apiPHPfile, { 
+                        method: "POST",
+                        //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
+                        //questo metodo encodeURIComponent
+                        body: bodyMessage
+                    });
+                    if (!response.ok) {
+                        throw new Error("Errore nella risposta del server.");
+                    }
+                    const json = await response.json();
+
+                    if (json.success) {
+                        error.textContent = listenerJsonDataExpected.jsonExpectedValue;
+                        error.style.color = "green";
+                    } else {
+                        error.style.display = 'block';
+                        error.textContent = json.message;
+                        error.style.color = listenerParagraphSetting.textColor;
+                    }
+                    } catch (errorEx) {
+                        console.error("Errore:", errorEx);
+                    }
+                }
+    });
+    return null;
+}
+
+
 
 //the same logic of eventListenerFormInputWarning but the event and the value to be checked
 //are into two different HTML element (used for example to check a input field of a form, after the pressing of a button.)
@@ -189,6 +237,7 @@ function eventListenerPasswordRules(idPassword,warningListClass,listenerParagrap
                 //need to think if we need to make it visible or not.
                 const warningElements = document.getElementsByClassName(warningListClass);
                 for (let i = 0; i < warningElements.length; i++) {
+                    warningElements.style.display="none";
                     warningElements[i].textContent="";
                     warningElements[i].color="";
                 }
@@ -197,8 +246,9 @@ function eventListenerPasswordRules(idPassword,warningListClass,listenerParagrap
             else{
                 const warningElements = document.getElementsByClassName(warningListClass);
                 for (let i = 0; i < warningElements.length; i++) {
-                    warningElements[i].textContent="• "+listenerParagraphSetting[i].textContent;
-                    warningElements[i].color=listenerParagraphSetting[i].textColor;
+                    warningElements.style.display="block";
+                   /* warningElements[i].textContent="• "+listenerParagraphSetting[i].textContent;
+                    warningElements[i].color=listenerParagraphSetting[i].textColor;*/
                 }
             }
 
