@@ -4,7 +4,7 @@
 const inputEmail = "email-login"; //from login.html
 let paragraphWarning = "email-error-login"; //where it is?
 let apiPHPfile="login_handler.php";
-let bodyPrefixName = "emailinsert";// PHP: given this in the $_POST return me a boolean if it exist in the emails
+let bodyPrefixName = "email-login";// PHP: given this in the $_POST return me a boolean if it exist in the emails
 let typeOfEvent="blur";
 const listenerJsonEmailWarning = new ListenerJsonDataExpected("exists", true);
 const listenerEmailSetting = new listenerObjectSetting( "No Account associated", "red");

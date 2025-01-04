@@ -12,11 +12,11 @@ $response = ["success" => false, "message" => ""];
 
 try {
     // Validate email presence for all operations
-    if (!isset($_POST["emailinsert"]) || empty($_POST["emailinsert"])) {
+    if (!isset($_POST["email-login"]) || empty($_POST["email-login"])) {
         throw new Exception("Email is required");
     }
 
-    $email = filter_var($_POST["emailinsert"], FILTER_SANITIZE_EMAIL);
+    $email = filter_var($_POST["email-login"], FILTER_SANITIZE_EMAIL);
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         throw new Exception("Invalid email format");
     }
@@ -27,13 +27,13 @@ try {
         $exists = $dbh->isUserRegistered($email);
         $response = ["success" => true, "exists" => $exists];
     } 
-    else if (isset($_POST["password"])) {
+    else if (isset($_POST["password-login"])) {
         // Handle login
-        if (empty($_POST["password"])) {
+        if (empty($_POST["password-login"])) {
             throw new Exception("Password is required");
         }
         
-        $user = $dbh->loginUser($email, $_POST["password"]);
+        $user = $dbh->loginUser($email, $_POST["password-login"]);
         if ($user) {
             $response = ["success" => true, "exists" => true,"message" => "Login successful"];
         } else {
