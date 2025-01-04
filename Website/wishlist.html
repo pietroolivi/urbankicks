@@ -69,65 +69,69 @@
             </nav>
         </aside>
         <main>
-            <nav>
-                <ul>
-                    <li>
+            <h2>Wishlist</h2>
+            <ul>
+                <li>
+                    <article id="21032">
                         <a href="#">
-                            <article>
-                                <h3>ADIDAS SPEZIAL</h3>
-                                <img>
-                                <p id="btn" onclick="myfunction()">&#10084;</p>
-                                <p></p>
-                            </article>
+                            <h3>ADIDAS SPEZIAL</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test1.webp" alt=""></div>
+                            <p>€80.00 <s>€109.99</s></p>
                         </a>
-                    </li>
-                    <li>
+                        <span><img id="heart-icon21032" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="49022">
                         <a href="#">
-                            <article>
-                                <h3>CONVERSE CHUCK 70 HIGH</h3>
-                                <img>
-                                <p></p>
-                            </article>
+                            <h3>CONVERSE CHUCK 70 HIGH</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test2.webp" alt=""></div>
+                            <p>€74.99 <s>€94.99</s></p>
                         </a>
-                    </li>
-                    <li>
+                        <span><img id="heart-icon49022" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="13892">
                         <a href="#">
-                            <article>
-                                <h3>NEW BALANCE 740</h3>
-                                <img>
-                                <p></p>
-                            </article>
+                            <h3>NEW BALANCE 740</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test3.webp" alt=""></div>
+                            <p>119.99</p>
                         </a>
-                    </li>
-                    <li>
+                        <span><img id="heart-icon13892" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="02948">
                         <a href="#">
-                            <article>
-                                <h3>JORDAN AJ1 MID</h3>
-                                <img>
-                                <p></p>
-                            </article>
+                            <h3>JORDAN AJ1 MID</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test4.webp" alt=""></div>
+                            <p>€80.00 <s>€109.99</s></p>
                         </a>
-                    </li>
-                    <li>
+                        <span><img id="heart-icon02948" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="30928">
                         <a href="#">
-                            <article>
-                                <h3>JORDAN 1 RETRO HIGH OG</h3>
-                                <img>
-                                <p></p>
-                            </article>
+                            <h3>JORDAN 1 RETRO HIGH OG</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test5.webp" alt=""></div>
+                            <p>€90.00 <s>€109.99</s></p>
                         </a>
-                    </li>
-                    <li>
+                        <span><img id="heart-icon30928" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="98372">
                         <a href="#">
-                            <article>
-                                <h3>NIKE LUNAR ROAM</h3>
-                                <img>
-                                <p></p>
-                            </article>
+                            <h3>NIKE LUNAR ROAM</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test6.webp" alt=""></div>
+                            <p>€149.99</p>
                         </a>
-                    </li>
-                </ul>
-            </nav>
+                        <span><img id="heart-icon98372" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+            </ul>
         </main>
         <footer>
             <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
@@ -157,14 +161,14 @@
             </nav>
         </footer>
         <script>
-            var clicked = false;
-            function myfunction() {
-                clicked = !clicked;
-                const el = document.getElementById("btn");
-                if (clicked) {
-                    el.style.color = "red"
+            function myfunction(id) {
+                const heartIconTag = document.getElementById(id);
+                if (heartIconTag.src.endsWith("heart_filled.svg")) {
+                    heartIconTag.src = "CSS/Images/Icons/heart_empty.svg";
+                    heartIconTag.alt = "Click to add to wish list";                    
                 } else {
-                    el.style.color = "black"
+                    heartIconTag.src = "CSS/Images/Icons/heart_filled.svg";
+                    heartIconTag.alt = "Click to remove from wish list.";
                 }
             }
         </script>

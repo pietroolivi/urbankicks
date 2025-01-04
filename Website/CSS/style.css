@@ -801,11 +801,14 @@ main > .filters-and-sorters > .category-switch {
 
 
 
-#email-error-login {
+.authentication-error {
   display: none;
 }
 
 
+s {
+  text-decoration: line-through;
+}
 
 
 
