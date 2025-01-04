@@ -86,7 +86,7 @@
                     <li>
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" autocomplete="current-password" required>
-                        <p></p>
+                        <span><img id="eye-icon" src="CSS/Images/Icons/eye_open.svg" alt="Makes the password visible."></span>
                         <a href="password_forgotten1.html" id="forgot-password">Forgot Password?</a>
                     </li>
                     <li>
@@ -123,8 +123,24 @@
                 </ul>
             </nav>
         </footer>
-    <script src="JS/Objects/listenerObjectSetting.js" type="text/javascript"></script>
-    <script src='JS/Functions/listeners.js' type="text/javascript"></script>
-    <script src="JS/login.js" type="text/javascript"></script>
+    <script src="JS/Objects/listenerObjectSetting.js"></script>
+    <script src="JS/Functions/listeners.js"></script>
+    <script src="JS/login.js"></script>
+    <script>
+        let eyeIcon = document.getElementById("eye-icon");
+        let password = document.getElementById("password");
+
+        eyeIcon.onclick = function() {
+            if (password.type == "password") {
+                password.type = "text";
+                eyeIcon.src = "CSS/Images/Icons/eye_closed.svg";
+                eyeIcon.alt = "Makes the password masked.";
+            } else {
+                password.type = "password";
+                eyeIcon.src = "CSS/Images/Icons/eye_open.svg";
+                eyeIcon.alt = "Makes the password visible.";
+            }
+        }
+    </script>
     </body>
 </html>
