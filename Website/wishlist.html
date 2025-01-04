@@ -69,6 +69,14 @@
             </nav>
         </aside>
         <main>
+            <!-- 
+            We implement the wishlist as a list of <article> which, from the documentation, we read is a ‘self-contained composition in a document, page, 
+            application, or site, which is intended to be independently distributable or reusable (e.g., in syndication). Examples include: a forum post, 
+            a product card, or any other independent item of content.’ so the products we are trying to model are even mentioned. Within each <article> we 
+            will have a clickable area delimited by the <a> tag that will link to the specific page of that article, and include the image, product name 
+            and price. Why didn't we put <article> inside <a>? Because we also have the heart-shaped wishlist icon, which when clicked will have its 
+            own behaviour and we don't want to be redirected to the article page, so we want it to be outside <a> but still inside <article> for semantics.
+            -->
             <h2>Wishlist</h2>
             <ul>
                 <li>
@@ -160,6 +168,7 @@
                 </ul>
             </nav>
         </footer>
+        <!-- Below there is a function that changes the colour of the heart (initially set to red being the wishlist page) following a click. In reality, the code will have to be modified to remove an item from the wishlist in the database as a consequence of clicking on the icon. But we will also have to modify the HTML to read from the database the wishlist items to be shown, as we now show 6 hard-coded items. -->
         <script>
             function myfunction(id) {
                 const heartIconTag = document.getElementById(id);
