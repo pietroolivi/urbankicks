@@ -7,7 +7,8 @@ $templateParams["name"] = "login_content.php";
 $templateParams["js"] = [
     "JS/Objects/listenerObjectSetting.js",
     "JS/Functions/listeners.js",
-    "JS/login.js"
+    "JS/login.js",
+    "otp.js"
 ];
 
 require_once("Template/base.php");

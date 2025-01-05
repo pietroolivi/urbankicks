@@ -226,6 +226,7 @@ function eventListenerFormInputButtonWarning(idElement, idForward, idParagraph, 
                     try{
                         //the callback is a fetch with POST because we want to send to the server
                         //what is inside the element.
+                        const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&${"check_email_only"}=${encodeURIComponent("true")}`;
                     const response = await fetch(apiPHPfile, { //richiesta POST HTTP alla pagina login-api.php
                         method: "POST",
                         //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
@@ -234,17 +235,19 @@ function eventListenerFormInputButtonWarning(idElement, idForward, idParagraph, 
                         },
                         //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
                         //questo metodo encodeURIComponent
-                        body: bodyPrefixName + encodeURIComponent(valueOfElement),
+                        body: bodyMessage
                     });
                     if (!response.ok) {
                         throw new Error("Errore nella risposta del server.");
                     }
                     const json = await response.json();
 
-                    if (json.success && json[listenerJsonDataExpected.textContent]===listenerJsonDataExpected.jsonExpectedValue) {
+                
+                    if (json.exists) {
                         error.textContent = listenerJsonDataExpected.jsonExpectedValue;
                         error.style.color = "green";
                     } else {
+                        error.style.display = 'block';
                         error.textContent = listenerParagraphSetting.textContent;
                         error.style.color = listenerParagraphSetting.textColor;
                     }

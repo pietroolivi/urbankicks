@@ -10,14 +10,14 @@
         <ul>
             <li>
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" autocomplete="email" required>
+                <input type="email" id="email-login" name="email" autocomplete="email" required>
                 <p id="email-login-error">No account associated!</p>
             </li>
             <li>
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" autocomplete="current-password" required>
+                <input type="password" id="password-login" name="password" autocomplete="current-password" required>
                 <span><img id="eye-icon" src="CSS/Images/Icons/eye_open.svg" alt="Makes the password visible."></span>
-                <a href="password_forgotten1.html" id="forgot-password">Forgot Password?</a>
+                <a href="password_forgotten1.html" id="forgot-password-link">Forgot Password?</a>
             </li>
             <li>
                 <button type="submit" id="submit-1" form="access-credentials">Login</button>
@@ -27,34 +27,35 @@
     </form>
 </section>
 
-<section id="section-forgot-1">
+<section id="section-forgot1">
     <h2>We got this.</h2>
     <p>Confirm the email address you used to register and you will receive a code to reset your password.</p>
     <form id="pswd-recovery-mail" action="#" method="POST">
         <ul>
             <li>
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" autocomplete="email" required>
+                <input type="email" id="email-forgot1" name="email" autocomplete="email" required>
             </li>
             <li>                    
                 <button type="button" onclick="window.history.back()">Back</button>
             </li>
             <li>
-                <button type="submit" id="submit-2" form="pswd-recovery-mail">Next</button>
+                <p id="email-forgot-error">No Account associated!</p>
+                <button type="submit" id="submit-forgot1" form="pswd-recovery-mail">Next</button>
             </li>
         </ul>
-        <p>Don't have an account? <a href="register1.html">Register Here</a></p>
+        <p id="register-link" >Don't have an account? <a href="register1.html">Register Here</a></p>
     </form>
 </section>
 
-<section id="section-forgot-2">
+<section id="section-forgot2">
     <h2>We got this.</h2>
     <p>Enter the code we sent you in the email and proceed to choose a new password.</p>
     <form id="pswd-recovery-otp" action="#" method="POST">
         <ul>
             <li>
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email-forgot2" name="email" readonly>
             </li>
             <!--
             For the markup of the OTP input field we could have done it in two ways: use a single <input> 
@@ -84,7 +85,8 @@
                 <button type="button" onclick="window.history.back()">Back</button>
             </li>
             <li>
-                <button type="submit" id="submit-code" form="pswd-recovery-otp">Verify</button>
+                <p id="code-forgot-error">Incorrect code!</p>
+                <button type="submit" id="submit-forgot2" form="pswd-recovery-otp">Verify</button>
             </li>
         </ul>
         <p>Don't have an account? <a href="#">Register Here</a></p>
@@ -92,18 +94,18 @@
 </section>
 
 
-<section id="section-forgot-3">
+<section id="section-forgot3">
     <h2>It's all set.</h2>
     <p>Choose a different password from the previous one and step into greatness.</p>
     <form id="pswd-recovery-new" action="#" method="POST">
         <ul>
             <li>
                 <label for="password">New Password</label>
-                <input type="password" id="password" name="password" autocomplete="new-password" required>
+                <input type="password" id="password-forgot3" name="password" autocomplete="new-password" required>
             </li>
             <li>
                 <label for="confirm-password">Confirm New Password</label>
-                <input type="password" id="confirm-password" name="confirm-password" autocomplete="new-password" required>
+                <input type="password" id="confirm-password-forgot3" name="confirm-password" autocomplete="new-password" required>
             </li>
             <li>
                 <button type="button" onclick="window.history.back()">Back</button>

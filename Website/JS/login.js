@@ -1,7 +1,7 @@
 
 //------------------------------------------------Setting all the listeners----------------------------------------------------------
 //____________Listener For the "no account associated" attached to the email input_______________________
-const inputEmail = "email-login"; //from login.html
+let inputEmail = "email-login"; //from login.html
 let paragraphWarning = "email-error-login"; //where it is?
 let apiPHPfile="login_handler.php";
 let bodyPrefixName = "email-login";// PHP: given this in the $_POST return me a boolean if it exist in the emails
@@ -11,6 +11,14 @@ const listenerEmailSetting = new listenerObjectSetting( "No Account associated",
 
 eventListenerFormLoginWarning(inputEmail,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
     listenerEmailSetting,listenerJsonEmailWarning);
+
+inputEmail="email-forgot1";
+let buttonForgot="submit2";
+paragraphWarning="email-forgot-error";
+typeOfEvent="click";
+eventListenerFormInputButtonWarning(inputEmail,buttonForgot,paragraphWarning,typeOfEvent,apiPHPfile,bodyPrefixName,
+        listenerEmailSetting,listenerJsonEmailWarning);
+         
 /*
 //____________Listener For the "no account associated" attached to the password input_____________________
 const inputPassword = "password-login"; //from login.html
@@ -62,15 +70,16 @@ const optionalAsyncCallback = preloadSendAppendedHTMLIsReady(
 //this listener has as the parameter additionalListener the array defined on the previous istener definition
 //since the incorrect code listener is added only when the incorrect code html and logic is enabled in thje document. 
 //the idHTMLStructure It's hidden until forgot button is clicked.
-let buttonForgot = "forgot-password-1"; //from login.html
-let idHTMLStructure1="section-forgot-1"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
-let additionalListeners = [preloadEventListenerFormInputWarning];
+buttonForgot = "forgot-password-link"; //from login.html
+let idHTMLStructure1="section-forgot1"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
+let idHTMLStructureLogin="section-login";
+//let additionalListeners = [preloadEventListenerFormInputWarning];
 eventListenerAppendHTML(buttonForgot,idHTMLStructure,null,null,null);
-buttonForgot = "forgot-password-2";
-let idHTMLStructure2="section-forgot-2";
+buttonForgot = "submit-forgot1";
+let idHTMLStructure2="section-forgot2";
 eventListenerAppendHTML(buttonForgot,idHTMLStructure,null,null,idHTMLStructure1);
-buttonForgot = "forgot-password-3";
-let idHTMLStructure3="section-forgot-3";
+buttonForgot = "submit-forgot2";
+let idHTMLStructure3="section-forgot3";
 eventListenerAppendHTML(buttonForgot,idHTMLStructure,null,null, idHTMLStructure2);
 
 //____________Listener For the "passwords don't match" attached to the new password confirmation_______________________
