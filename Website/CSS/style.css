@@ -798,6 +798,9 @@ main > .filters-and-sorters > .category-switch {
 
 
 
+#email-register-error {
+  display: none;
+}
 
 
 

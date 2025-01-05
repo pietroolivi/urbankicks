@@ -20,7 +20,7 @@
                 <a href="password_forgotten1.html" id="forgot-password">Forgot Password?</a>
             </li>
             <li>
-                <button type="submit" form="access-credentials">Login</button>
+                <button type="submit" id="submit-1" form="access-credentials">Login</button>
                 <p>Don't have an account? <a href="register1.html">Register Here</a></p>
             </li>
         </ul>
@@ -40,7 +40,7 @@
                 <button type="button" onclick="window.history.back()">Back</button>
             </li>
             <li>
-                <button type="submit" form="pswd-recovery-mail">Next</button>
+                <button type="submit" id="submit-2" form="pswd-recovery-mail">Next</button>
             </li>
         </ul>
         <p>Don't have an account? <a href="register1.html">Register Here</a></p>

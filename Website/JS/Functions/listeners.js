@@ -14,13 +14,16 @@
  * @param {*} additionalListeners these are additional listeners to the event
  * @param {Function} [optionalAsyncCallback] an additional function containing an http request to the server
  */
-function eventListenerAppendHTML(idElement,idHTMLStructure,additionalListeners,optionalAsyncCallback){
+function eventListenerAppendHTML(idElement,idHTMLStructure,optionalAsyncCallback,idPrevHTMLStructure,){
     const button = document.getElementById(idElement);
     const HTMLStructure = document.getElementById(idHTMLStructure);
     button.addEventListener("click",
         async function(){
             //I suppose the hidden elements have a class that hides them
             //called hidden.
+            if(idPrevHTMLStructure!=null){
+                idPrevHTMLStructure.style.display='none';
+            }
             HTMLStructure.classList.remove("hidden");
             await optionalAsyncCallback();
             additionalListeners.forEach(lis=>lis());
@@ -87,17 +90,17 @@ function eventListenerFormLoginWarning(idElement, idParagraph, typeOfEvent, apiP
 
 function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, apiPHPfile, bodyPrefixName, 
     listenerParagraphSetting, listenerJsonDataExpected){
-    
+        
     const element = document.getElementById(idElement);
     const error = document.getElementById(idParagraph);
     element.addEventListener(typeOfEvent,
         async function() {
+                console.log("BLURBLURBLURBLURBLURBLURBULRBRLUBRLU");
                 const valueOfElement = element.value;
                 //if there's something in the input field that has been written, only then I want to execute the logic
                 // (you can't have done something wrong if you have done nothing)
                 if(valueOfElement.length!==0){
-                    console.log("string is not empty");
-                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&${"check_email_only"}=${encodeURIComponent("true")}`;
+                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}`;
                     try{
                         //the callback is a fetch with POST because we want to send to the server
                         //what is inside the element.
@@ -131,12 +134,54 @@ function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, a
                     }
                 }
                 else{
-                  //  document.getElementById("submit1").disabled = true;
+                    error.innerHTML = "STRINGA VUOTAAAAAAAAAA",
                     error.style.display = 'block';
                     error.style.color = listenerParagraphSetting.textColor;
                 }
     });
     return null;
+}
+
+function eventListenerRegisterButton(idSubmit,idEmail,idName,idLastName,idPassword,typeOfEvent,apiPHPfile){
+
+    const button=document.getElementById(idSubmit);
+    const email=document.getElementById(idEmail);
+    const name=document.getElementById(idName);
+    const lastName=document.getElementById(idLastName);
+    const password=document.getElementById(idPassword);
+
+    button.addEventListener(typeOfEvent,
+        async function(){
+            const valueOfEmail = email.value;
+            const valueOfName = name.value;
+            const valueOfLastName = lastName.value;
+            const valuePassword = password.value;
+            const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}
+                                &${"firstname"}=${encodeURIComponent(valueOfName)}
+                                &${"lastname"}=${encodeURIComponent(valueOfLastName)}
+                                &${"password"}=${encodeURIComponent(valueOfPassword)}`;
+            try{
+                const response = await fetch(apiPHPfile,{
+                    method: "POST",
+                    //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
+                    //questo metodo encodeURIComponent
+                    body: bodyMessage
+                })
+                const json = await response.json();
+
+                if (json.success) 
+                    console.log("successo registrazione");
+            }
+            catch(errorEx){
+                console.error("Errore:", errorEx);
+            }
+        }
+
+    )
 }
 
 

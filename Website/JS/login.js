@@ -63,15 +63,15 @@ const optionalAsyncCallback = preloadSendAppendedHTMLIsReady(
 //since the incorrect code listener is added only when the incorrect code html and logic is enabled in thje document. 
 //the idHTMLStructure It's hidden until forgot button is clicked.
 let buttonForgot = "forgot-password-1"; //from login.html
-let idsHTMLStructures="id-div1"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
+let idHTMLStructure1="section-forgot-1"; // from password_forgotten.html. see eventListenerAppendHTML comments in JS/Functions/listeners.js
 let additionalListeners = [preloadEventListenerFormInputWarning];
-eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
+eventListenerAppendHTML(buttonForgot,idHTMLStructure,null,null,null);
 buttonForgot = "forgot-password-2";
-idsHTMLStructures="id-div2";
-eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
+let idHTMLStructure2="section-forgot-2";
+eventListenerAppendHTML(buttonForgot,idHTMLStructure,null,null,idHTMLStructure1);
 buttonForgot = "forgot-password-3";
-idsHTMLStructures="id-div2";
-eventListenerAppendHTML(buttonForgot,idHTMLStructure,additionalListeners,optionalAsyncCallback);
+let idHTMLStructure3="section-forgot-3";
+eventListenerAppendHTML(buttonForgot,idHTMLStructure,null,null, idHTMLStructure2);
 
 //____________Listener For the "passwords don't match" attached to the new password confirmation_______________________
 inputPassword = "password"; //from register2.html
