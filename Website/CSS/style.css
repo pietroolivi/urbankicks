@@ -253,7 +253,8 @@ aside p {
 
 label[for="hamburger-icon"],
 label[for="profile-icon"],
-label[for="sort-icon"] {
+label[for="sort-icon"],
+label[for="filter-icon"] {
   display: none;
 }
 
@@ -810,8 +811,14 @@ s {
   text-decoration: line-through;
 }
 
+.filter-sidebar label {
+  display: none;
+}
 
-
+.filter-sidebar legend {
+  display: unset;
+  color: black;
+}
  
 /*
 – [CSS] Vogliamo che il testo “a” all’interno di un bottone si illumini anche se sono sopra il bottone ma non sopra il testo con il cursore (e dunque che l’utente venga re-indirizzato quando questa parte viene cliccata), per questo motivo devo allargare l’area di “a” a tutto il “listItem” (e non gestire gli spazi con il padding internamente al “listItem”, altrimenti l’area di a rimarrebbe la stessa). Tuttavia per far ciò dovremmo cambiare la natura in-line di “a” attraverso “display: in- line block” poiché altrimenti occuperebbe solamente la larghezza del contenuto, ed impostare “height” e “width” a 100%. Anche se ci sarà del padding per centrare il testo il link si attiverà anche ai bordi.

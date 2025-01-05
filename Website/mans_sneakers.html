@@ -71,21 +71,83 @@
         <main>
             <h2>Man's Sneakers</h2>
             <div class="filters-and-sorters">
-                <!-- 
-                <label class="filter-menu"><input type="checkbox"></label>
+                <!-- The filter-related pop-up menu has the basic structure similar to that of the hamburger, profile, and sorter: a checkbox wrapped by a <label> which, when selected, pops up the sister <aside> element containing the actual menu. In this case, however, the menu will be more complicated since it contains more selections as opposed to a single input. -->
+                <label for="filter-icon">Open/close the menu with the available product filter criteria.</label>
+                <label class="filter-menu"><input type="checkbox" id="filter-icon"></label>
                 <aside class="filter-sidebar">
-                    <fieldset class="filter-switch">
-                        <legend>Please select the category of articles to be displayed:</legend>
-                        <input type="radio" id="switch3-radio1" name="radio" checked="checked"/><label for="switch3-radio1">PRICE LOW TO HIGH</label><input type="radio" id="switch3-radio2" name="radio"/><label for="switch3-radio2">PRICE HIGH TO LOW</label><input type="radio" id="switch3-radio3" name="radio"/><label for="switch3-radio3">ALPHABETICAL</label>
-                    </fieldset>
-                        <li><a href="#">REVIEWS LOW TO HIGH</a></li>
-                        <li><a href="#">REVIEWS HIGH TO LOW</a></li>
+                    <form>
+                        <fieldset>
+                            <legend>DESIGNERS</legend>
+                            <label for="designers">Choose one or more brands whose products you are interested to view:DESIGNERS</label>
+                            <select name="designers" id="designers" multiple>
+                                <option value="adidas">ADIDAS</option>
+                                <option value="new-balance">NEW BALANCE</option>
+                                <option value="fila">FILA</option>
+                                <option value="sergio-tacchini">SERGIO TACCHINI</option>
+                                <option value="crocs">CROCS</option>
+                                <option value="converse">CONVERSE</option>
+                                <option value="asics">ASICS</option>
+                                <option value="hoka">HOKA</option>
+                                <option value="lacoste">LACOSTE</option>
+                                <option value="on">ON</option>
+                                <option value="puma">PUMA</option>
+                                <option value="reebok">REEBOK</option>
+                                <option value="salomon">SALOMON</option>
+                                <option value="ugg">UGG</option>
+                                <option value="saucony">SAUCONY</option>
+                                <option value="vans">VANS</option>
+                                <option value="havaianas">HAVAIANAS</option>
+                                <option value="kappa">KAPPA</option>
+                                <option value="under-armour">UNDER ARMOUR</option>
+                                <option value="diadora">DIADORA</option>
+                            </select>
+                        </fieldset>
+                        <fieldset>
+                            <legend>SIZE</legend>
+                            <label for="size">Select sizes that will have products that are not available in that measure removed from view:</label>
+                            <select name="size" id="size" multiple>
+                                <option value="35">35</option>
+                                <option value="36">36</option>
+                                <option value="37">37</option>
+                                <option value="38">38</option>
+                                <option value="39">39</option>
+                                <option value="40">40</option>
+                                <option value="41">41</option>
+                                <option value="42">42</option>
+                                <option value="43">43</option>
+                                <option value="44">44</option>
+                                <option value="45">45</option>
+                                <option value="46">46</option>
+                                <option value="47">47</option>
+                            </select>
+                        </fieldset>
+                        <fieldset>
+                            <legend>PRICE</legend> 
+                            <label for="range-min">Select the minimum possible price of the products that will be displayed:</label>
+                            <input type="range" id="range-min" min="0" step="10" />
+                            <label for="range-max">Select the maximum possible price of the products that will be displayed:</label>
+                            <input type="range" id="range-max" min="0" step="10" />
+                        </fieldset>
+                        <fieldset>  
+                            <legend>COLOR</legend>                                                          
+                            <label for="color">Select the color of the products that will be shown:</label>
+                            <select name="color" id="color" multiple>
+                                <option value="blue">Blue</option>
+                                <option value="purple">Purple</option>
+                                <option value="red">Red</option>
+                                <option value="green">Green</option>
+                                <option value="white">White</option>
+                                <option value="yellow">Yellow</option>
+                            </select>
+                        </fieldset>  
+                    </form>
                 </aside>
-                -->
+                <!-- We have a label containing the input tag that will allow us to (1) expand the clickable area, since the <label> tag, when clicked, triggers the input it contains, (2) modify its style being that we want an icon and not the default design of the checkbox, (3) understand when to show or not the pop-up menu linked to the icon, since <label> tells us if it contains checked <input>s. The second label was instead placed for accessibility reasons. -->
                 <fieldset class="category-switch">
                     <legend>Please select the category of articles to be displayed:</legend>
                     <input type="radio" id="popular" name="category" value="popular" checked="checked"/><label for="popular">Popular</label><input type="radio" id="discounted" name="category" value="discounted"/><label for="discounted">Discounted</label><input type="radio" id="novelties" name="category" value="novelties"/><label for="novelties">Novelties</label>
                 </fieldset>
+                <!-- We have a label containing the input tag that will allow us to (1) expand the clickable area, since the <label> tag, when clicked, triggers the input it contains, (2) modify its style being that we want an icon and not the default design of the checkbox, (3) understand when to show or not the pop-up menu linked to the icon, since <label> tells us if it contains checked <input>s. The second label was instead placed for accessibility reasons. -->
                 <label for="sort-icon">Open/close menu with available product sorting criteria.</label>
                 <label class="sort-menu"><input id="sort-icon" type="checkbox"></label>
                 <aside class="sort-sidebar">
@@ -104,7 +166,76 @@
                   <li><span aria-current="page">Man's Sneakers</span></li>
                 </ol>
             </nav>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo libero vel lectus accumsan auctor sit amet sed ex. Vestibulum tincidunt id magna quis venenatis. Donec condimentum laoreet fermentum. Curabitur semper metus dolor, ac venenatis orci mattis vel. Pellentesque velit tellus, eleifend et lobortis at, ullamcorper nec ligula. Nam ultricies pretium tellus non lobortis. Praesent euismod a mi vitae tincidunt. Fusce ac eleifend urna. Nullam suscipit nisl ac risus maximus tincidunt. Aliquam non lorem quis orci rhoncus aliquet quis vel nibh. Vestibulum lacinia tincidunt risus, quis congue metus laoreet lacinia. Cras porta vestibulum erat, nec euismod orci pretium eu. Proin nec justo id velit dignissim mollis tempor et magna. Vestibulum tincidunt tempor ligula id elementum. Donec luctus lorem neque, in condimentum ligula finibus et. Vivamus sed mi quam. Nunc laoreet leo id varius consectetur. Quisque facilisis porta eros, quis placerat sapien tincidunt id. Quisque nec imperdiet quam. Donec ornare pharetra arcu quis sollicitudin. In placerat molestie augue, in pretium ex ultricies at. Donec malesuada semper mauris, eu mattis nibh elementum ut. Donec malesuada consectetur rutrum. Vivamus pretium interdum condimentum. Donec rhoncus metus non bibendum mollis. Cras ullamcorper lectus at augue porttitor, non bibendum est aliquam. Cras imperdiet eget odio eu finibus. Nulla rhoncus, diam in venenatis rhoncus, lacus lacus pellentesque ligula, quis mattis odio eros a enim. Phasellus egestas vitae erat sed maximus.</p>
+            <!-- 
+            We implement the list of products as a <ul> of <article> which, from the documentation, we read is a ‘self-contained composition in a document, 
+            page, application, or site, which is intended to be independently distributable or reusable (e.g., in syndication). Examples include: a forum post, 
+            a product card, or any other independent item of content.’ so the products we are trying to model are even mentioned. Within each <article> we 
+            will have a clickable area delimited by the <a> tag that will link to the specific page of that article, and include the image, product name 
+            and price. Why didn't we put <article> inside <a>? Because we also have the heart-shaped wishlist icon, which when clicked will have its 
+            own behaviour and we don't want to be redirected to the article page, so we want it to be outside <a> but still inside <article> for semantics.
+            -->
+            <ul>
+                <li>
+                    <article id="21032">
+                        <a href="#">
+                            <h3>ADIDAS SPEZIAL</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test1.webp" alt=""></div>
+                            <p>€80.00 <s>€109.99</s></p>
+                        </a>
+                        <span><img id="heart-icon21032" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="49022">
+                        <a href="#">
+                            <h3>CONVERSE CHUCK 70 HIGH</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test2.webp" alt=""></div>
+                            <p>€74.99 <s>€94.99</s></p>
+                        </a>
+                        <span><img id="heart-icon49022" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="13892">
+                        <a href="#">
+                            <h3>NEW BALANCE 740</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test3.webp" alt=""></div>
+                            <p>119.99</p>
+                        </a>
+                        <span><img id="heart-icon13892" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="02948">
+                        <a href="#">
+                            <h3>JORDAN AJ1 MID</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test4.webp" alt=""></div>
+                            <p>€80.00 <s>€109.99</s></p>
+                        </a>
+                        <span><img id="heart-icon02948" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="30928">
+                        <a href="#">
+                            <h3>JORDAN 1 RETRO HIGH OG</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test5.webp" alt=""></div>
+                            <p>€90.00 <s>€109.99</s></p>
+                        </a>
+                        <span><img id="heart-icon30928" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+                <li>
+                    <article id="98372">
+                        <a href="#">
+                            <h3>NIKE LUNAR ROAM</h3>
+                            <div><img src="CSS/Images/Illustrations/sneaker_test6.webp" alt=""></div>
+                            <p>€149.99</p>
+                        </a>
+                        <span><img id="heart-icon98372" onclick="myfunction(this.id)" src="CSS/Images/Icons/heart_filled.svg" alt="Click to remove from wish list."></span>
+                    </article>
+                </li>
+            </ul>
         </main>
         <footer>
             <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
@@ -133,5 +264,18 @@
                 </ul>
             </nav>
         </footer>
+        <!-- Below there is a function that changes the colour of the heart following a click. In reality, the code will have to be modified to add/remove an item from the wishlist in the database as a consequence of clicking on the icon. -->
+        <script>
+            function myfunction(id) {
+                const heartIconTag = document.getElementById(id);
+                if (heartIconTag.src.endsWith("heart_filled.svg")) {
+                    heartIconTag.src = "CSS/Images/Icons/heart_empty.svg";
+                    heartIconTag.alt = "Click to add to wish list";                    
+                } else {
+                    heartIconTag.src = "CSS/Images/Icons/heart_filled.svg";
+                    heartIconTag.alt = "Click to remove from wish list.";
+                }
+            }
+        </script>
     </body>
 </html>
