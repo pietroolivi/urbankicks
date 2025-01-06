@@ -17,7 +17,7 @@
                 <label for="password-login">Password</label>
                 <input type="password" id="password-login" name="password-login" autocomplete="current-password" required>
                 <span><img id="eye-icon" src="CSS/Images/Icons/eye_open.svg" alt="Makes the password visible."></span>
-                <a href="password_forgotten1.html" id="forgot-password-link">Forgot Password?</a>
+                <a href="recovery.php" id="forgot-password-link">Forgot Password?</a>
                 <script>
                     let eyeIcon = document.getElementById("eye-icon");
                     let password = document.getElementById("password-login");
@@ -37,96 +37,6 @@
             <li>
                 <button type="submit" id="login-submit" form="access-credentials">Login</button>
                 <p>Don't have an account? <a href="register.php">Register Here</a></p>
-            </li>
-        </ul>
-    </form>
-</section>
-
-<section id="section-forgot1">
-    <h2>We got this.</h2>
-    <p>Confirm the email address you used to register and you will receive a code to reset your password.</p>
-    <form id="pswd-recovery-mail" action="#" method="POST">
-        <ul>
-            <li>
-                <label for="email">Email Address</label>
-                <input type="email" id="email-forgot1" name="email" autocomplete="email" required>
-            </li>
-            <li>                    
-                <button type="button" onclick="window.history.back()">Back</button>
-            </li>
-            <li>
-                <p id="email-forgot-error"></p>
-                <button type="submit" id="submit-forgot1" form="pswd-recovery-mail">Next</button>
-            </li>
-        </ul>
-        <p id="register-link" >Don't have an account? <a href="register1.html">Register Here</a></p>
-    </form>
-</section>
-
-<section id="section-forgot2">
-    <h2>We got this.</h2>
-    <p>Enter the code we sent you in the email and proceed to choose a new password.</p>
-    <form id="pswd-recovery-otp" action="#" method="POST">
-        <ul>
-            <li>
-                <label for="email">Email Address</label>
-                <input type="email" id="email-forgot2" name="email" readonly>
-            </li>
-            <!--
-            For the markup of the OTP input field we could have done it in two ways: use a single <input> 
-            tag containing the 6 digits of which the code is composed, which although semantically more 
-            correct would have been very complicated to implement, since on the CSS side we would have had 
-            to simulate the separation into 6 fields, each with its own background & outline made via linear-
-            gradient, but also handle the cursor ending outside the 6 boxes at the end of the code typing. 
-            The second way, chosen by us, is to use an <input> tag for each digit of code, with the addition 
-            of a JS script that detects when we enter or leave a field, which greatly simplifies the styling part.
-            -->
-            <li class="otp" id="otp">
-                <p>Code Received</p>
-                <label for="otp-digit1">First digit of the code received by email</label>
-                <input type="text" id="otp-digit1" class="otp-input" maxlength="1" required/>
-                <label for="otp-digit2">Second digit of the code received by email</label>
-                <input type="text" id="otp-digit2" class="otp-input" maxlength="1" required/>
-                <label for="otp-digit3">Third digit of the code received by email</label>
-                <input type="text" id="otp-digit3" class="otp-input" maxlength="1" required/>
-                <label for="otp-digit4">Fourth digit of the code received by email</label>
-                <input type="text" id="otp-digit4" class="otp-input" maxlength="1" required/>
-                <label for="otp-digit5">Fifth digit of the code received by email</label>
-                <input type="text" id="otp-digit5" class="otp-input" maxlength="1" required/>
-                <label for="otp-digit6">Sixth digit of the code received by email</label>
-                <input type="text" id="otp-digit6" class="otp-input" maxlength="1" required/>
-            </li>
-            <li>
-                <button type="button" onclick="window.history.back()">Back</button>
-            </li>
-            <li>
-                <p id="code-forgot-error"></p>
-                <button type="submit" id="submit-forgot2" form="pswd-recovery-otp">Verify</button>
-            </li>
-        </ul>
-        <p>Don't have an account? <a href="#">Register Here</a></p>
-    </form>
-</section>
-
-
-<section id="section-forgot3">
-    <h2>It's all set.</h2>
-    <p>Choose a different password from the previous one and step into greatness.</p>
-    <form id="pswd-recovery-new" action="#" method="POST">
-        <ul>
-            <li>
-                <label for="password">New Password</label>
-                <input type="password" id="password-forgot3" name="password" autocomplete="new-password" required>
-            </li>
-            <li>
-                <label for="confirm-password">Confirm New Password</label>
-                <input type="password" id="confirm-password-forgot3" name="confirm-password" autocomplete="new-password" required>
-            </li>
-            <li>
-                <button type="button" onclick="window.history.back()">Back</button>
-            </li>
-            <li>
-                <button type="submit" form="pswd-recovery-new">Login</button>
             </li>
         </ul>
     </form>

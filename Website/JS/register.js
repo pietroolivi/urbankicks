@@ -1,6 +1,5 @@
 class RegistrationHandler {
     constructor() {
-        this.currentStep = 1;
         this.passwordRules = {
             length: (pwd) => pwd.length >= 8 && pwd.length <= 20,
             alphanumeric: (pwd) => /[a-zA-Z]/.test(pwd) && /\d/.test(pwd),
