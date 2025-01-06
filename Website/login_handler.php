@@ -11,38 +11,28 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 $response = ["success" => false, "message" => ""];
 
 try {
-    // Validate email presence for all operations
-    if (!isset($_POST["email-login"]) || empty($_POST["email-login"])) {
-        throw new Exception("Email is required");
-    }
-
-    $email = filter_var($_POST["email-login"], FILTER_SANITIZE_EMAIL);
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        throw new Exception("Invalid email format");
-    }
-
-    // Handle different operations based on POST parameters
-    if (isset($_POST["check_email_only"]) && $_POST["check_email_only"] === "true") {
-        // Check if user exists
-        $exists = $dbh->isUserRegistered($email);
-        if (!$exists) {
+    if (isset($_POST["check_email_only"]) && $_POST["check_email_only"]==="true") {
+        $email = filter_var($_POST["email-login"], FILTER_SANITIZE_EMAIL);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Invalid email format");
+        }
+        // Check if user already exists
+        if (!$dbh->isUserRegistered($email)) {
             throw new Exception("User with this email is not registered");
         }
-        $response = ["success" => true, "exists" => true];
-    }
-    else if (isset($_POST["password-login"])) {
-        // Handle login
-        if (empty($_POST["password-login"])) {
-            throw new Exception("Password is required");
-        }
-        
-        $user = $dbh->loginUser($email, $_POST["password-login"]);
+
+        echo json_encode([
+            "success" => true, 
+            "message" => "Email is registered"
+        ]);
+        exit();
+    } else if (isset($_POST["password-login"])) {
+        $user = $dbh->loginUser($_POST['email-login'], $_POST["password-login"]);
         if ($user) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_email'] = $email;
+            $_SESSION['user_email'] = $_POST['email-login'];
             $response = ["success" => true, "message" => "Login successful"];
         } else {
-            throw new Exception("Invalid email or password");
+            throw new Exception("Invalid password");
         }
     }
     else if (isset($_POST["generate_reset_code"]) && $_POST["generate_reset_code"] === "true") {

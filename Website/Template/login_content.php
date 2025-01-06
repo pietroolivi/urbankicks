@@ -11,7 +11,7 @@
             <li>
                 <label for="email-login">Email Address</label>
                 <input type="email" id="email-login" name="email-login" autocomplete="email" required>
-                <p id="email-login-error">No account associated!</p>
+                <p id="email-login-error"></p>
             </li>
             <li>
                 <label for="password-login">Password</label>
@@ -36,7 +36,7 @@
             </li>
             <li>
                 <button type="submit" id="login-submit" form="access-credentials">Login</button>
-                <p>Don't have an account? <a href="register1.html">Register Here</a></p>
+                <p>Don't have an account? <a href="register.php">Register Here</a></p>
             </li>
         </ul>
     </form>
@@ -55,7 +55,7 @@
                 <button type="button" onclick="window.history.back()">Back</button>
             </li>
             <li>
-                <p id="email-forgot-error">No Account associated!</p>
+                <p id="email-forgot-error"></p>
                 <button type="submit" id="submit-forgot1" form="pswd-recovery-mail">Next</button>
             </li>
         </ul>
@@ -100,7 +100,7 @@
                 <button type="button" onclick="window.history.back()">Back</button>
             </li>
             <li>
-                <p id="code-forgot-error">Incorrect code!</p>
+                <p id="code-forgot-error"></p>
                 <button type="submit" id="submit-forgot2" form="pswd-recovery-otp">Verify</button>
             </li>
         </ul>
