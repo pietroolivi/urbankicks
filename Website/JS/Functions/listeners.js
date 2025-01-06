@@ -74,34 +74,33 @@ function eventListenerFormLoginWarning(idElement, idParagraph, typeOfEvent, apiP
                 //if there's something in the input field that has been written, only then I want to execute the logic
                 // (you can't have done something wrong if you have done nothing)
                 if(valueOfElement.length!==0){
-                    console.log("string is not empty");
-                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&${"check_email_only"}=${encodeURIComponent("true")}`;
+                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&check_email_only=true`;
                     try{
                         //the callback is a fetch with POST because we want to send to the server
                         //what is inside the element.
-                    const response = await fetch(apiPHPfile, { 
-                        method: "POST",
-                        //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
-                        //questo metodo encodeURIComponent
-                        body: bodyMessage
-                    });
-                    if (!response.ok) {
-                        throw new Error("Errore nella risposta del server.");
-                    }
-                    const json = await response.json();
+                        const response = await fetch(apiPHPfile, { 
+                            method: "POST",
+                            //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
+                            //questo metodo encodeURIComponent
+                            body: bodyMessage
+                        });
+                        if (!response.ok) {
+                            throw new Error("Errore nella risposta del server.");
+                        }
+                        const json = await response.json();
 
-                    if (json.exists) {
-                        error.textContent = listenerJsonDataExpected.jsonExpectedValue;
-                        error.style.color = "green";
-                    } else {
-                        error.style.display = 'block';
-                        error.textContent = listenerParagraphSetting.textContent;
-                        error.style.color = listenerParagraphSetting.textColor;
-                    }
+                        if (json.exists) {
+                            error.textContent = listenerJsonDataExpected.jsonExpectedValue;
+                            error.style.color = "green";
+                        } else {
+                            error.style.display = 'block';
+                            error.textContent = listenerParagraphSetting.textContent;
+                            error.style.color = listenerParagraphSetting.textColor;
+                        }
                     } catch (errorEx) {
                         console.error("Errore:", errorEx);
                     }
@@ -142,11 +141,11 @@ function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, a
                         const json = await response.json();
 
                         if (json.success) {
-                            document.getElementById("submit-1").disabled = false;
+                            document.getElementById("register-button").disabled = false;
                             //error.textContent = listenerJsonDataExpected.jsonExpectedValue;
                             //error.style.color = "green";
                         } else {
-                            document.getElementById("submit-1").disabled = true;
+                            document.getElementById("register-button").disabled = true;
                             error.style.display = 'block';
                             error.textContent = json.message;
                             error.style.color = listenerParagraphSetting.textColor;
@@ -205,32 +204,6 @@ function eventListenerRegisterButton(idSubmit,idEmail,idName,idLastName,idPasswo
 
     )
 }
-
-
-function eventListenerInputTextEmptyWarning(idElement, idParagraph, typeOfEvent,
-    listenerParagraphSetting, listenerJsonDataExpected){
-    //document.getElementById("submit1").disabled = true;
-    const element = document.getElementById(idElement);
-    const error = document.getElementById(idParagraph);
-    element.addEventListener(typeOfEvent,
-        async function() {
-                const valueOfElement = element.value;
-                //if there's something in the input field that has been written, only then I want to execute the logic
-                // (you can't have done something wrong if you have done nothing)
-                if(valueOfElement.length==0){
-                        document.getElementById("submit1").disabled = true;
-                        error.style.display = 'block';
-                        error.textContent = json.message;
-                        error.style.color = listenerParagraphSetting.textColor;
-                }
-                else{
-                        document.getElementById("submit1").disabled = false;
-                }
-    });
-    return null;
-}
-
-
 
 //the same logic of eventListenerFormInputWarning but the event and the value to be checked
 //are into two different HTML element (used for example to check a input field of a form, after the pressing of a button.)

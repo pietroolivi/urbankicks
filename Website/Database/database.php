@@ -415,17 +415,20 @@ class DatabaseHelper {
     }
 
     // User registration
-    public function registerUser($email, $firstName, $lastName, $password, $phone = null) {
-        // Hash password
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        
-        // Insert new user
-        $query = "INSERT INTO UTENTE (Email, Nome, Cognome, Password, Telefono, Data_Registrazione, Preferenze_Newsletter, Ruolo) 
-                VALUES (?, ?, ?, ?, ?, NOW(), 'N', 'customer')";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssss", $email, $firstName, $lastName, $hashedPassword, $phone);
-        
-        if ($stmt->execute()) {
+    public function registerUser($email, $firstName, $lastName, $password, $newsletter, $phone = null) {
+        try {
+            $this->db->begin_transaction();
+            
+            /// Hash password
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Insert new user
+            $userQuery = "INSERT INTO UTENTE (Email, Nome, Cognome, Password, Telefono, Data_Registrazione, Preferenze_Newsletter, Ruolo) 
+                        VALUES (?, ?, ?, ?, ?, NOW(), ?, 'Customer')";
+            $userStmt = $this->db->prepare($userQuery);
+            $userStmt->bind_param("sssssi", $email, $firstName, $lastName, $hashedPassword, $phone, $newsletter);
+            $userStmt->execute();
+
             // Create cart for new user
             $cartQuery = "INSERT INTO CARRELLO (Email, Data_Creazione, Data_Modifica, Valore_Totale) 
                         VALUES (?, NOW(), NOW(), 0)";
@@ -439,9 +442,12 @@ class DatabaseHelper {
             $wishlistStmt->bind_param("s", $email);
             $wishlistStmt->execute();
 
+            $this->db->commit();
             return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
         }
-        return false;
     }
 
     // User login
