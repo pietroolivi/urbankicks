@@ -9,7 +9,7 @@
                 <p id="email-forgot-error" class="error-message"></p>
             </li>
             <li>                    
-                <button type="button" onclick="window.history.back()">Back</button>
+                <button type="button" id="back-forgot1" onclick="window.history.back()">Back</button>
             </li>
             <li>
                 <button type="submit" id="submit-forgot1" form="pswd-recovery-mail">Next</button>
@@ -39,7 +39,7 @@
                 </div>
             </li>
             <li>
-                <button type="button" onclick="window.history.back()">Back</button>
+                <button type="button" id="back-forgot2">Back</button>
             </li>
             <li>
                 <p id="code-forgot-error" class="error-message"></p>
@@ -63,7 +63,7 @@
                 <input type="password" id="confirm-password-forgot3" name="confirm-password" autocomplete="new-password" required>
             </li>
             <li>
-                <button type="button" onclick="window.history.back()">Back</button>
+                <button type="button" id="back-forgot3">Back</button>
             </li>
             <li>
                 <p id="password-forgot-error" class="error-message"></p>
@@ -72,5 +72,3 @@
         </ul>
     </form>
 </section>
-
-<script src="JS/recovery.js"></script>

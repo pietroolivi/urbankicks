@@ -1,5 +1,12 @@
 <?php
 require_once("bootstrap.php");
+require_once("PHPMailer/src/PHPMailer.php");
+require_once("PHPMailer/src/SMTP.php");
+require_once("PHPMailer/src/Exception.php");
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -30,24 +37,33 @@ try {
         $_SESSION['recovery_email'] = $email;
         $_SESSION['recovery_expires'] = time() + 900; // 15 minutes
 
-        // Add headers for better email delivery
-        $headers = "From: root@localhost\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
-        $headers .= "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/plain; charset=utf-8\r\n";
-        
-        // Send email
-        $subject = "Password Recovery OTP - Urban Kicks";
-        $message = "Your OTP for password recovery is: $otp\n";
-        $message .= "This code will expire in 15 minutes.";
-        
-        if (!mail($email, $subject, $message, $headers)) {
-            throw new Exception("Failed to send OTP");
-        }
-        
+        // Create PHPMailer instance
+        $mail = new PHPMailer(true);
+
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'urbankicks77@gmail.com';
+        $mail->Password = 'xhztmkdkigqlumwo';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = 465;
+        $mail->CharSet = 'UTF-8';
+
+        // Recipients
+        $mail->setFrom('urbankicks77@gmail.com', 'UrbanKicks');
+        $mail->addAddress($email);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Password Recovery OTP - Urban Kicks';
+        $mail->Body = "Your OTP for password recovery is: <b>$otp</b><br>This code will expire in 15 minutes.";
+        $mail->AltBody = "Your OTP for password recovery is: $otp\nThis code will expire in 15 minutes.";
+
+        $mail->send();
         $response = ["success" => true, "message" => "OTP sent successfully"];
     } else if (isset($_POST["verify_otp"]) && $_POST["verify_otp"] === "true") {
-        $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+        $email = filter_var($_POST["email-recovery"], FILTER_SANITIZE_EMAIL);
         $otp = $_POST["otp"];
         
         if (!isset($_SESSION['recovery_otp']) || 
@@ -73,19 +89,8 @@ try {
             throw new Exception("Invalid recovery session");
         }
         
-        // Validate password rules
-        if (strlen($password) < 8 || strlen($password) > 20) {
-            throw new Exception("Password must be between 8 and 20 characters");
-        }
-        if (!preg_match('/[a-zA-Z]/', $password) || !preg_match('/\d/', $password)) {
-            throw new Exception("Password must contain both letters and numbers");
-        }
-        if (!preg_match('/[!"#$%&\'()*+,\-./:;<=>?]/', $password)) {
-            throw new Exception("Password must contain at least one special character");
-        }
-        
         // Update password in database
-        if (!$dbh->updatePassword($email, $password)) {
+        if (!$dbh->changePassword($email, $password)) {
             throw new Exception("Failed to update password");
         }
         

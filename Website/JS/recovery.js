@@ -7,6 +7,7 @@ class RecoveryHandler {
             alphanumeric: (pwd) => /[a-zA-Z]/.test(pwd) && /\d/.test(pwd),
             special: (pwd) => /[!"#$%&'()*+,-./:;<=>?]/.test(pwd),
         };
+        this.sectionOrder = ['section-forgot1', 'section-forgot2', 'section-forgot3'];
         this.initializeListeners();
     }
 
@@ -29,6 +30,12 @@ class RecoveryHandler {
         // Email validation on blur
         const emailInput = document.getElementById('email-forgot1');
         emailInput?.addEventListener('blur', () => this.validateEmail(emailInput.value));
+
+        // Add back button listeners
+        const backButtons = document.querySelectorAll('button[id^="back-forgot"]');
+        backButtons.forEach(button => {
+            button.addEventListener('click', () => this.handleBackNavigation());
+        });
     }
 
     async validateEmail(email) {
@@ -95,7 +102,9 @@ class RecoveryHandler {
                 const data = await response.json();
                 
                 if (data.success) {
-                    document.getElementById('email-forgot2').value = email;
+                    const emailInput2 = document.getElementById('email-forgot2');
+                    emailInput2.value = email;
+                    emailInput2.readOnly = true;
                     this.switchSection('section-forgot2');
                 } else {
                     this.showError('email-forgot-error', data.message);
@@ -130,10 +139,10 @@ class RecoveryHandler {
         const email = document.getElementById('email-forgot2').value;
 
         try {
-            const response = await fetch('recover_handler.php', {
+            const response = await fetch('recovery_handler.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `email=${encodeURIComponent(email)}&otp=${otp}&verify_otp=true`
+                body: `email-recovery=${encodeURIComponent(email)}&otp=${otp}&verify_otp=true`
             });
             const data = await response.json();
             
@@ -165,7 +174,7 @@ class RecoveryHandler {
         }
 
         try {
-            const response = await fetch('recover_handler.php', {
+            const response = await fetch('recovery_handler.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&update_password=true`
@@ -179,6 +188,13 @@ class RecoveryHandler {
             }
         } catch (error) {
             this.showError('password-forgot-error', 'Error updating password');
+        }
+    }
+
+    handleBackNavigation() {
+        const currentIndex = this.sectionOrder.indexOf(this.currentSection);
+        if (currentIndex > 0) {
+            this.switchSection(this.sectionOrder[currentIndex - 1]);
         }
     }
 

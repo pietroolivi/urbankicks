@@ -7,8 +7,7 @@ $templateParams["name"] = "recovery_content.php";
 $templateParams["js"] = [
     "JS/Objects/listenerObjectSetting.js",
     "JS/Functions/listeners.js",
-    "JS/recovery.js",
-    "otp.js"
+    "JS/recovery.js"
 ];
 
 require_once("Template/base.php");

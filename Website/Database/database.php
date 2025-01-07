@@ -470,26 +470,12 @@ class DatabaseHelper {
     }
 
     // Change password
-    public function changePassword($email, $currentPassword, $newPassword) {
-        // First verify current password
-        $query = "SELECT Password FROM UTENTE WHERE Email = ?";
+    public function changePassword($email, $password) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $query = "UPDATE UTENTE SET Password = ? WHERE Email = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows === 1) {
-            $user = $result->fetch_assoc();
-            if (password_verify($currentPassword, $user['Password'])) {
-                // Update to new password
-                $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-                $updateQuery = "UPDATE UTENTE SET Password = ? WHERE Email = ?";
-                $updateStmt = $this->db->prepare($updateQuery);
-                $updateStmt->bind_param("ss", $hashedNewPassword, $email);
-                return $updateStmt->execute();
-            }
-        }
-        return false;
+        $stmt->bind_param("ss", $hashedPassword, $email);
+        return $stmt->execute();
     }
 
     // Get user profile
