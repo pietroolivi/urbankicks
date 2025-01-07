@@ -796,7 +796,8 @@ main > .filters-and-sorters > .category-switch {
 
 #email-register-error,
 #email-forgot-error,
-#code-forgot-error {
+#code-forgot-error,
+#email-login-error {
   display: none;
 }
 
@@ -808,9 +809,9 @@ s {
   text-decoration: line-through;
 }
 
-#section-forgot-1,
-#section-forgot-2,
-#section-forgot-3 {
+#section-forgot1,
+#section-forgot2,
+#section-forgot3 {
   display: none;
 }
 
