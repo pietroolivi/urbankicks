@@ -31,9 +31,10 @@ try {
         $_SESSION['recovery_expires'] = time() + 900; // 15 minutes
 
         // Add headers for better email delivery
-        $headers = 'From: ' . ini_get('sendmail_from') . "\r\n" .
-                'Reply-To: ' . ini_get('sendmail_from') . "\r\n" .
-                'X-Mailer: PHP/' . phpversion();
+        $headers = "From: root@localhost\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: text/plain; charset=utf-8\r\n";
         
         // Send email
         $subject = "Password Recovery OTP - Urban Kicks";
