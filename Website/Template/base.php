@@ -26,7 +26,7 @@ require_once("bootstrap.php");
     <body>
         <header>
             <h1>URBANKICKS</h1>
-            <a class="cart-icon" href="#"><img src="CSS/Images/Icons/cart.svg" alt="My shopping cart."></a>
+            <a class="cart-icon" href="cart.php"><img src="CSS/Images/Icons/cart.svg" alt="My shopping cart."></a>
         </header>
         
         <label for="hamburger-icon">Open/close the pop-up sidebar.</label>
@@ -70,10 +70,16 @@ require_once("bootstrap.php");
         <aside class="profile-sidebar">
             <nav>
                 <ul>
-                    <li><a href="#">MY ORDERS</a></li>
-                    <li><a href="#">WISHLIST</a></li>
-                    <li><a href="#">NOTIFICATIONS</a></li>
-                    <li><a href="#">SETTINGS</a></li>
+                    <?php if(isset($_SESSION['user_email'])): ?>
+                        <li><a href="orders.php">MY ORDERS</a></li>
+                        <li><a href="wishlist.php">WISHLIST</a></li>
+                        <li><a href="notifications.php">NOTIFICATIONS</a></li>
+                        <li><a href="account.php">SETTINGS</a></li>
+                        <li><a href="logout.php">LOGOUT</a></li>
+                    <?php else: ?>
+                        <li><a href="login.php">LOGIN</a></li>
+                        <li><a href="register.php">REGISTER</a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </aside>
