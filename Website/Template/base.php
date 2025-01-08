@@ -47,7 +47,7 @@ require_once("bootstrap.php");
             </fieldset>
             <nav class="main-hamburger-nav">
                 <ul>
-                    <li><a href="#">VIEW ALL</a></li>
+                    <li><a href="home.php">VIEW ALL</a></li>
                     <li><a href="#">SNEAKERS</a></li>
                     <li><a href="#">SANDALS</a></li>
                     <li><a href="#">SLIDERS</a></li>
