@@ -5,6 +5,9 @@ $category = isset($_GET['category']) ? $_GET['category'] : 'popular';
 // Get sort parameter from URL, default to 'price-low-to-high'
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'price-low-to-high';
 
+// Get designers from URL parameters
+$brand = isset($_GET['brand']) ? $_GET['brand'] : "";
+
 // Get Genre and Type from URL parameters
 $genre = isset($_GET['genre']) ? $_GET['genre'] : "";
 $type = isset($_GET['type']) ? $_GET['type'] : "";
@@ -13,9 +16,11 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
 <h2>
     <?php 
     if ($genre || $type) {
-        echo trim($genre . ' ' . $type);
+        echo(trim(ucfirst($genre) . ' ' . ucfirst($type)));
+    } else if ($genre) {
+        echo(ucfirst($genre));
     } else {
-        echo "All Products";
+        echo("All Products");
     }
     ?>
 </h2>
@@ -24,9 +29,9 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     <!-- Breadcrumb Navigation -->
     <nav aria-label="Breadcrumb" class="breadcrumb">
         <ol>
-            <li>Home</li>
+            <li><a href="home.php">Home</a></li>
             <?php if ($genre): ?>
-                <li><a href="index.php?genre=<?php echo urlencode($genre); ?>"><?php echo ucfirst($genre); ?></a></li>
+                <li><a href="home.php?genre=<?php echo urlencode($genre); ?>"><?php echo ucfirst($genre); ?></a></li>
             <?php endif; ?>
             <?php if ($type): ?>
                 <li><span aria-current="page"><?php echo ucfirst($type); ?></span></li>

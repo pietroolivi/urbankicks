@@ -48,12 +48,24 @@ require_once("bootstrap.php");
             <nav class="main-hamburger-nav">
                 <ul>
                     <li><a href="home.php">VIEW ALL</a></li>
-                    <li><a href="#">SNEAKERS</a></li>
-                    <li><a href="#">SANDALS</a></li>
-                    <li><a href="#">SLIDERS</a></li>
-                    <li><a href="#">PROMO</a></li>
-                    <li><a href="#">LATEST</a></li>
-                    <li><a href="#">POPULAR</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&type=sneakers'">SNEAKERS</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&type=sandals'">SANDALS</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&type=sliders'">SLIDERS</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&category=discounted'">PROMO</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&category=novelties'">LATEST</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&category=popular'">POPULAR</a></li>
                 </ul>
             </nav>
             <nav class="secondary-hamburger-nav">

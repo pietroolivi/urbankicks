@@ -43,13 +43,13 @@ function updateBreadcrumb(genre, type) {
 
     // Add Home
     const homeItem = document.createElement('li');
-    homeItem.innerHTML = '<a href="index.php">Home</a>';
+    homeItem.innerHTML = '<a href="home.php">Home</a>';
     breadcrumb.appendChild(homeItem);
 
     // Add Genre if exists
     if (genre) {
         const genreItem = document.createElement('li');
-        genreItem.innerHTML = `<a href="index.php?genre=${encodeURIComponent(genre)}">${genre.charAt(0).toUpperCase() + genre.slice(1)}</a>`;
+        genreItem.innerHTML = `<a href="home.php?genre=${encodeURIComponent(genre)}">${genre.charAt(0).toUpperCase() + genre.slice(1)}</a>`;
         breadcrumb.appendChild(genreItem);
     }
 
