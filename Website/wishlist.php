@@ -2,7 +2,7 @@
 require_once("bootstrap.php");
 
 // Check if user is logged in
-if(!isset($_SESSION["email"])){
+if(!isset($_SESSION["user_email"])){
     header("Location: login.php");
     exit();
 }
@@ -11,9 +11,11 @@ if(!isset($_SESSION["email"])){
 $templateParams["wishlistItems"] = $dbh->getWishlistItems($_SESSION["email"]);
 
 // Set template parameters
-$templateParams["title"] = "My Wishlist";
+$templateParams["title"] = "Wishlist";
 $templateParams["name"] = "wishlist_content.php";
 $templateParams["js"] = [
+    "JS/Objects/listenerObjectSetting.js",
+    "JS/Functions/listeners.js",
     "js/wishlist.js"
 ];
 

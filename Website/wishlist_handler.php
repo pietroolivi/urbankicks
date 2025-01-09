@@ -12,7 +12,7 @@ $response = ["success" => false, "message" => ""];
 switch ($_POST["action"]) {
     case "add":
         // Verify product exists and has stock before adding
-        if ($dbh->addToWishlist($_SESSION["email"], $_POST["productId"], $_POST["color"], $_POST["size"])) {
+        if ($dbh->addToWishlist($_SESSION["email"], $_POST["productId"])) {
             $response = [
                 "success" => true,
                 "message" => "Item added to wishlist"
@@ -26,7 +26,7 @@ switch ($_POST["action"]) {
         break;
 
     case "remove":
-        if ($dbh->removeFromWishlist($_SESSION["email"], $_POST["productId"], $_POST["color"], $_POST["size"])) {
+        if ($dbh->removeFromWishlist($_SESSION["email"], $_POST["productId"])) {
             $response = [
                 "success" => true,
                 "message" => "Item removed from wishlist"

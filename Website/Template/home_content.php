@@ -109,6 +109,9 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         </a>
         <h3 class="product-name"></h3>
         <p class="product-price"></p>
-        <button class="add-to-wishlist">Add to Wishlist</button>
+        <label class="wishlist-container">
+            <input type="checkbox" class="wishlist-checkbox">
+            <span class="wishlist-text">Add to Wishlist</span>
+        </label>
     </div>
 </template>
