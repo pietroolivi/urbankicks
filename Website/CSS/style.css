@@ -906,6 +906,12 @@ textarea {
   border: 2px solid black;
 }
 
+.product-details img {
+  width: 60%;
+}
+
+
+
 @media (max-width: 600px) {
   .main {
     width: 100%;
