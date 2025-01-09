@@ -16,9 +16,10 @@ class DatabaseHelper {
 
     // Returns filtered products
     public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
-        $query = "SELECT DISTINCT p.* FROM PRODOTTO p 
-                  LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto 
-                  WHERE 1=1";
+        $query = "SELECT p.*, v.Colore, v.Quantita, v.Taglia 
+            FROM PRODOTTO p 
+            LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
+            WHERE 1=1";
         $params = [];
         $types = "";
         
