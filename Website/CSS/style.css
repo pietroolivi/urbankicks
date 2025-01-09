@@ -166,7 +166,7 @@ main {
   background-color: #efefef;
 }
 
-main > div > img {
+main > .explore-section > img {
   width: 100%;
   height: auto;
 }
@@ -910,6 +910,9 @@ textarea {
   width: 60%;
 }
 
+.product-details .item-info label {
+  display: none;
+}
 
 
 @media (max-width: 600px) {
