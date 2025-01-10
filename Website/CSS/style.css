@@ -914,6 +914,20 @@ textarea {
   display: none;
 }
 
+#shipping-form legend {
+  display: unset;
+  text-align: center;
+}
+
+.product-overview img {
+  width: 200px;
+}
+
+.promo-code label {
+  display: none;
+}
+
+
 
 @media (max-width: 600px) {
   .main {
