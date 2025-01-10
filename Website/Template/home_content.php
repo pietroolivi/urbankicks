@@ -44,11 +44,11 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     <!-- Category Selection -->
     <fieldset class="category-switch">
         <legend>Please select the category of articles to be displayed:</legend>
-        <input type="radio" id="popular" name="category" value="popular" <?php echo $category === 'popular' ? 'checked' : ''; ?>>
+        <input type="radio" id="popular" name="category" value="popular" checked>
         <label for="popular">Popular</label>
-        <input type="radio" id="discounted" name="category" value="discounted" <?php echo $category === 'discounted' ? 'checked' : ''; ?>>
+        <input type="radio" id="discounted" name="category" value="discounted">
         <label for="discounted">Discounted</label>
-        <input type="radio" id="novelties" name="category" value="novelties" <?php echo $category === 'novelties' ? 'checked' : ''; ?>>
+        <input type="radio" id="novelties" name="category" value="novelties">
         <label for="novelties">Novelties</label>
     </fieldset>
 
@@ -97,3 +97,21 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         </fieldset>
     </aside>
 </div>
+
+<div id="products-container" class="products-grid" 
+     data-products='<?php echo htmlspecialchars(json_encode($templateParams["products"]), ENT_QUOTES, 'UTF-8'); ?>'>
+</div>
+
+<template id="product-template">
+    <div class="product-card">
+        <a href="" class="product-link">
+            <img src="" alt="">
+        </a>
+        <h3 class="product-name"></h3>
+        <p class="product-price"></p>
+        <label class="wishlist-container">
+            <input type="checkbox" class="wishlist-checkbox">
+            <span class="wishlist-text">Add to Wishlist</span>
+        </label>
+    </div>
+</template>

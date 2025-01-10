@@ -16,9 +16,10 @@ class DatabaseHelper {
 
     // Returns filtered products
     public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
-        $query = "SELECT DISTINCT p.* FROM PRODOTTO p 
-                  LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto 
-                  WHERE 1=1";
+        $query = "SELECT p.*, v.Colore, v.Quantita, v.Taglia 
+            FROM PRODOTTO p 
+            LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
+            WHERE 1=1";
         $params = [];
         $types = "";
         
@@ -85,6 +86,103 @@ class DatabaseHelper {
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ds", $newPrice, $productId);
         return $stmt->execute();
+    }
+
+    public function getProductData($productId, $userEmail = null) {
+        $query = "SELECT 
+            p.*,
+            v.Colore,
+            v.Taglia,
+            v.Quantita,
+            r.Punteggio,
+            r.Descrizione as RecensioneDescrizione,
+            r.Data_Recensione,
+            r.Email as ReviewerEmail,
+            CASE WHEN w.Email IS NOT NULL THEN 1 ELSE 0 END as InWishlist,
+            CASE WHEN cart.ID_Prodotto IS NOT NULL THEN 1 ELSE 0 END as InCart,
+            cart.Quantita as CartQuantity
+        FROM PRODOTTO p
+        LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
+        LEFT JOIN RECENSIONE r ON p.ID_Prodotto = r.ID_Prodotto
+        LEFT JOIN (
+            SELECT a.ID_Prodotto, w.Email 
+            FROM WISHLIST w 
+            JOIN aggiungere a ON w.Email = a.Email 
+            WHERE w.Email = ?
+        ) w ON p.ID_Prodotto = w.ID_Prodotto
+        LEFT JOIN (
+            SELECT comp.ID_Prodotto, comp.Quantita 
+            FROM CARRELLO c 
+            JOIN comprendere comp ON c.ID_Carrello = comp.ID_Carrello 
+            WHERE c.Email = ?
+        ) cart ON p.ID_Prodotto = cart.ID_Prodotto
+        WHERE p.ID_Prodotto = ?";
+    
+        try {
+            $stmt = $this->db->prepare($query);
+            if($stmt === false) {
+                throw new Exception("Error preparing statement: " . $this->db->error);
+            }
+    
+            $stmt->bind_param("ssi", $userEmail, $userEmail, $productId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+    
+            $productData = [
+                'product' => null,
+                'variants' => [],
+                'reviews' => [],
+                'inWishlist' => false,
+                'inCart' => false,
+                'cartQuantity' => 0
+            ];
+    
+            while($row = $result->fetch_assoc()) {
+                if(!$productData['product']) {
+                    $productData['product'] = [
+                        'ID_Prodotto' => $row['ID_Prodotto'],
+                        'Nome' => $row['Nome'],
+                        'Descrizione' => $row['Descrizione'],
+                        'Marca' => $row['Marca'],
+                        'Tipo' => $row['Tipo'],
+                        'Genere' => $row['Genere'],
+                        'Prezzo' => $row['Prezzo'],
+                        'Data_Aggiunta' => $row['Data_Aggiunta'],
+                        'Sta_Tipo' => $row['Sta_Tipo']
+                    ];
+                }
+    
+                if($row['Colore'] && $row['Taglia']) {
+                    $variantKey = $row['Colore'] . '_' . $row['Taglia'];
+                    if(!isset($productData['variants'][$variantKey])) {
+                        $productData['variants'][$variantKey] = [
+                            'Colore' => $row['Colore'],
+                            'Taglia' => $row['Taglia'],
+                            'Quantita' => $row['Quantita']
+                        ];
+                    }
+                }
+    
+                if($row['Punteggio']) {
+                    $productData['reviews'][] = [
+                        'Punteggio' => $row['Punteggio'],
+                        'Descrizione' => $row['RecensioneDescrizione'],
+                        'Data_Recensione' => $row['Data_Recensione'],
+                        'Email' => $row['ReviewerEmail']
+                    ];
+                }
+    
+                $productData['inWishlist'] = (bool)$row['InWishlist'];
+                $productData['inCart'] = (bool)$row['InCart'];
+                $productData['cartQuantity'] = $row['CartQuantity'] ?? 0;
+            }
+    
+            return $productData;
+    
+        } catch(Exception $e) {
+            error_log("Error in getProductData: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /*******************
@@ -192,28 +290,27 @@ class DatabaseHelper {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Create a stock notification when a product is back in stocl
-    public function createStockNotification($productId, $size, $color) {
-        $query = "SELECT p.Nome, v.Taglia, v.Colore 
+    // Create a stock notification when a product is back in stock
+    public function createStockNotification($productId) {
+        $query = "SELECT p.Nome
                  FROM PRODOTTO p 
-                 JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto 
-                 WHERE p.ID_Prodotto = ? AND v.Taglia = ? AND v.Colore = ?";
+                 WHERE p.ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ids", $productId, $size, $color);
+        $stmt->bind_param("i", $productId);
         $stmt->execute();
         $product = $stmt->get_result()->fetch_assoc();
         
         // Get users who have this item in their wishlist
-        $wishlistQuery = "SELECT DISTINCT w.Email 
-                         FROM aggiungere w 
-                         WHERE w.ID_Prodotto = ? AND w.Taglia = ? AND w.Colore = ?";
+        $wishlistQuery = "SELECT DISTINCT a.Email 
+                         FROM aggiungere a 
+                         WHERE a.ID_Prodotto = ?";
         $wishlistStmt = $this->db->prepare($wishlistQuery);
-        $wishlistStmt->bind_param("ids", $productId, $size, $color);
+        $wishlistStmt->bind_param("i", $productId);
         $wishlistStmt->execute();
         $users = $wishlistStmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         foreach ($users as $user) {
-            $message = "Great news! The size {$size} of the {$product['Nome']} is back in stock";
+            $message = "Great news! The product {$product['Nome']} is back in stock";
             $this->createNotification(
                 uniqid('stock_'),
                 'product_stock',
@@ -260,9 +357,9 @@ class DatabaseHelper {
         $product = $stmt->get_result()->fetch_assoc();
 
         // Get users who have this item in their wishlist
-        $wishlistQuery = "SELECT DISTINCT w.Email 
-                         FROM aggiungere w 
-                         WHERE w.ID_Prodotto = ?";
+        $wishlistQuery = "SELECT DISTINCT a.Email 
+                         FROM aggiungere a 
+                         WHERE a.ID_Prodotto = ?";
         $wishlistStmt = $this->db->prepare($wishlistQuery);
         $wishlistStmt->bind_param("i", $productId);
         $wishlistStmt->execute();
@@ -430,14 +527,14 @@ class DatabaseHelper {
             $userStmt->execute();
 
             // Create cart for new user
-            $cartQuery = "INSERT INTO CARRELLO (Email, Data_Creazione, Data_Modifica, Valore_Totale) 
-                        VALUES (?, NOW(), NOW(), 0)";
+            $cartQuery = "INSERT INTO CARRELLO (Email, Data_Modifica, Valore_Totale) 
+                        VALUES (?, NOW(), 0)";
             $cartStmt = $this->db->prepare($cartQuery);
             $cartStmt->bind_param("s", $email);
             $cartStmt->execute();
 
             // Create wishlist for new user
-            $wishlistQuery = "INSERT INTO WISHLIST (Email, Data_Creazione) VALUES (?, NOW())";
+            $wishlistQuery = "INSERT INTO WISHLIST (Email, Data_Modifica) VALUES (?, NOW())";
             $wishlistStmt = $this->db->prepare($wishlistQuery);
             $wishlistStmt->bind_param("s", $email);
             $wishlistStmt->execute();
@@ -496,12 +593,8 @@ class DatabaseHelper {
 
     // Get user's wishlist items
     public function getWishlistItems($email) {
-        $query = "SELECT p.*, v.Colore, v.Taglia, v.Quantita 
-                  FROM PRODOTTO p
+        $query = "SELECT p.* FROM PRODOTTO p
                   JOIN aggiungere a ON p.ID_Prodotto = a.ID_Prodotto
-                  JOIN VARIANTE v ON (a.ID_Prodotto = v.ID_Prodotto 
-                                    AND a.Colore = v.Colore 
-                                    AND a.Taglia = v.Taglia)
                   WHERE a.Email = ?
                   ORDER BY p.Nome";
         $stmt = $this->db->prepare($query);
@@ -512,33 +605,31 @@ class DatabaseHelper {
     }
 
     // Add item to wishlist
-    public function addToWishlist($email, $productId, $color, $size) {
+    public function addToWishlist($email, $productId) {
         // Check if item already exists in wishlist
         $checkQuery = "SELECT 1 FROM aggiungere 
-                      WHERE Email = ? AND ID_Prodotto = ? 
-                      AND Colore = ? AND Taglia = ?";
+                      WHERE Email = ? AND ID_Prodotto = ?";
         $checkStmt = $this->db->prepare($checkQuery);
-        $checkStmt->bind_param("sssd", $email, $productId, $color, $size);
+        $checkStmt->bind_param("ss", $email, $productId);
         $checkStmt->execute();
         if ($checkStmt->get_result()->num_rows > 0) {
             return false; // Item already in wishlist
         }
 
         // Add item to wishlist
-        $query = "INSERT INTO aggiungere (Email, ID_Prodotto, Colore, Taglia) 
-                  VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO aggiungere (Email, ID_Prodotto) 
+                  VALUES (?, ?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        $stmt->bind_param("ss", $email, $productId);
         return $stmt->execute();
     }
 
     // Remove item from wishlist
-    public function removeFromWishlist($email, $productId, $color, $size) {
+    public function removeFromWishlist($email, $productId) {
         $query = "DELETE FROM aggiungere 
-                  WHERE Email = ? AND ID_Prodotto = ? 
-                  AND Colore = ? AND Taglia = ?";
+                  WHERE Email = ? AND ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        $stmt->bind_param("ss", $email, $productId);
         return $stmt->execute();
     }
 
@@ -561,43 +652,13 @@ class DatabaseHelper {
     }
 
     // Check if item is in wishlist
-    public function isInWishlist($email, $productId, $color, $size) {
+    public function isInWishlist($email, $productId) {
         $query = "SELECT 1 FROM aggiungere 
-                  WHERE Email = ? AND ID_Prodotto = ? 
-                  AND Colore = ? AND Taglia = ?";
+                  WHERE Email = ? AND ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        $stmt->bind_param("ss", $email, $productId);
         $stmt->execute();
         return $stmt->get_result()->num_rows > 0;
-    }
-
-    // Move item from wishlist to cart
-    public function moveToCart($email, $productId, $color, $size, $quantity = 1) {
-        $this->db->begin_transaction();
-        try {
-            // Get user's cart ID
-            $cartQuery = "SELECT ID_Carrello FROM CARRELLO WHERE Email = ?";
-            $cartStmt = $this->db->prepare($cartQuery);
-            $cartStmt->bind_param("s", $email);
-            $cartStmt->execute();
-            $cartId = $cartStmt->get_result()->fetch_assoc()['ID_Carrello'];
-
-            // Add to cart
-            $addToCartQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
-                              VALUES (?, ?, ?, ?, ?)";
-            $addToCartStmt = $this->db->prepare($addToCartQuery);
-            $addToCartStmt->bind_param("issdi", $cartId, $productId, $color, $size, $quantity);
-            $addToCartStmt->execute();
-
-            // Remove from wishlist
-            $this->removeFromWishlist($email, $productId, $color, $size);
-
-            $this->db->commit();
-            return true;
-        } catch (Exception $e) {
-            $this->db->rollback();
-            return false;
-        }
     }
 
     /*******************
