@@ -58,12 +58,12 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     <aside class="filter-sidebar">
         <h3>DESIGNERS</h3>
         <?php
-        $brands = ["ADIDAS", "NIKE", "NEW BALANCE", "CONVERSE"];
+        $brands = ["Adidas", "Nike", "New Balance", "Converse"];
         foreach($brands as $brand): ?>
             <div>
-                <input type="checkbox" id="<?php echo strtolower($brand); ?>" name="designers[]" value="<?php echo $brand; ?>" 
+                <input type="checkbox" id="<?php echo $brand; ?>" name="designers[]" value="<?php echo $brand; ?>" 
                     <?php echo isset($designers) && in_array($brand, $designers) ? 'checked' : ''; ?>>
-                <label for="<?php echo strtolower($brand); ?>"><?php echo $brand; ?></label>
+                <label for="<?php echo strtolower($brand); ?>"><?php echo strtoupper($brand); ?></label>
             </div>
         <?php endforeach; ?>
 

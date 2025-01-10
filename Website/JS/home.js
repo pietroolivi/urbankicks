@@ -70,6 +70,7 @@ class ProductManager {
         // Designer filters
         document.querySelectorAll('input[name="designers[]"]').forEach(input => {
             input.checked = this.filters.brand.includes(input.value);
+          //  console.log(input.value+" check nome del brand nel filtro");
             input.addEventListener('change', () => this.handleFilterChange('designers'));
         });
 
@@ -159,7 +160,8 @@ class ProductManager {
     renderProducts() {
         const container = document.getElementById('products-container');
         container.innerHTML = '';
-        
+        //debug to see if there's a filed name mismatch
+        console.log(this.allProducts);
         if (this.filteredProducts.length === 0) {
             container.innerHTML = '<p>No products found matching your criteria.</p>';
             return;
