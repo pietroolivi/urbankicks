@@ -6,7 +6,7 @@ INSERT INTO STATO_PRODOTTO (Tipo, Descrizione) VALUES
 
 -- Inserimento dati nella tabella PRODOTTO
 INSERT INTO PRODOTTO (Nome, Descrizione, Marca, Tipo, Genere, Prezzo, Data_Aggiunta, Sta_Tipo) VALUES
-    ('Ultraboost 21', 'Scarpa da corsa ad alte prestazioni', 'Adidas', 'Sneakers', 'Man', 180.00, '2025-01-08', 'Disponibile'),
+    ('Ultraboost', 'Scarpa da corsa ad alte prestazioni', 'Adidas', 'Sneakers', 'Man', 180.00, '2025-01-08', 'Disponibile'),
     ('Cloudfoam Pure', 'Scarpa casual comoda', 'Adidas', 'Sneakers', 'Woman', 70.00, '2025-01-08', 'Disponibile'),
     ('Yeezy Slides', 'Ciabatte comode e di tendenza', 'Adidas', 'Sliders', 'Kids', 60.00, '2025-01-08', 'Disponibile'),
     ('Arishi V3', 'Scarpa da corsa leggera', 'New Balance', 'Sneakers', 'Man', 100.00, '2025-01-08', 'Disponibile'),

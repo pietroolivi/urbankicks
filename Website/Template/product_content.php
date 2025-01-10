@@ -22,6 +22,27 @@ $reviews = $templateParams["productData"]["reviews"];
 
 <button id="share-page" onclick="linkToClipboard()">SHARE</button>
 
+<div class="product-image">    
+    <div class="track">
+        <ul>
+            <?php for($i = 1; $i <= 4; $i++): ?>
+                <li id="slide<?php echo $i; ?>">
+                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . $i); ?>.webp" 
+                            alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>">
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </div>
+    <div class="slides">
+        <?php for($i = 1; $i <= 4; $i++): ?>
+            <a href="#slide<?php echo $i; ?>">
+                <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . $i); ?>.webp" 
+                        alt="<?php echo htmlspecialchars($product['Nome']); ?> - Thumbnail <?php echo $i; ?>">
+            </a>
+        <?php endfor; ?>
+    </div>
+</div>
+
 <section id="description">
     <h3>Description</h3>
     <p><?php echo htmlspecialchars($product['Descrizione']); ?></p>

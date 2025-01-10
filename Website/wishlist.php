@@ -8,7 +8,7 @@ if(!isset($_SESSION["user_email"])){
 }
 
 // Get wishlist items
-$templateParams["wishlistItems"] = $dbh->getWishlistItems($_SESSION["email"]);
+$templateParams["wishlistItems"] = $dbh->getWishlistItems($_SESSION["user_email"]);
 
 // Set template parameters
 $templateParams["title"] = "Wishlist";
