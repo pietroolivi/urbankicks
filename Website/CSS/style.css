@@ -927,6 +927,10 @@ textarea {
   display: none;
 }
 
+#payment-form legend {
+  display: none;
+}
+
 
 
 @media (max-width: 600px) {
