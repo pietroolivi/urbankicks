@@ -272,11 +272,11 @@ class DatabaseHelper {
      *******************/
 
     // Create notification
-    public function createNotification($notificationId, $type, $message, $email) {
-        $query = "INSERT INTO NOTIFICA (ID_Notifica, TipoNotifica, Messaggio, Timestamp_Invio, Tipo, Email) 
-                  VALUES (?, ?, ?, NOW(), ?, ?)";
+    public function createNotification($type, $message, $email) {
+        $query = "INSERT INTO NOTIFICA (TipoNotifica, Messaggio, Timestamp_Invio, Tipo, Email) 
+                  VALUES (?, ?, NOW(), ?, ?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssss", $notificationId, $type, $message, $type, $email);
+        $stmt->bind_param("ssss", $type, $message, $type, $email);
         return $stmt->execute();
     }
 
@@ -310,10 +310,9 @@ class DatabaseHelper {
         $users = $wishlistStmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         foreach ($users as $user) {
-            $message = "Great news! The product {$product['Nome']} is back in stock";
+            $message = "Great news! The product {$product['Nome']} [$productId] is back in stock";
             $this->createNotification(
-                uniqid('stock_'),
-                'product_stock',
+                'Stock Product',
                 $message,
                 $user['Email']
             );
@@ -331,15 +330,14 @@ class DatabaseHelper {
         $order = $stmt->get_result()->fetch_assoc();
 
         $messages = [
-            'placed' => "Your payment has been successfully processed and we are starting to prepare your order",
-            'shipped' => "Your order #{$orderId} was handed over to the SDA express courier",
-            'delivered' => "Your order #{$orderId} has been delivered"
+            'placed' => "Your payment has been successfully processed and we are starting to prepare your order [$orderId]",
+            'shipped' => "Your order [$orderId] was handed over to the SDA express courier",
+            'delivered' => "Your order [$orderId] has been delivered"
         ];
 
         if (isset($messages[$status])) {
             $this->createNotification(
-                uniqid('order_'),
-                'order_status',
+                'Order Status',
                 $messages[$status],
                 $order['Email']
             );
@@ -366,10 +364,9 @@ class DatabaseHelper {
         $users = $wishlistStmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         foreach ($users as $user) {
-            $message = "Your favorite product {$product['Nome']} is now {$discountPercentage}% off for a short time";
+            $message = "Your favorite product {$product['Nome']} [$productId] is now {$discountPercentage}% off for a short time";
             $this->createNotification(
-                uniqid('sale_'),
-                'flash_sale',
+                'Flash Sale',
                 $message,
                 $user['Email']
             );
@@ -391,8 +388,7 @@ class DatabaseHelper {
         if ($result && $result['count'] > 0) {
             $message = "You spend a lot of time browsing but, just spend a minute to make them yours!";
             $this->createNotification(
-                uniqid('cart_'),
-                'cart_reminder',
+                'Cart Reminder',
                 $message,
                 $email
             );
@@ -401,7 +397,7 @@ class DatabaseHelper {
 
     // Create a review request notification
     public function createReviewRequestNotification($orderId) {
-        $query = "SELECT o.Email, p.Nome 
+        $query = "SELECT o.Email, p.Nome, p.ID_Prodotto 
                  FROM ORDINE o 
                  JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine 
                  JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto 
@@ -417,19 +413,26 @@ class DatabaseHelper {
         $items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         foreach ($items as $item) {
-            $message = "How do you like your {$item['Nome']}? Share your experience!";
+            $message = "How do you like your {$item['Nome']} [{$item['ID_Prodotto']}]? Share your experience!";
             $this->createNotification(
-                uniqid('review_'),
-                'review_request',
+                'Review Request',
                 $message,
                 $item['Email']
             );
         }
     }
 
+    public function createAdminMessageNotification($email, $message) {
+        $this->createNotification(
+            'Admin Message',
+            $message,
+            $email
+        );
+    }
+
     // Mark notifications as read
     public function markNotificationsAsRead($email, $notificationIds = null) {
-        $query = "UPDATE NOTIFICA SET Tipo = 'read' WHERE Email = ?";
+        $query = "UPDATE NOTIFICA SET Tipo = 'Letta' WHERE Email = ?";
         $params = [$email];
         $types = "s";
 
