@@ -69,53 +69,59 @@
             </nav>
         </aside>
         <main>
-            <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." /></a>
-            <h2>Checkout</h2>
-            <img src="CSS/Images/Illustrations/progress_bar2.svg" alt="Second of the three steps required to complete the checkout." />
-            <h3>SHIPPING</h3>
-            <form id="shipping-form">
-                <fieldset>
-                    <legend>ADDRESS</legend>
-                    <label for="first-name-shipping">First Name</label>
-                    <input id="first-name-shipping" type="text" value="Mario" />
-                    <label for="last-name-shipping">Last Name</label>
-                    <input id="last-name-shipping" type="text" value="Rossi" />
-                    <div id="invariable-part-address">
-                        <p>Cesena Campus - UniBo</p>
-                        <p>Piazza Aldo Moro, 90</p>
-                        <p>Cesena (FC), 47521</p>
-                    </div>
-                    <script>
-                        document.getElementById('invariable-part-address').onclick = function() {
-                            alert("It is not possible to change the position.");
-                        }
-                    </script>
-                </fieldset>
-                <fieldset>
-                    <legend>DELIVERY OPTIONS</legend>
-                    <div>
-                        <input id="shipping-standard-paid" type="radio" name="delivery-options" value="shipping-standard-paid"/>
-                        <label for="shipping-standard-paid"><img src="CSS/Images/Icons/shipping_standard.svg" alt="" />Standard</label>
-                        <p>5-7 weekdays</p>
-                        <p>+€5.00</p>
-                    </div>
-                    <div>
-                        <input id="shipping-standard-free" type="radio" name="delivery-options" value="shipping-standard-free"/>
-                        <label for="shipping-standard-free"><img src="CSS/Images/Icons/shipping_standard.svg" alt="">Standard</label>
-                        <p>orders over €200</p>
-                        <p>FREE</p>
-                    </div>
-                    <div>
-                        <input id="shipping-express" type="radio" name="delivery-options" value="shipping-express"/>
-                        <label for="shipping-express"><img src="CSS/Images/Icons/shipping_express.svg" alt="" />Express</label>
-                        <p>2-4 weekdays</p>
-                        <p>+€10.00</p>
-                    </div>
-                </fieldset>
-            </form>
-            <p>SUBTOTAL €179.00</p>
-            <p>TOTAL €184.00</p>
-            <button type="submit" form="shipping-form">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>      
+            <header>
+                <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." /></a>
+                <h2>Checkout</h2>
+                <img src="CSS/Images/Illustrations/progress_bar2.svg" alt="Second of the three steps required to complete the checkout." />
+                <h3>SHIPPING</h3>
+            </header>
+            <div>
+                <form id="shipping-form">
+                    <fieldset>
+                        <legend>ADDRESS</legend>
+                        <label for="first-name-shipping">First Name</label>
+                        <input id="first-name-shipping" type="text" value="Mario" />
+                        <label for="last-name-shipping">Last Name</label>
+                        <input id="last-name-shipping" type="text" value="Rossi" />
+                        <div id="invariable-part-address">
+                            <p>Cesena Campus - UniBo</p>
+                            <p>Piazza Aldo Moro, 90</p>
+                            <p>Cesena (FC), 47521</p>
+                        </div>
+                        <script>
+                            document.getElementById('invariable-part-address').onclick = function() {
+                                alert("It is not possible to change the position.");
+                            }
+                        </script>
+                    </fieldset>
+                    <fieldset>
+                        <legend>DELIVERY OPTIONS</legend>
+                        <div>
+                            <input id="shipping-standard-paid" type="radio" name="delivery-options" value="shipping-standard-paid"/>
+                            <label for="shipping-standard-paid"><img src="CSS/Images/Icons/shipping_standard.svg" alt="" />Standard</label>
+                            <p>5-7 weekdays</p>
+                            <p>+€5.00</p>
+                        </div>
+                        <div>
+                            <input id="shipping-standard-free" type="radio" name="delivery-options" value="shipping-standard-free"/>
+                            <label for="shipping-standard-free"><img src="CSS/Images/Icons/shipping_standard.svg" alt="">Standard</label>
+                            <p>orders over €200</p>
+                            <p>FREE</p>
+                        </div>
+                        <div>
+                            <input id="shipping-express" type="radio" name="delivery-options" value="shipping-express"/>
+                            <label for="shipping-express"><img src="CSS/Images/Icons/shipping_express.svg" alt="" />Express</label>
+                            <p>2-4 weekdays</p>
+                            <p>+€10.00</p>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <footer>
+                <p>SUBTOTAL €179.00</p>
+                <p>TOTAL €184.00</p>
+                <button type="submit" form="shipping-form">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>                                
+            </footer>
         </main>
         <footer>
             <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->

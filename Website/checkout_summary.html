@@ -69,44 +69,50 @@
             </nav>
         </aside>
         <main>
-            <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
-            <h2>Checkout</h2>
-            <img src="CSS/Images/Illustrations/progress_bar1.svg" alt="First of three steps required to complete checkout.">
-            <h3>ORDER SUMMARY</h3>
-            <ul class="product-overview">
-                <li>
-                    <article>
-                        <img src="CSS/Images/Illustrations/sneaker_test1.webp" alt="" />
-                        <h4>ADIDAS SPEZIAL</h4>
-                        <p>Size: 44 | Qty: 1</p>
-                        <p>Color: blue</p>
-                        <p>€80.00 <s>€109.99</s></p>
-                    </article>
-                </li>
-                <li>
-                    <article>
-                        <img src="CSS/Images/Illustrations/sneaker_test2.webp" alt="" />
-                        <h4>NEW BALANCE 740</h4>
-                        <p>Size: 44 | Qty: 1</p>
-                        <p>Color: blue</p>
-                        <p>€119.99</p>
-                    </article>
-                </li>
-            </ul>
-            <form class="promo-code" action="#">
-                <label for="promo-code-input">Please, enter a discount code if you have one.</label>
-                <input id="promo-code-input" type="text" placeholder="Promo code">
-                <button type="submit">Apply</button>
-            </form>
-            <div class="gift-wrap">
-                <input id="gift-wrap-checkbox" type="checkbox">
-                <label for="gift-wrap-checkbox"><img src="CSS/Images/Icons/gift.svg" alt="">Gift Wrap this order?</label>
-                <p>+€5.00</p>
+            <header>
+                <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
+                <h2>Checkout</h2>
+                <img src="CSS/Images/Illustrations/progress_bar1.svg" alt="First of three steps required to complete checkout.">
+                <h3>ORDER SUMMARY</h3>
+            </header>
+            <div>
+                <ul class="product-overview">
+                    <li>
+                        <article>
+                            <img src="CSS/Images/Illustrations/sneaker_test1.webp" alt="" />
+                            <h4>ADIDAS SPEZIAL</h4>
+                            <p>Size: 44 | Qty: 1</p>
+                            <p>Color: blue</p>
+                            <p>€80.00 <s>€109.99</s></p>
+                        </article>
+                    </li>
+                    <li>
+                        <article>
+                            <img src="CSS/Images/Illustrations/sneaker_test2.webp" alt="" />
+                            <h4>NEW BALANCE 740</h4>
+                            <p>Size: 44 | Qty: 1</p>
+                            <p>Color: blue</p>
+                            <p>€119.99</p>
+                        </article>
+                    </li>
+                </ul>
+                <form class="promo-code" action="#">
+                    <label for="promo-code-input">Please, enter a discount code if you have one.</label>
+                    <input id="promo-code-input" type="text" placeholder="Promo code">
+                    <button type="submit">Apply</button>
+                </form>
+                <div class="gift-wrap">
+                    <input id="gift-wrap-checkbox" type="checkbox">
+                    <label for="gift-wrap-checkbox"><img src="CSS/Images/Icons/gift.svg" alt="">Gift Wrap this order?</label>
+                    <p>+€5.00</p>
+                </div>
             </div>
-            <p>SUBTOTAL €199.99</p>
-            <p>DISCOUNT -€20.99</p>
-            <p>NEW SUBTOTAL €179.00</p>
-            <button>Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
+            <footer>
+                <p>SUBTOTAL €199.99</p>
+                <p>DISCOUNT -€20.99</p>
+                <p>NEW SUBTOTAL €179.00</p>
+                <button>Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
+            </footer>
         </main>
         <footer>
             <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
