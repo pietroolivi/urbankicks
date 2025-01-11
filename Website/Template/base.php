@@ -107,7 +107,7 @@ require_once("bootstrap.php");
             <nav>
                 <ul>
                     <li><a href="about_us.html">About Us</a></li>
-                    <li><a href="contact_us.html">Contact Us</a></li>
+                    <li><a href="contact_us.php">Contact Us</a></li>
                     <li><a href="accessibility.html">Accessibility</a></li>
                     <li><a href="faq.html">FAQ</a></li>
                 </ul>
