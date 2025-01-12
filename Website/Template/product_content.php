@@ -86,8 +86,7 @@ $reviews = $templateParams["productData"]["reviews"];
                value="<?php echo $color; ?>">
     <?php endforeach; ?>
 </section>
-
-<button id="addToCartButton" 
+<button id="addToCartButton" data-product-id="<?php echo htmlspecialchars($product['ID_Prodotto']); ?>"
         <?php echo $product['Sta_Tipo'] !== 'disponibile' ? 'disabled' : ''; ?>>
     Add to cart
 </button>
