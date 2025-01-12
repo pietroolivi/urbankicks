@@ -181,10 +181,13 @@ class ProductManager {
         card.dataset.productId = product.id;
         const link = card.querySelector('.product-link');
         link.href = `product.php?id=${product.id}`;
-        
+        /**<img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . $i); ?>.webp" 
+                            alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>"> */
         const img = card.querySelector('img');
-        img.src = product.baseProduct.Immagine;
-        img.alt = product.name;
+        img.src = `CSS/Images/Products/${product.id}_${product.genre}1.webp`;
+        console.log(`CSS/Images/Products/${product.id}_${product.genre}1.webp`);
+        img.name = `${product.Nome} - View ${1}`;
+        
         
         card.querySelector('.product-name').textContent = product.name;
         
