@@ -436,7 +436,7 @@ function eventListenerItemWish(classCheckboxHeart,apiPHPfile){
  * @param {*} idElement the element that is like the <select> having all the choices
  * @param {*} idParagraph the element that is the paragraph of the warning
  */
-function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idElement,idParagraph,listenerParagraphSetting) {
+/*function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idElement,idParagraph,listenerParagraphSetting) {
 
     const button=document.getElementById(idButton);
 
@@ -451,7 +451,7 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
                 /*body.no-scroll {
                     overflow: hidden;
                 }*/
-                const body = document.body;
+               /* const body = document.body;
                 body.classList.add("no-scroll");
                 //this simulates the length of the animation (0.5 sec) at the end it will remove the class that disables the scroll.
                 setTimeout(() => {
@@ -469,6 +469,7 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
 
         });
 }
+*/
 
 
 
@@ -598,34 +599,34 @@ function eventListenerApplyFilters(){
 
 }*/
 
-function setupBackButtons() {
-    // Back button from section 2 to 1
-    document.querySelector('#section-register2 .back-btn').addEventListener('click', () => {
-        // Show section 1
-        document.getElementById('section-register2').style.display = 'none';
-        document.getElementById('section-register1').style.display = 'block';
+// function setupBackButtons() {
+//     // Back button from section 2 to 1
+//     document.querySelector('#section-register2 .back-btn').addEventListener('click', () => {
+//         // Show section 1
+//         document.getElementById('section-register2').style.display = 'none';
+//         document.getElementById('section-register1').style.display = 'block';
 
-        // Restore section 1 data
-        document.getElementById('first-name').value = sessionStorage.getItem('firstname') || '';
-        document.getElementById('last-name').value = sessionStorage.getItem('lastname') || '';
-        document.getElementById('email-register').value = sessionStorage.getItem('email') || '';
+//         // Restore section 1 data
+//         document.getElementById('first-name').value = sessionStorage.getItem('firstname') || '';
+//         document.getElementById('last-name').value = sessionStorage.getItem('lastname') || '';
+//         document.getElementById('email-register').value = sessionStorage.getItem('email') || '';
         
-        history.pushState({}, '', '?step=1');
-    });
+//         history.pushState({}, '', '?step=1');
+//     });
 
-    // Back button from section 3 to 2
-    document.querySelector('#section-register3 .back-btn').addEventListener('click', () => {
-        // Show section 2
-        document.getElementById('section-register3').style.display = 'none';
-        document.getElementById('section-register2').style.display = 'block';
+//     // Back button from section 3 to 2
+//     document.querySelector('#section-register3 .back-btn').addEventListener('click', () => {
+//         // Show section 2
+//         document.getElementById('section-register3').style.display = 'none';
+//         document.getElementById('section-register2').style.display = 'block';
         
-        // Restore section 2 data
-        document.getElementById('password-register').value = sessionStorage.getItem('password') || '';
-        document.getElementById('phone-register').value = sessionStorage.getItem('phone') || '';
+//         // Restore section 2 data
+//         document.getElementById('password-register').value = sessionStorage.getItem('password') || '';
+//         document.getElementById('phone-register').value = sessionStorage.getItem('phone') || '';
         
-        history.pushState({}, '', '?step=2');
-    });
-}
+//         history.pushState({}, '', '?step=2');
+//     });
+// }
 
 // Initialize back buttons
-document.addEventListener('DOMContentLoaded', setupBackButtons);
+// document.addEventListener('DOMContentLoaded', setupBackButtons);

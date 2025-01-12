@@ -2,19 +2,22 @@
 require_once("bootstrap.php");
 
 if (!isset($_SESSION["user_email"])) {
-    http_response_code(401);
     die(json_encode(['success' => false, 'message' => 'Unauthorized']));
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = ['success' => false, 'message' => ''];
     
-    if (isset($_POST['notificationIds'])) {
-        $notificationIds = json_decode($_POST['notificationIds']);
-        $action = $_POST['action'] ?? '';
-        $email = $_SESSION["user_email"];
+    try {
+        if (isset($_POST['notificationIds']) && isset($_POST['action'])) {
+            $notificationIds = json_decode($_POST['notificationIds']);
+            $action = $_POST['action'];
+            $email = $_SESSION["user_email"];
 
-        try {
+            if (!is_array($notificationIds)) {
+                $notificationIds = [$notificationIds];
+            }
+
             $success = $dbh->markNotificationsAsRead($email, $notificationIds);
             
             if ($success) {
@@ -25,10 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'Notification marked as read'
                 ];
             }
-        } catch (Exception $e) {
-            http_response_code(500);
-            $response = ['success' => false, 'message' => 'Server error'];
+        } else {
+            $response = ['success' => false, 'message' => 'Missing required parameters'];
         }
+    } catch (Exception $e) {
+        $response = ['success' => false, 'message' => $e->getMessage()];
     }
 
     header('Content-Type: application/json');
