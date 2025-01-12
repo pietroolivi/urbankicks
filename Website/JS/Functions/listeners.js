@@ -436,7 +436,7 @@ function eventListenerItemWish(classCheckboxHeart,apiPHPfile){
  * @param {*} idElement the element that is like the <select> having all the choices
  * @param {*} idParagraph the element that is the paragraph of the warning
  */
-function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idElement,idParagraph,listenerParagraphSetting) {
+/*function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idElement,idParagraph,listenerParagraphSetting) {
 
     const button=document.getElementById(idButton);
 
@@ -451,7 +451,7 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
                 /*body.no-scroll {
                     overflow: hidden;
                 }*/
-                const body = document.body;
+               /* const body = document.body;
                 body.classList.add("no-scroll");
                 //this simulates the length of the animation (0.5 sec) at the end it will remove the class that disables the scroll.
                 setTimeout(() => {
@@ -469,6 +469,7 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
 
         });
 }
+*/
 
 
 

@@ -185,10 +185,12 @@ class ProductManager {
                             alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>"> */
         const img = card.querySelector('img');
         img.src = `CSS/Images/Products/${product.id}_${product.genre}1.webp`;
+        //fallback image if image fetch fails.
+        img.onerror = function() {
+            img.src = `CSS/Images/Products/default_shoe.webp`;
+        };
         console.log(`CSS/Images/Products/${product.id}_${product.genre}1.webp`);
         img.name = `${product.Nome} - View ${1}`;
-        
-        
         card.querySelector('.product-name').textContent = product.name;
         
         // Show price range if variants have different prices
