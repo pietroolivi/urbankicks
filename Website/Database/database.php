@@ -756,9 +756,47 @@ class DatabaseHelper {
         return $stmt->execute();
     }
 
+    // Get all Sizes of a product color
+    public function getProductSizes($productId, $color) {
+        $query = "SELECT DISTINCT v.Taglia, v.Quantita 
+                FROM VARIANTE v 
+                WHERE v.ID_Prodotto = ? 
+                AND v.Colore = ? 
+                AND v.Quantita > 0 
+                ORDER BY v.Taglia";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ss", $productId, $color);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get all Colors of a product
+    public function getProductColors($productId) {
+        $query = "SELECT DISTINCT v.Colore 
+                FROM VARIANTE v 
+                WHERE v.ID_Prodotto = ? 
+                AND v.Quantita > 0 
+                ORDER BY v.Colore";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get max product quantity
+    public function getProductMaxQuantity($productId, $color, $size) {
+        $query = "SELECT Quantita FROM VARIANTE 
+                  WHERE ID_Prodotto = ? AND Colore = ? AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("isd", $productId, $color, $size);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc()['Quantita'];
+    }
+
     // Get all items in cart
     public function getCartItems($cartId) {
-        $query = "SELECT c.*, p.Prezzo, p.Nome 
+        $query = "SELECT c.*, p.Prezzo, p.Nome, p.Genere 
                   FROM comprendere c 
                   JOIN PRODOTTO p ON c.ID_Prodotto = p.ID_Prodotto 
                   WHERE c.ID_Carrello = ?";

@@ -1,4 +1,4 @@
-<h2>Wishlist</h2>
+<h2>My Wishlist</h2>
 <?php if(!empty($templateParams["wishlistItems"])): ?>
     <nav>
         <ul>

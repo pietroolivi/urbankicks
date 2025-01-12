@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS comprendere (
      ID_Carrello INT NOT NULL,
      ID_Prodotto INT NOT NULL,
      Colore VARCHAR(50) NOT NULL,
-     Taglia DECIMAL(5,2) NOT NULL,
+     Taglia DECIMAL(3,0) NOT NULL,
      Quantita INT NOT NULL,
      CONSTRAINT ID_comprendere_ID PRIMARY KEY (ID_Prodotto, Colore, Taglia, ID_Carrello),
      FOREIGN KEY (ID_Prodotto, Colore, Taglia) REFERENCES VARIANTE(ID_Prodotto, Colore, Taglia) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS ORDINE (
 CREATE TABLE IF NOT EXISTS PRODOTTO_ORDINE (
      ID_Prodotto INT NOT NULL,
      Colore VARCHAR(50) NOT NULL,
-     Taglia DECIMAL(5,2) NOT NULL,
+     Taglia DECIMAL(3,0) NOT NULL,
      Quantita INT NOT NULL,
      ID_Ordine INT NOT NULL,
      Prezzo_Acquisto DECIMAL(10,2) NOT NULL,
