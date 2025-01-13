@@ -931,6 +931,10 @@ textarea {
   display: none;
 }
 
+.product-admin img {
+  width: 100px;
+}
+
 
 
 @media (max-width: 600px) {

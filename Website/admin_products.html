@@ -2,23 +2,60 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="CSS/style.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Barrio&display=swap" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+        <link href="https://fonts.googleapis.com/css2?family=Barrio&display=swap" rel="stylesheet"/>
         <title>UrbanKicks - Home</title>
     </head>
     <body>
         <header>
             <h1>URBANKICKS</h1>
         </header>
-        
         <main>
-            <!-- BARRA DI RICERCA -->
-            <!-- SORTER -->
-
+            <header>
+                <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
+                <h2>Published Products</h2>
+            </header>
+            <a href="admin_add_product.html">Add New Product</a>
+            <form>
+                <div class="search">
+                    <span class="search-icon"><img src="CSS/Images/Icons/search.svg" alt="Execute search." /></span>
+                    <label for="search">Please, type the string that will be searched among the product names and IDs.</label>
+                    <input id="search" class="search-input" type="search" placeholder="Search for a published item"/>
+                </div>
+            </form>
+            <article class="product-admin">
+                <img src="CSS/Images/Illustrations/sneaker_test1.webp" alt=""/>
+                <div class="product-textual-info-admin">
+                    <h3>#3298793</h3>
+                    <p>ADIDAS SPEZIAL</p>
+                </div>
+                <img src="CSS/Images/Icons/high_stocks.svg" alt="High stocks."/>
+                <a href="admin_edit_product.html"><img src="CSS/Images/Icons/edit.svg" alt="Edits one or more fields of the article or its variants."/></a>
+                <a href="admin_delete_product.html"><img src="CSS/Images/Icons/bin.svg" alt="Permanently deletes the product from the list."/></a>
+            </article>
+            <article class="product-admin">
+                <img src="CSS/Images/Illustrations/sneaker_test3.webp" alt=""/>
+                <div class="product-textual-info-admin">
+                    <h3>#6372842</h3>
+                    <p>NEW BALANCE 740</p>
+                </div>
+                <img src="CSS/Images/Icons/low_stocks.svg" alt="Low stocks."/>
+                <a href="admin_edit_product.html"><img src="CSS/Images/Icons/edit.svg" alt="Edits one or more fields of the article or its variants."/></a>
+                <a href="admin_delete_product.html"><img src="CSS/Images/Icons/bin.svg" alt="Permanently deletes the product from the list."/></a>
+            </article>
+            <article class="product-admin">
+                <img src="CSS/Images/Illustrations/sneaker_test2.webp" alt=""/>
+                <div class="product-textual-info-admin">
+                    <h3>#5673451</h3>
+                    <p>CONVERSE CHUCK 70 HIGH</p>
+                </div>
+                <img src="CSS/Images/Icons/out_of_stock.svg" alt="Out of stock."/>
+                <a href="admin_edit_product.html"><img src="CSS/Images/Icons/edit.svg" alt="Edits one or more fields of the article or its variants."/></a>
+                <a href="admin_delete_product.html"><img src="CSS/Images/Icons/bin.svg" alt="Permanently deletes the product from the list."/></a>
+            </article>
         </main>
-        
     </body>
 </html>
