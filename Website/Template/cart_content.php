@@ -24,7 +24,7 @@ if (isset($_SESSION["user_email"])) {
     <div class="warning-free-shipping">
         <img src="CSS/Images/Icons/information.svg" alt="Information symbol">
         <?php if ($cartTotal >= 100): ?>
-            <p>Your order is eligible for FREE STANDARD SHIPPING!</p>
+            <p>You qualify for FREE STANDARD SHIPPING!</p>
         <?php else: ?>
             <p>Just €<?= number_format(100 - $cartTotal, 2) ?> away from getting FREE STANDARD SHIPPING</p>
         <?php endif; ?>
@@ -98,6 +98,6 @@ if (isset($_SESSION["user_email"])) {
     </ul>
     <p><?= count($cartItems) ?> ITEMS</p>
     <p>SUBTOTAL €<?= number_format($cartTotal, 2) ?></p>
-    <button class="continue-shopping">Continue shopping</button>
-    <button class="proceed-checkout">Proceed to checkout</button>
+    <button class="continue-shopping" onclick="window.location.href='home.php'">Continue shopping</button>
+    <button class="proceed-checkout" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
 <?php endif; ?>

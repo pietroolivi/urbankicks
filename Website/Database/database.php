@@ -616,7 +616,7 @@ class DatabaseHelper {
         $checkStmt->bind_param("ss", $email, $productId);
         $checkStmt->execute();
         if ($checkStmt->get_result()->num_rows > 0) {
-            return false; // Item already in wishlist
+            return true; // Item already in wishlist
         }
 
         // Add item to wishlist
@@ -671,7 +671,7 @@ class DatabaseHelper {
     // Add product to cart
     public function addToCart($email, $productId, $color, $size, $quantity = 1) {
         // First get the cart ID
-        $cartInfo = $dbh->getCartByEmail($email);
+        $cartInfo = $this->getCartByEmail($email);
         if (!$cartInfo) {
             return false;
         }
@@ -682,7 +682,7 @@ class DatabaseHelper {
                     WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                     AND Colore = ? AND Taglia = ?";
         $checkStmt = $this->db->prepare($checkQuery);
-        $checkStmt->bind_param("issd", $cartId, $productId, $color, $size);
+        $checkStmt->bind_param("iisd", $cartId, $productId, $color, $size);
         $checkStmt->execute();
         $existingItem = $checkStmt->get_result()->fetch_assoc();
         
@@ -694,14 +694,14 @@ class DatabaseHelper {
                         WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                         AND Colore = ? AND Taglia = ?";
             $updateStmt = $this->db->prepare($updateQuery);
-            $updateStmt->bind_param("iissd", $newQuantity, $cartId, $productId, $color, $size);
+            $updateStmt->bind_param("iiisd", $newQuantity, $cartId, $productId, $color, $size);
             return $updateStmt->execute();
         } else {
             // Add new item if it doesn't exist
             $insertQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
                         VALUES (?, ?, ?, ?, ?)";
             $insertStmt = $this->db->prepare($insertQuery);
-            $insertStmt->bind_param("issdi", $cartId, $productId, $color, $size, $quantity);
+            $insertStmt->bind_param("iisdi", $cartId, $productId, $color, $size, $quantity);
             return $insertStmt->execute();
         }
     }
@@ -709,7 +709,7 @@ class DatabaseHelper {
      // Remove item from cart
     public function removeFromCart($email, $productId, $color, $size) {
         // First get the cart ID
-        $cartInfo = $dbh->getCartByEmail($email);
+        $cartInfo = $this->getCartByEmail($email);
         if (!$cartInfo) {
             return false;
         }
@@ -719,7 +719,7 @@ class DatabaseHelper {
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                   AND Colore = ? AND Taglia = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("issd", $cartId, $productId, $color, $size);
+        $stmt->bind_param("iisd", $cartId, $productId, $color, $size);
         return $stmt->execute();
     }
 
@@ -730,29 +730,29 @@ class DatabaseHelper {
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                   AND Colore = ? AND Taglia = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("iissd", $adjustment, $cartId, $productId, $color, $size);
+        $stmt->bind_param("iiisd", $adjustment, $cartId, $productId, $color, $size);
         return $stmt->execute();
     }
 
     // Update item size in cart
-    public function updateCartItemSize($cartId, $productId, $color, $newSize) {
+    public function updateCartItemSize($cartId, $productId, $oldSize, $color, $newSize) {
         $query = "UPDATE comprendere 
                   SET Taglia = ? 
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
-                  AND Colore = ?";
+                  AND Colore = ? AND Taglia = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("disc", $newSize, $cartId, $productId, $color);
+        $stmt->bind_param("diisd", $newSize, $cartId, $productId, $color, $oldSize);
         return $stmt->execute();
     }
 
     // Update item color in cart
-    public function updateCartItemColor($cartId, $productId, $newColor, $size) {
+    public function updateCartItemColor($cartId, $productId, $oldColor, $newColor, $size) {
         $query = "UPDATE comprendere 
                   SET Colore = ? 
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
-                  AND Taglia = ?";
+                  AND Taglia = ? AND Colore = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sisd", $newColor, $cartId, $productId, $size);
+        $stmt->bind_param("siids", $newColor, $cartId, $productId, $size, $oldColor);
         return $stmt->execute();
     }
 
@@ -765,7 +765,7 @@ class DatabaseHelper {
                 AND v.Quantita > 0 
                 ORDER BY v.Taglia";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ss", $productId, $color);
+        $stmt->bind_param("is", $productId, $color);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
@@ -778,7 +778,7 @@ class DatabaseHelper {
                 AND v.Quantita > 0 
                 ORDER BY v.Colore";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $productId);
+        $stmt->bind_param("i", $productId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
@@ -813,6 +813,15 @@ class DatabaseHelper {
         $stmt->bind_param("s", $email);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
+    }
+
+    // Modify cart total value
+    public function modifyCartTotalValue($cartId, $newTotal) {
+        $query = "UPDATE CARRELLO 
+            SET Valore_Totale = ? WHERE ID_Carrello = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $newTotal, $cartId);
+        return $stmt->execute();
     }
 
     /*********************
