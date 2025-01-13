@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="CSS/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Barrio&display=swap" rel="stylesheet">
+        <title>UrbanKicks - Home</title>
+    </head>
+    <body>
+        <header>
+            <h1>URBANKICKS</h1>
+        </header>
+        <main>
+            <header>
+                <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
+                <h2>New Message</h2>
+            </header>
+            <form action="#">
+                <label for="email-new-message-admin">Recipient's Email</label>
+                <p id="error-email-new-message-admin">No customers found with this email</p>
+                <input name="email-new-message-admin" id="email-new-message-admin" type="email" placeholder="mariorossi@gmail.com" required />
+                <label for="subject-new-message-admin">Subject</label>
+                <input name="subject-new-message-admin" id="subject-new-message-admin" type="text" placeholder="Answers to your doubts" required />                
+                <label for="body-new-message-admin">Body</label>
+                <textarea name="body-new-message-admin" id="body-new-message-admin" placeholder="Type your message here (max 400 characters)." maxlength="400" rows="10" cols="40" required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </main>
+    </body>
+</html>

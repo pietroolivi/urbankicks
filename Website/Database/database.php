@@ -755,9 +755,24 @@ class DatabaseHelper {
         $stmt->bind_param("siids", $newColor, $cartId, $productId, $size, $oldColor);
         return $stmt->execute();
     }
+    //returns true if the variant of that color and size exists
+    public function getColorsBySize($productId, $size) {
+        $query = "SELECT DISTINCT Colore 
+                  FROM VARIANTE 
+                  WHERE ID_Prodotto = ? 
+                  AND Taglia = ? 
+                  AND Quantita > 0 
+                  ORDER BY Colore";
+                  
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ss", $productId, $size);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
 
     // Get all Sizes of a product color
-    public function getProductSizes($productId, $color) {
+    public function getSizesByColor($productId, $color) {
         $query = "SELECT DISTINCT v.Taglia, v.Quantita 
                 FROM VARIANTE v 
                 WHERE v.ID_Prodotto = ? 
@@ -782,6 +797,20 @@ class DatabaseHelper {
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
+
+        // Get all Sizes of a product
+        public function getProductSizes($productId) {
+            $query = "SELECT DISTINCT v.Taglia 
+                    FROM VARIANTE v 
+                    WHERE v.ID_Prodotto = ? 
+                    AND v.Quantita > 0 
+                    ORDER BY v.Taglia";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("s", $productId);
+            $stmt->execute();
+            return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        }
+    
 
     // Get max product quantity
     public function getProductMaxQuantity($productId, $color, $size) {

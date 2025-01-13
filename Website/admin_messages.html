@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="CSS/style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Barrio&display=swap" rel="stylesheet" />
+        <title>UrbanKicks - Home</title>
+        <style>
+            /* The Modal (background) */
+            .modal {
+              display: none; /* Hidden by default */
+              position: fixed; /* Stay in place */
+              z-index: 1; /* Sit on top */
+              padding-top: 100px; /* Location of the box */
+              left: 0;
+              top: 0;
+              width: 100%; /* Full width */
+              height: 100%; /* Full height */
+              overflow: auto; /* Enable scroll if needed */
+              background-color: rgb(0,0,0); /* Fallback color */
+              background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+            
+            /* Modal Content */
+            .modal-content {
+              background-color: #fefefe;
+              margin: auto;
+              padding: 20px;
+              border: 1px solid #888;
+              width: 80%;
+            }
+            
+            /* The Close Button */
+            .close {
+              color: #aaaaaa;
+              float: right;
+              font-size: 28px;
+              font-weight: bold;
+            }
+            
+            .close:hover,
+            .close:focus {
+              color: #000;
+              text-decoration: none;
+              cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>URBANKICKS</h1>
+        </header>
+        <main>
+            <header>
+                <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
+                <h2>Messages</h2>
+            </header>
+            <a href="admin_new_message.html">New Message</a>
+            <section class="messages-to-admin">
+                <h3>Received Messages</h3>
+                <article class="message-to-admin" onclick="expandMessage('CSS/Images/Icons/user_review.svg', 'fullName1', 'email1', 'messageBody1', true, 'previewBody1')">
+                    <img src="CSS/Images/Icons/user_review.svg" alt="Profile photo of the user who sent the message." />
+                    <div class="textual-part-message">
+                        <h4>Ernesto Minniti</h4>
+                        <p>ernestominniti@gmail.com</p>
+                        <p>The shoes I purchased are small...</p>
+                    </div>
+                    <img src="CSS/Images/Icons/notification_unread.svg" alt="Blue dot, notification not yet read." />
+                </article>
+                <article class="message-to-admin" onclick="expandMessage('CSS/Images/Icons/user_review.svg', 'fullName2', 'email2', 'messageBody2', false, 'previewBody2')">
+                    <img src="CSS/Images/Icons/user_review.svg" alt="Profile photo of the user who sent the message." />
+                    <div class="textual-part-message">
+                        <h4>Roberto Crino</h4>
+                        <p>robertocrino@outlook.com</p>
+                        <p>When will UGG men's ankle boots be...</p>
+                    </div>
+                </article>
+                <article class="message-to-admin" onclick="expandMessage('CSS/Images/Icons/user_review.svg', 'fullName3', 'email3', 'messageBody3', true, 'previewBody3')">
+                    <img src="CSS/Images/Icons/user_review.svg" alt="Profile photo of the user who sent the message." />
+                    <div class="textual-part-message">
+                        <h4>Sabina Bettamio</h4>
+                        <p>sabinabettamio@icloud.com</p>
+                        <p>Where do I get a discount code?...</p>
+                    </div>
+                    <img src="CSS/Images/Icons/notification_unread.svg" alt="Blue dot, notification not yet read." />
+                </article>
+                <article class="message-to-admin" onclick="expandMessage('CSS/Images/Icons/user_review.svg', 'fullName4', 'email4', 'messageBody4', false, 'previewBody4')">
+                    <img src="CSS/Images/Icons/user_review.svg" alt="Profile photo of the user who sent the message." />
+                    <div class="textual-part-message">
+                        <h4>Miguel Tomassini</h4>
+                        <p>migueltomassini@gmail.com</p>
+                        <p>Do you also sell vouchers to give...</p>
+                    </div>
+                </article>
+                <article class="message-to-admin" onclick="expandMessage('CSS/Images/Icons/user_review.svg', 'fullName5', 'email5', 'messageBody5', true, 'previewBody5')">
+                    <img src="CSS/Images/Icons/user_review.svg" alt="Profile photo of the user who sent the message." />
+                    <div class="textual-part-message">
+                        <h4>Vittoria Esposito</h4>
+                        <p>vittoriaesposito@yahoo.com</p>
+                        <p>Do you also have the pink coloring...</p>
+                    </div>
+                    <img src="CSS/Images/Icons/notification_unread.svg" alt="Blue dot, notification not yet read." />
+                </article>
+                <article class="message-to-admin" onclick="expandMessage('CSS/Images/Icons/user_review.svg', 'fullName6', 'email6', 'messageBody6', false, 'previewBody6')">
+                    <img src="CSS/Images/Icons/user_review.svg" alt="Profile photo of the user who sent the message." />
+                    <div class="textual-part-message">
+                        <h4>Pierantonio Airola</h4>
+                        <p>pierantonioairola@outlook.com</p>
+                        <p>Is it possible to pay with Klarna?...</p>
+                    </div>
+                </article>
+                <article class="message-to-admin" onclick="expandMessage('CSS/Images/Icons/user_review.svg', 'fullName7', 'email7', 'messageBody7', true, 'previewBody7')">
+                    <img src="CSS/Images/Icons/user_review.svg" alt="Profile photo of the user who sent the message." />
+                    <div class="textual-part-message">
+                        <h4>Simonetta Crescenzio</h4>
+                        <p>simonettacrescenzio@gmail.com</p>
+                        <p>Is the shipping time for islands...</p>
+                    </div>
+                    <img src="CSS/Images/Icons/notification_unread.svg" alt="Blue dot, notification not yet read." />
+                </article>
+            </section>
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                </div>
+            </div>
+        </main>
+        <script>
+            // Get the modal.
+            var modal = document.getElementById("myModal");
+            // Get the content of the model.
+            var content = document.getElementsByClassName("modal-content")[0];            
+            // Get the button that opens the modal.
+            var messages = document.getElementsByClassName("message-to-admin");
+            // When the user clicks the <article>, open the modal.             
+            function expandMessage(profilePictureURL, fullName, email, messageBody, isStillUnread, previewBody) {
+                content.innerHTML = `
+                    <span class="close">&times;</span>
+                    <article class="message-to-admin">
+                        <img src="${profilePictureURL}" alt="Profile photo of the user who sent the message." />
+                        <div class="textual-part-message">
+                            <h4>${fullName}</h4>
+                            <p>${email}</p>
+                            <p>${messageBody}</p>
+                        </div>
+                    </article>
+                    <a href="admin_new_message.html">Reply</a>
+                `;
+                // When the user clicks on <span> (x), close the modal.
+                document.getElementsByClassName("close")[0].onclick = function() {
+                    modal.style.display = "none";
+                }
+                modal.style.display = "block";
+                if (isStillUnread == true) {
+                    event.currentTarget.innerHTML = `
+                        <img src="${profilePictureURL}" alt="Profile photo of the user who sent the message." />
+                        <div class="textual-part-message">
+                            <h4>${fullName}</h4>
+                            <p>${email}</p>
+                            <p>${previewBody}</p>
+                        </div>                        
+                    `;
+                }
+            }
+            
+            // When the user clicks anywhere outside of the modal, close it.
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        </script>
+    </body>
+</html>
