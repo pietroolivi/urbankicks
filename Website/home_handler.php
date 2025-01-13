@@ -11,7 +11,33 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 $response = ["success" => false, "message" => ""];
 
 try {
-    if ($isset($_POST["action"])) {
+    if (isset($_POST["action"])) {
+
+        if ($_POST["action"] === "getWishlistItems") {
+            
+            // Se l’utente non è loggato...
+            if (!isset($_SESSION["user_email"])) {
+                $response = [
+                    "success" => false,
+                    "message" => "User not logged in"
+                ];
+                echo json_encode($response);
+                exit;
+            }
+
+            $email = $_SESSION["user_email"];
+            // Recupera i prodotti in wishlist dal DB
+            $wishlistItems = $dbh->getWishlistItems($email);
+
+            // Rispondi con la lista in formato JSON
+            $response = [
+                "success" => true,
+                "wishlistItems" => $wishlistItems
+            ];
+            echo json_encode($response);
+            exit;
+        }
+
         if ($_POST["action"] === "toggleWishlist") {
             
             if (!isset($_SESSION["user_email"])) {

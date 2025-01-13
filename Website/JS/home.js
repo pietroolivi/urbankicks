@@ -1,6 +1,7 @@
 class ProductManager {
     constructor() {
         const rawProducts = JSON.parse(document.getElementById('products-container').dataset.products);
+
         this.wishlistItems = new Set();
         
         // Initialize filters from URL parameters
@@ -14,6 +15,37 @@ class ProductManager {
         };
 
         this.initializeProducts(rawProducts);
+        this.loadWishlistItems();
+
+    }
+
+    async loadWishlistItems() {
+        try {
+            const response = await fetch('home_handler.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    action: 'getWishlistItems'
+                })
+            });
+            const data = await response.json();
+    
+            if (data.success) {
+                // Popola i tuoi this.wishlistItems con gli ID dei prodotti
+                // data.wishlistItems è un array di prodotti (con le colonne di PRODOTTO)
+                const wishlistIds = data.wishlistItems.map(item => item.ID_Prodotto.toString());
+                this.wishlistItems = new Set(wishlistIds);
+                console.log(this.wishlistItems.size);
+                // Eventualmente aggiorna il rendering dei prodotti 
+                // per spuntare i checkbox corrispondenti
+               // this.updateWishlistCheckboxes();
+
+            } else {
+                console.warn('Could not load wishlist items:', data.message);
+            }
+        } catch (error) {
+            console.error('Error loading wishlist items:', error);
+        }
         this.setupEventListeners();
         this.applyFilters();
     }
@@ -21,7 +53,10 @@ class ProductManager {
     initializeProducts(rawProducts) {
         // Group products by model
         const groupedProducts = new Map();
-        
+    /*    rawProducts.forEach(p=>{
+            if(p.inWishlist==true)
+            console.log("prodotto in wishlist:"+p.ID_Prodotto);
+        });*/
         rawProducts.forEach(product => {
             const modelKey = product.Nome.toLowerCase();
             
@@ -207,6 +242,7 @@ class ProductManager {
         
         const wishlistCheckbox = card.querySelector('.wishlist-checkbox');
         if (this.wishlistItems.has(product.id.toString())) {
+            console.log("disabilita check");
             wishlistCheckbox.checked = true;
             wishlistCheckbox.nextElementSibling.textContent = 'Remove from Wishlist';
         }
@@ -229,6 +265,10 @@ class ProductManager {
         });
     }
 
+    
+
+
+
     async handleWishlistToggle(checkbox) {
         const productCard = checkbox.closest('.product-card');
         const productId = productCard.dataset.productId;
@@ -236,16 +276,24 @@ class ProductManager {
         const wishlistText = checkbox.nextElementSibling;
 
         try {
-            const formData = new FormData();
+           /* const formData = new FormData();
             formData.append('action', 'toggleWishlist');
             formData.append('productId', productId);
-            formData.append('isAdd', isAdd);
+            formData.append('isAdd', isAdd);*/
 
             const response = await fetch('home_handler.php', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body:new URLSearchParams({
+                    action: 'toggleWishlist',
+                    productId: productId,
+                    isAdd: isAdd 
+                })
             });
-
+          /*  const data= await response.text();
+            console.log(data);*/
             const data = await response.json();
 
             if (data.success) {
@@ -305,6 +353,9 @@ class ProductManager {
         `;
     }
 }
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     new ProductManager();
