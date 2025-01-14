@@ -935,6 +935,11 @@ textarea {
   width: 100px;
 }
 
+#error-images-product-admin {
+  display: none;
+  color: red;
+}
+
 
 
 @media (max-width: 600px) {
