@@ -44,11 +44,9 @@
                     <option value="under-armour">Under Armour</option>
                     <option value="diadora">Diadora</option>                            
                 </select>
-
                 <!--MODEL-->
                 <label for="model-product-admin">Model</label>
                 <input type="text" id="model-product-admin" maxlength="14" placeholder="CHUCK 70 HIGH" required>
-
                 <!--GENRE-->
                 <fieldset>
                     <legend>Genre</legend>
@@ -59,7 +57,6 @@
                     <label for="kids-product-admin">Kids</label>
                     <input id="kids-product-admin" class="genre-product-admin" type="checkbox" value="kids"/>
                 </fieldset>
-
                 <!--CATEGORY-->
                 <fieldset>
                     <legend>Category</legend>
@@ -70,11 +67,11 @@
                     <label for="sliders-product-admin">Sliders</label>
                     <input id="sliders-product-admin" type="radio" name="category-product-admin" value="sliders" required>
                 </fieldset>
-
                 <!--IMAGES-->
                 <label for="images-product-admin">Images</label>
                 <input type="file" id="images-product-admin" accept=".png, .jpg, .jpeg" multiple required>
                 <p id="error-images-product-admin">Please, upload exactly 4 pictures.</p>
+                <div class="images-product-to-add"></div>
                 <script>
                     /* ********************************************************************* */
                     /* We make sure that the admin uploads exactly 4 images for the product. */
@@ -89,13 +86,19 @@
                             document.querySelector(".fields-product-admin > button[type='submit']").disabled = false;
                             error.style.display='none';
                         }
+                        // We update the preview of presently uploaded images.
+                        document.getElementsByClassName("images-product-to-add")[0].innerHTML = "";
+                        for (image of uploader.files) {
+                            console.log(image);
+                            document.getElementsByClassName("images-product-to-add")[0].innerHTML += `
+                                <img src="${URL.createObjectURL(image)}" alt="">
+                            `
+                        }
                     })
                 </script>
-
                 <!--DESCRIPTION-->
                 <label for="description-product-admin">Description</label>
                 <textarea name="description-product-admin" id="description-product-admin" cols="30" rows="10" placeholder="Durable canvas upper for that classic Chuck 70 look and feel. OrthoLite cushioning helps to provide optimal comfort. Vintage-inspired design elements like an egret midsole, ornate stitching, and a taller rubber sidewall. Iconic Chuck Taylor ankle patch and vintage All Star license plate. Iconic Chuck Taylor ankle patch and vintage All Star license plate." required></textarea>
-
                 <!--PRICE-->
                 <label for="price-product-admin">Price</label>
                 <span>€<input id="price-product-admin" type="number" placeholder="0.01" min="0.01" max="999.99" step="0.01" onblur="standardisePrice()" required></span>
@@ -143,7 +146,6 @@
                         }
                     } 
                 </script>
-
                 <!--NUMBER SIZE COLOR-->
                 <table id="quantity-size-color">
                     <caption>Product availability for each size and colour.</caption>
