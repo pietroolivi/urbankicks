@@ -46,7 +46,7 @@ if (isset($_SESSION["user_email"])) {
                             </label>
                             <select id="size-selector-<?= $item['ID_Prodotto'] ?>" class="size-selector">
                                 <?php 
-                                $sizes = $dbh->getProductSizes($item['ID_Prodotto'], $item['Colore']); 
+                                $sizes = $dbh->getSizesByColor($item['ID_Prodotto'], $item['Colore']); 
                                 foreach ($sizes as $sizeData): 
                                 ?>
                                     <option value="<?= htmlspecialchars($sizeData['Taglia']) ?>" 
@@ -67,16 +67,17 @@ if (isset($_SESSION["user_email"])) {
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-
+                            
                             <label for="quantity-selector-<?= $item['ID_Prodotto'] ?>">
                                 Please, select the quantity of <?= htmlspecialchars($item['Nome']) ?> 
                                 in color <?= htmlspecialchars($item['Colore']) ?> and size <?= htmlspecialchars($item['Taglia']) ?> 
                                 that you wish to purchase.
                             </label>
                             <input id="quantity-selector-<?= $item['ID_Prodotto'] ?>" 
-                                   type="number" 
-                                   value="<?= htmlspecialchars($item['Quantita']) ?>" 
-                                   min="1" max="<?= $dbh->getProductMaxQuantity($item['ID_Prodotto'], $item['Colore'], $item['Taglia']) ?>"/>
+                                type="number" 
+                                class="quantity-selector"
+                                value="<?= htmlspecialchars($item['Quantita']) ?>" 
+                                min="1" max="<?= $dbh->getProductMaxQuantity($item['ID_Prodotto'], $item['Colore'], $item['Taglia']) ?>"/>
 
                             <p class="price">
                                 €<?= number_format($item['Prezzo'], 2) ?>
@@ -97,7 +98,10 @@ if (isset($_SESSION["user_email"])) {
         <?php endforeach; ?>
     </ul>
     <p><?= count($cartItems) ?> ITEMS</p>
-    <p>SUBTOTAL €<?= number_format($cartTotal, 2) ?></p>
+    <div class="cart-total-container">
+        <span>Total:</span>
+        <span class="cart-total">€<?= number_format($cartTotal, 2) ?></span>
+    </div>
     <button class="continue-shopping" onclick="window.location.href='home.php'">Continue shopping</button>
     <button class="proceed-checkout" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
 <?php endif; ?>

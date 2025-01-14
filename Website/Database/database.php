@@ -724,24 +724,37 @@ class DatabaseHelper {
     }
 
     // Adjust item quantity in cart
-    public function adjustCartQuantity($cartId, $productId, $color, $size, $adjustment) {
+    public function adjustCartQuantity($cartId, $productId, $color, $size, $quantity) {
         $query = "UPDATE comprendere 
-                  SET Quantita = GREATEST(1, Quantita + ?) 
+                  SET Quantita = ? 
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                   AND Colore = ? AND Taglia = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("iiisd", $adjustment, $cartId, $productId, $color, $size);
+        $stmt->bind_param("iiisd", $quantity, $cartId, $productId, $color, $size);
         return $stmt->execute();
     }
 
-    // Update item size in cart
-    public function updateCartItemSize($cartId, $productId, $oldSize, $color, $newSize) {
-        $query = "UPDATE comprendere 
-                  SET Taglia = ? 
-                  WHERE ID_Carrello = ? AND ID_Prodotto = ? 
-                  AND Colore = ? AND Taglia = ?";
-        $stmt = $this->db->prepare($query);
+    // Update product size in cart
+    public function updateSizeOnly($cartId, $productId, $color, $oldSize, $newSize) {
+        $stmt = $this->db->prepare(
+            "UPDATE comprendere 
+                SET Taglia = ? 
+                WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                AND Colore = ? AND Taglia = ?"
+        );
         $stmt->bind_param("diisd", $newSize, $cartId, $productId, $color, $oldSize);
+        return $stmt->execute();
+    }
+    
+    // Update product color and size in cart
+    public function updateSizeAndColor($cartId, $productId, $oldColor, $oldSize, $newColor, $newSize) {
+        $stmt = $this->db->prepare(
+            "UPDATE comprendere 
+                SET Colore = ?, Taglia = ? 
+                WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                AND Colore = ? AND Taglia = ?"
+        );
+        $stmt->bind_param("sdiisd", $newColor, $newSize, $cartId, $productId, $oldColor, $oldSize);
         return $stmt->execute();
     }
 
@@ -755,7 +768,8 @@ class DatabaseHelper {
         $stmt->bind_param("siids", $newColor, $cartId, $productId, $size, $oldColor);
         return $stmt->execute();
     }
-    //returns true if the variant of that color and size exists
+
+    // Get all Colors of a product size
     public function getColorsBySize($productId, $size) {
         $query = "SELECT DISTINCT Colore 
                   FROM VARIANTE 
@@ -769,7 +783,6 @@ class DatabaseHelper {
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
-
 
     // Get all Sizes of a product color
     public function getSizesByColor($productId, $color) {
@@ -798,19 +811,18 @@ class DatabaseHelper {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-        // Get all Sizes of a product
-        public function getProductSizes($productId) {
-            $query = "SELECT DISTINCT v.Taglia 
-                    FROM VARIANTE v 
-                    WHERE v.ID_Prodotto = ? 
-                    AND v.Quantita > 0 
-                    ORDER BY v.Taglia";
-            $stmt = $this->db->prepare($query);
-            $stmt->bind_param("s", $productId);
-            $stmt->execute();
-            return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        }
-    
+    // Get all Sizes of a product
+    public function getProductSizes($productId) {
+        $query = "SELECT DISTINCT v.Taglia 
+                FROM VARIANTE v 
+                WHERE v.ID_Prodotto = ? 
+                AND v.Quantita > 0 
+                ORDER BY v.Taglia";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 
     // Get max product quantity
     public function getProductMaxQuantity($productId, $color, $size) {
