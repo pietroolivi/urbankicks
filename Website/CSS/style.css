@@ -940,6 +940,10 @@ textarea {
   color: red;
 }
 
+#quantity-size-color label {
+  display: none;
+}
+
 
 
 @media (max-width: 600px) {

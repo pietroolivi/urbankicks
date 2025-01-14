@@ -22,6 +22,7 @@
                 <!--BRAND-->
                 <label for="brand-product-admin">Brand</label>
                 <select name="brand-product-admin" id="brand-product-admin" required>
+                    <option disabled selected value> -- Choose an option -- </option>
                     <option value="adidas">Adidas</option>
                     <option value="new-balance">New Balance</option>
                     <option value="sergio-tacchini">Sergio Tacchini</option>
@@ -46,7 +47,7 @@
 
                 <!--MODEL-->
                 <label for="model-product-admin">Model</label>
-                <input type="text" id="model-product-admin" maxlength="14" required>
+                <input type="text" id="model-product-admin" maxlength="14" placeholder="CHUCK 70 HIGH" required>
 
                 <!--GENRE-->
                 <fieldset>
@@ -71,7 +72,7 @@
                 </fieldset>
 
                 <!--IMAGES-->
-                <label for="images-product-admin"></label>
+                <label for="images-product-admin">Images</label>
                 <input type="file" id="images-product-admin" accept=".png, .jpg, .jpeg" multiple required>
                 <p id="error-images-product-admin">Please, upload exactly 4 pictures.</p>
                 <script>
@@ -93,7 +94,7 @@
 
                 <!--DESCRIPTION-->
                 <label for="description-product-admin">Description</label>
-                <textarea name="" id="description-product-admin" cols="30" rows="10" placeholder="Durable canvas upper for that classic Chuck 70 look and feel. OrthoLite cushioning helps to provide optimal comfort. Vintage-inspired design elements like an egret midsole, ornate stitching, and a taller rubber sidewall. Iconic Chuck Taylor ankle patch and vintage All Star license plate. Iconic Chuck Taylor ankle patch and vintage All Star license plate." required></textarea>
+                <textarea name="description-product-admin" id="description-product-admin" cols="30" rows="10" placeholder="Durable canvas upper for that classic Chuck 70 look and feel. OrthoLite cushioning helps to provide optimal comfort. Vintage-inspired design elements like an egret midsole, ornate stitching, and a taller rubber sidewall. Iconic Chuck Taylor ankle patch and vintage All Star license plate. Iconic Chuck Taylor ankle patch and vintage All Star license plate." required></textarea>
 
                 <!--PRICE-->
                 <label for="price-product-admin">Price</label>
@@ -144,7 +145,7 @@
                 </script>
 
                 <!--NUMBER SIZE COLOR-->
-                <table>
+                <table id="quantity-size-color">
                     <caption>Product availability for each size and colour.</caption>
                     <tr>
                         <td></td>
@@ -157,102 +158,102 @@
                     </tr>
                     <tr>
                         <th id="row-36" scope="row">36</th>
-                        <td headers="row-36 col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36 col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36 col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36 col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36 col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36 col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-36 col-blue"><label for="row-36-col-blue">Quantity in size 36 and colour blue.</label><input id="row-36-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36 col-purple"><label for="row-36-col-purple">Quantity in size 36 and colour purple.</label><input id="row-36-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36 col-red"><label for="row-36-col-red">Quantity in size 36 and colour red.</label><input id="row-36-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36 col-green"><label for="row-36-col-green">Quantity in size 36 and colour green.</label><input id="row-36-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36 col-white"><label for="row-36-col-white">Quantity in size 36 and colour white.</label><input id="row-36-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36 col-yellow"><label for="row-36-col-yellow">Quantity in size 36 and colour yellow.</label><input id="row-36-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-36-half" scope="row">36.5</th>
-                        <td headers="row-36-half col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36-half col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36-half col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36-half col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36-half col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-36-half col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-36-half col-blue"><label for="row-36-half-col-blue">Quantity in size 36.5 and colour blue.</label><input id="row-36-half-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36-half col-purple"><label for="row-36-half-col-purple">Quantity in size 36.5 and colour purple.</label><input id="row-36-half-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36-half col-red"><label for="row-36-half-col-red">Quantity in size 36.5 and colour red.</label><input id="row-36-half-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36-half col-green"><label for="row-36-half-col-green">Quantity in size 36.5 and colour green.</label><input id="row-36-half-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36-half col-white"><label for="row-36-half-col-white">Quantity in size 36.5 and colour white.</label><input id="row-36-half-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-36-half col-yellow"><label for="row-36-half-col-yellow">Quantity in size 36.5 and colour yellow.</label><input id="row-36-half-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-37" scope="row">37</th>
-                        <td headers="row-37 col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37 col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37 col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37 col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37 col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37 col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-37 col-blue"><label for="row-37-col-blue">Quantity in size 37 and colour blue.</label><input id="row-37-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37 col-purple"><label for="row-37-col-purple">Quantity in size 37 and colour purple.</label><input id="row-37-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37 col-red"><label for="row-37-col-red">Quantity in size 37 and colour red.</label><input id="row-37-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37 col-green"><label for="row-37-col-green">Quantity in size 37 and colour green.</label><input id="row-37-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37 col-white"><label for="row-37-col-white">Quantity in size 37 and colour white.</label><input id="row-37-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37 col-yellow"><label for="row-37-col-yellow">Quantity in size 37 and colour yellow.</label><input id="row-37-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-37-half" scope="row">37.5</th>
-                        <td headers="row-37-half col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37-half col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37-half col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37-half col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37-half col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-37-half col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-37-half col-blue"><label for="row-37-half-col-blue">Quantity in size 37.5 and colour blue.</label><input id="row-37-half-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37-half col-purple"><label for="row-37-half-col-purple">Quantity in size 37.5 and colour purple.</label><input id="row-37-half-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37-half col-red"><label for="row-37-half-col-red">Quantity in size 37.5 and colour red.</label><input id="row-37-half-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37-half col-green"><label for="row-37-half-col-green">Quantity in size 37.5 and colour green.</label><input id="row-37-half-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37-half col-white"><label for="row-37-half-col-white">Quantity in size 37.5 and colour white.</label><input id="row-37-half-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-37-half col-yellow"><label for="row-37-half-col-yellow">Quantity in size 37.5 and colour yellow.</label><input id="row-37-half-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-38" scope="row">38</th>
-                        <td headers="row-38 col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38 col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38 col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38 col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38 col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38 col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-38 col-blue"><label for="row-38-col-blue">Quantity in size 38 and colour blue.</label><input id="row-38-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38 col-purple"><label for="row-38-col-purple">Quantity in size 38 and colour purple.</label><input id="row-38-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38 col-red"><label for="row-38-col-red">Quantity in size 38 and colour red.</label><input id="row-38-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38 col-green"><label for="row-38-col-green">Quantity in size 38 and colour green.</label><input id="row-38-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38 col-white"><label for="row-38-col-white">Quantity in size 38 and colour white.</label><input id="row-38-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38 col-yellow"><label for="row-38-col-yellow">Quantity in size 38 and colour yellow.</label><input id="row-38-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-38-half" scope="row">38.5</th>
-                        <td headers="row-38-half col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38-half col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38-half col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38-half col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38-half col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-38-half col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-38-half col-blue"><label for="row-38-half-col-blue">Quantity in size 38.5 and colour blue.</label><input id="row-38-half-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38-half col-purple"><label for="row-38-half-col-purple">Quantity in size 38.5 and colour purple.</label><input id="row-38-half-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38-half col-red"><label for="row-38-half-col-red">Quantity in size 38.5 and colour red.</label><input id="row-38-half-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38-half col-green"><label for="row-38-half-col-green">Quantity in size 38.5 and colour green.</label><input id="row-38-half-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38-half col-white"><label for="row-38-half-col-white">Quantity in size 38.5 and colour white.</label><input id="row-38-half-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-38-half col-yellow"><label for="row-38-half-col-yellow">Quantity in size 38.5 and colour yellow.</label><input id="row-38-half-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-39" scope="row">39</th>
-                        <td headers="row-39 col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39 col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39 col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39 col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39 col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39 col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-39 col-blue"><label for="row-39-col-blue">Quantity in size 39 and colour blue.</label><input id="row-39-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39 col-purple"><label for="row-39-col-purple">Quantity in size 39 and colour purple.</label><input id="row-39-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39 col-red"><label for="row-39-col-red">Quantity in size 39 and colour red.</label><input id="row-39-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39 col-green"><label for="row-39-col-green">Quantity in size 39 and colour green.</label><input id="row-39-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39 col-white"><label for="row-39-col-white">Quantity in size 39 and colour white.</label><input id="row-39-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39 col-yellow"><label for="row-39-col-yellow">Quantity in size 39 and colour yellow.</label><input id="row-39-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-39-half" scope="row">39.5</th>
-                        <td headers="row-39-half col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39-half col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39-half col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39-half col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39-half col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-39-half col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-39-half col-blue"><label for="row-39-half-col-blue">Quantity in size 39.5 and colour blue.</label><input id="row-39-half-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39-half col-purple"><label for="row-39-half-col-purple">Quantity in size 39.5 and colour purple.</label><input id="row-39-half-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39-half col-red"><label for="row-39-half-col-red">Quantity in size 39.5 and colour red.</label><input id="row-39-half-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39-half col-green"><label for="row-39-half-col-green">Quantity in size 39.5 and colour green.</label><input id="row-39-half-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39-half col-white"><label for="row-39-half-col-white">Quantity in size 39.5 and colour white.</label><input id="row-39-half-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-39-half col-yellow"><label for="row-39-half-col-yellow">Quantity in size 39.5 and colour yellow.</label><input id="row-39-half-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-40" scope="row">40</th>
-                        <td headers="row-40 col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40 col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40 col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40 col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40 col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40 col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-40 col-blue"><label for="row-40-col-blue">Quantity in size 40 and colour blue.</label><input id="row-40-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40 col-purple"><label for="row-40-col-purple">Quantity in size 40 and colour purple.</label><input id="row-40-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40 col-red"><label for="row-40-col-red">Quantity in size 40 and colour red.</label><input id="row-40-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40 col-green"><label for="row-40-col-green">Quantity in size 40 and colour green.</label><input id="row-40-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40 col-white"><label for="row-40-col-white">Quantity in size 40 and colour white.</label><input id="row-40-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40 col-yellow"><label for="row-40-col-yellow">Quantity in size 40 and colour yellow.</label><input id="row-40-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-40-half" scope="row">40.5</th>
-                        <td headers="row-40-half col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40-half col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40-half col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40-half col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40-half col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-40-half col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-40-half col-blue"><label for="row-40-half-col-blue">Quantity in size 40.5 and colour blue.</label><input id="row-40-half-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40-half col-purple"><label for="row-40-half-col-purple">Quantity in size 40.5 and colour purple.</label><input id="row-40-half-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40-half col-red"><label for="row-40-half-col-red">Quantity in size 40.5 and colour red.</label><input id="row-40-half-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40-half col-green"><label for="row-40-half-col-green">Quantity in size 40.5 and colour green.</label><input id="row-40-half-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40-half col-white"><label for="row-40-half-col-white">Quantity in size 40.5 and colour white.</label><input id="row-40-half-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-40-half col-yellow"><label for="row-40-half-col-yellow">Quantity in size 40.5 and colour yellow.</label><input id="row-40-half-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                     <tr>
                         <th id="row-41" scope="row">41</th>
-                        <td headers="row-41 col-blue"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-41 col-purple"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-41 col-red"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-41 col-green"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-41 col-white"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
-                        <td headers="row-41 col-yellow"><input type="number" onkeyup="standardiseQuantity()" maxlength="2" value="0"/></td>
+                        <td headers="row-41 col-blue"><label for="row-41-col-blue">Quantity in size 41 and colour blue.</label><input id="row-41-col-blue" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-41 col-purple"><label for="row-41-col-purple">Quantity in size 41 and colour purple.</label><input id="row-41-col-purple" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-41 col-red"><label for="row-41-col-red">Quantity in size 41 and colour red.</label><input id="row-41-col-red" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-41 col-green"><label for="row-41-col-green">Quantity in size 41 and colour green.</label><input id="row-41-col-green" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-41 col-white"><label for="row-41-col-white">Quantity in size 41 and colour white.</label><input id="row-41-col-white" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
+                        <td headers="row-41 col-yellow"><label for="row-41-col-yellow">Quantity in size 41 and colour yellow.</label><input id="row-41-col-yellow" type="number" onkeyup="standardiseQuantity()" value="0"/></td>
                     </tr>
                 </table>
                 <button type="reset">Reset</button>
@@ -280,6 +281,7 @@
         <script>
             function standardiseQuantity() {
                 inputTag = event.currentTarget;
+                maxlength = 2;
                 if (inputTag.value <= 0) {
                     inputTag.value = 0;
                 }                
@@ -288,7 +290,7 @@
                 }
                 // We remove non-significant zeros.   
                 if (inputTag.value[0] == 0 && inputTag.value.length > 1) {
-                    inputTag.value = inputTag.value.slice(1, inputTag.maxLength);
+                    inputTag.value = inputTag.value.slice(1, maxlength);
                 }
             }
         </script>
