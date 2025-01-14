@@ -944,7 +944,13 @@ textarea {
   display: none;
 }
 
+.images-product-to-delete img, .images-product-to-add img {
+  width: 50px;
+}
 
+input:disabled[type='file'] {
+  color: transparent;
+}
 
 @media (max-width: 600px) {
   .main {
