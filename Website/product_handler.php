@@ -105,38 +105,45 @@ try {
             break;
 
         case "add_to_wishlist":
-            if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"], $_POST["email"])) {
+          /*  if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"], $_POST["email"])) {
                 throw new Exception("Missing required fields");
-            }
-
-            $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+            }*/
+            if(!isset($_POST["product_id"], $_SESSION['user_email']))
+                throw new Exception("Missing required fields");
+            $email = filter_var($_SESSION['user_email'], FILTER_SANITIZE_EMAIL);
             $productId = $_POST["product_id"];
-            $size = floatval($_POST["size"]);
-            $color = $_POST["color"];
-
-            $success = $dbh->addToWishlist($email, $productId, $color, $size);
+         /*   $size = floatval($_POST["size"]);
+            $color = $_POST["color"];*/
+            
+            $success = $dbh->addToWishlist($email, $productId);
             if (!$success) {
                 throw new Exception("Failed to add item to wishlist");
             }
             $response = ["success" => true, "message" => "Product added to wishlist"];
             break;
 
-        case "remove_from_wishlist":
-            if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"], $_POST["email"])) {
-                throw new Exception("Missing required fields");
-            }
-
-            $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
-            $productId = $_POST["product_id"];
-            $size = floatval($_POST["size"]);
-            $color = $_POST["color"];
-
-            $success = $dbh->removeFromWishlist($email, $productId, $color, $size);
-            if (!$success) {
-                throw new Exception("Failed to remove item from wishlist");
-            }
-            $response = ["success" => true, "message" => "Product removed from wishlist"];
-            break;
+            case "remove_from_wishlist":
+                if (!isset($_POST["product_id"])) {
+                    throw new Exception("Missing required fields");
+                }
+            
+                if (!isset($_SESSION["user_email"])) {
+                    $response = ["success" => false, "message" => "User not logged in"];
+                    echo json_encode($response);
+                    exit();
+                }
+            
+                $email = filter_var($_SESSION["user_email"], FILTER_SANITIZE_EMAIL);
+                $productId = $_POST["product_id"];
+            
+                $success = $dbh->removeFromWishlist($email, $productId);
+                if (!$success) {
+                    throw new Exception("Failed to remove item from wishlist");
+                }
+            
+                $response = ["success" => true, "message" => "Product removed from wishlist"];
+               // echo json_encode($response);
+                break;
 
         case "add_review":
             if (!isset($_POST["product_id"], $_POST["rating"], $_POST["comment"], $_POST["email"])) {

@@ -45,7 +45,7 @@ addToCartButton.addEventListener('click', async () => {
     }
 
 
-    const userEmail = "user@example.com"; 
+    //const userEmail = "user@example.com"; 
 
     try {
         const response = await fetch('product_handler.php', {
@@ -58,7 +58,7 @@ addToCartButton.addEventListener('click', async () => {
                 product_id: productId,
                 size: selectedSize,
                 color: selectedColor,
-                email: userEmail,
+              //  email: userEmail,
                 quantity: 1 
             })
         });
@@ -193,5 +193,45 @@ async function updateDisabledColors(productId, size) {
         console.error("Errore nella richiesta:", error);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const wishlistButton = document.getElementById('wishlistButton');
+
+    wishlistButton.addEventListener('click', async () => {
+        const inWishlist =wishlistButton.getAttribute('data-in-wishlist') === 'true'; // Stato attuale
+        const productId = wishlistButton.getAttribute('data-product-id');
+
+        try {
+            const action = inWishlist ? "remove_from_wishlist" : "add_to_wishlist";
+
+            const response = await fetch('product_handler.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    action: action,
+                    product_id: productId
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Aggiorna il pulsante in base al nuovo stato
+                wishlistButton.dataset.inWishlist = (!inWishlist).toString();
+                wishlistButton.textContent = (!inWishlist ? 'Remove from' : 'Add to') + ' wishlist';
+            } else {
+                alert(data.message || 'An error occurred while updating the wishlist.');
+                console.error(data.message);
+            }
+          /* const data = await response.text();
+           console.log(data);*/
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    });
+});
+
+
 
 updateButtonState();

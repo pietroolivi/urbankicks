@@ -92,6 +92,7 @@ $reviews = $templateParams["productData"]["reviews"];
 </button>
 
 <button id="wishlistButton" 
+       data-product-id="<?php echo htmlspecialchars($product['ID_Prodotto']); ?>"
         data-in-wishlist="<?php echo $templateParams["productData"]["inWishlist"] ? 'true' : 'false'; ?>">
     <?php 
     echo $templateParams["productData"]["inWishlist"] ? 'Remove from' : 'Add to'; ?> wishlist
