@@ -146,11 +146,11 @@ try {
                 break;
 
         case "add_review":
-            if (!isset($_POST["product_id"], $_POST["rating"], $_POST["comment"], $_POST["email"])) {
+            if (!isset($_POST["product_id"], $_POST["rating"], $_POST["comment"], $_SESSION["user_email"])) {
                 throw new Exception("Missing required fields");
             }
 
-            $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+            $email = filter_var($_SESSION['user_email'], FILTER_SANITIZE_EMAIL);
             $productId = $_POST["product_id"];
             $rating = intval($_POST["rating"]);
             $comment = filter_var($_POST["comment"], FILTER_SANITIZE_STRING);

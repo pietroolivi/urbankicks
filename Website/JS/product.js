@@ -63,14 +63,24 @@ addToCartButton.addEventListener('click', async () => {
             })
         });
 
-       // const data = await response.json();
-       const rawText = await response.text();
-       console.log(rawText);
-      /*  if (data.success) {
-            alert(data.message || "Product added to cart successfully!");
+        const data = await response.json();
+  /*     const rawText = await response.text();
+       console.log(rawText);*/
+        if (data.success) {
+           // alert(data.message || "Product added to cart successfully!");
+
         } else {
-            alert(data.message || "Failed to add product to cart.");
-        }*/
+          //  alert(data.message || "Failed to add product to cart.");
+            if (selectedSize==null)
+            {
+                sizeParagraph=document.getElementById("sizeParagraphWarning");
+                sizeParagraph.value.textContent="missing size";
+            }
+            if(selectedColor==null){
+                colorParagraph=document.getElementById("colorParagraphWarning");
+                colorParagraph.value.textContent="missing color";
+            }
+        }
     } catch (error) {
         console.error("Errore nella richiesta:", error);
         alert("An error occurred while adding the product to cart.");
@@ -153,6 +163,89 @@ async function updateDisabledSizes(productId, color) {
         console.error("Errore nella richiesta:", error);
     }
 }
+
+//________________________REVIEW_______________________________________-
+
+
+
+const submitReviewButton=document.getElementById("review-submit");
+const comment=document.getElementById("comment-review");
+let ratingSelected = 0;
+
+
+const ratingFromPoint = (evt) => {
+    const el = evt.currentTarget;
+    const pointerX = evt.pageX - el.offsetLeft;
+    return Math.max(1, Math.min(5, Math.ceil(pointerX / el.offsetWidth * 5)));
+};
+const starRating = (el) => {
+    const colorDefault = getComputedStyle(el).getPropertyValue("--color");
+    const colorClick = "#f00";
+    
+    el.addEventListener("pointerdown", (evt) => {
+        ratingSelected = ratingFromPoint(evt);
+        el.style.setProperty("--color", colorClick);
+        el.style.setProperty("--rating", ratingSelected);
+    });
+    
+    el.addEventListener("pointermove", (evt) => {
+        evt.preventDefault();
+        const ratingHover = ratingFromPoint(evt);
+        el.style.setProperty("--rating", ratingHover);
+    });
+    
+    el.addEventListener("pointerleave", (evt) => {
+        el.style.setProperty("--color", colorDefault);
+        el.style.setProperty("--rating", ratingSelected);
+    });
+    el.addEventListener("pointerup", (evt) => {
+        ratingSelected = ratingFromPoint(evt);
+        console.log(ratingSelected); // @TODO: Send ratingSelected value to server
+    });
+};
+document.querySelectorAll('[style="--rating:0"]').forEach(starRating);
+
+
+submitReviewButton.addEventListener("click",  (event) => {
+    event.preventDefault(); // Previene il comportamento predefinito (invio del form)
+    addReview(
+        submitReviewButton.getAttribute('data-product-id'),
+        ratingSelected,
+        comment.value
+    )}
+);
+
+async function addReview(productId,ratingSelected,comment){
+    try{
+        const response = await fetch('product_handler.php',{
+            method:'POST',
+            headers:{
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: 'add_review',
+                product_id: productId,
+                rating: ratingSelected,
+                comment: comment
+            })
+        });
+        const data = await response.json();
+        if(data.success){
+            console.log("review aggiunta con successo");
+        }
+        if(!data.success){
+            console.error(data.message);
+            document.getElementById("review-error").innerText=data.message;
+        }
+    }catch(error){
+
+
+    }
+
+
+}
+
+
 
 // Function to disable colors
 async function updateDisabledColors(productId, size) {

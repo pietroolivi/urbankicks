@@ -85,6 +85,7 @@ $reviews = $templateParams["productData"]["reviews"];
                name="color" 
                value="<?php echo $color; ?>">
     <?php endforeach; ?>
+    <p id="colorParagraphWarning"></p>
 </section>
 <button id="addToCartButton" data-product-id="<?php echo htmlspecialchars($product['ID_Prodotto']); ?>"
         <?php echo $product['Sta_Tipo'] !== 'disponibile' ? 'disabled' : ''; ?>>
@@ -100,6 +101,12 @@ $reviews = $templateParams["productData"]["reviews"];
 
 <aside id="reviews">
     <h3>Reviews</h3>
+    <p id="review-error"></p>
+            <form id="add-a-review">
+            <textarea id="comment-review" placeholder="Add your review (max 160 characters)" maxlength="234" rows="4" cols="40"></textarea>
+            <span style="--rating:0"></span>
+            <button id="review-submit" type="submit">Send</button>
+        </form>
     <?php foreach($reviews as $review): ?>
         <article class="review">
             <span style="--rating:<?php echo $review['Punteggio']; ?>"></span>
