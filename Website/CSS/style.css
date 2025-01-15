@@ -944,11 +944,11 @@ textarea {
   display: none;
 }
 
-.images-product-to-delete img, .images-product-to-add img {
+.images-product-to-delete img, .images-product-to-add img, .images-product-to-edit img {
   width: 50px;
 }
 
-input:disabled[type='file'] {
+input:disabled[type='file'],#images-product-admin-edit {
   color: transparent;
 }
 
