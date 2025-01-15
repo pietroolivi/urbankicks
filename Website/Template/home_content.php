@@ -69,7 +69,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
 
         <h3>COLOR</h3>
         <?php
-        $colors = ["blue", "purple", "red", "green", "white", "yellow"];
+        $colors = ["blue", "purple", "red", "green", "white", "black"];
         foreach($colors as $color): ?>
             <div class="color-option">
                 <input type="checkbox" id="<?php echo $color; ?>" name="colors[]" value="<?php echo $color; ?>">
