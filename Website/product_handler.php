@@ -1,6 +1,5 @@
 <?php
 require_once("bootstrap.php");
-
 header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -128,6 +127,7 @@ try {
                 }
             
                 if (!isset($_SESSION["user_email"])) {
+                    
                     $response = ["success" => false, "message" => "User not logged in"];
                     echo json_encode($response);
                     exit();

@@ -73,10 +73,13 @@ addToCartButton.addEventListener('click', async () => {
            // alert(data.message || "Product added to cart successfully!");
            wishlistButton.textContent="";
         } else {
-            const cartError=document.getElementById('wishlist-cart-error');
+            if(data.message==="You need to be logged in"){
+                window.location.href = "login.php";
+            }
+        /*    const cartError=document.getElementById('wishlist-cart-error');
             cartError.textContent=data.message;
           //  alert(data.message || "Failed to add product to cart.");
-           /* if (selectedSize===undefined)
+            if (selectedSize===undefined)
             {
                 let sizeParagraph=document.getElementById("sizeParagraphWarning");
                 sizeParagraph.value.textContent="missing size";
@@ -318,6 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 wishlistButton.textContent = (!inWishlist ? 'Remove from' : 'Add to') + ' wishlist';
                 p.textContent='';
             } else {
+                if(data.message==="You need to be logged in"){
+                    window.location.href = "login.php";
+                }
              //   alert(data.message || 'An error occurred while updating the wishlist.');
                 console.error(data.message);
                 wishlistError.textContent=data.message;
