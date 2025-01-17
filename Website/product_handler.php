@@ -68,7 +68,7 @@ try {
                 throw new Exception("User must be logged in");
             }*/
             if(!isset($_SESSION['user_email'])){
-                throw new Exception("User must be logged in");
+                throw new Exception("You need to be logged in");
             }
             $email = $_SESSION['user_email'];
           //  $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
@@ -109,7 +109,7 @@ try {
                 throw new Exception("Missing required fields");
             }*/
             if(!isset($_POST["product_id"], $_SESSION['user_email']))
-                throw new Exception("Missing required fields");
+                throw new Exception("You need to be logged in");
             $email = filter_var($_SESSION['user_email'], FILTER_SANITIZE_EMAIL);
             $productId = $_POST["product_id"];
          /*   $size = floatval($_POST["size"]);
@@ -146,7 +146,11 @@ try {
                 break;
 
         case "add_review":
-            if (!isset($_POST["product_id"], $_POST["rating"], $_POST["comment"], $_SESSION["user_email"])) {
+            if(!isset($_SESSION["user_email"])){
+                throw new Exception("You need to be logged in");
+            }
+
+            if (!isset($_POST["product_id"], $_POST["rating"], $_POST["comment"])) {
                 throw new Exception("Missing required fields");
             }
 

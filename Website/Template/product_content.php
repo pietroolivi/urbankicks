@@ -71,7 +71,7 @@ $reviews = $templateParams["productData"]["reviews"];
                value="<?php echo $size; ?>"
                <?php echo !$available ? 'disabled' : ''; ?>>
     <?php endforeach; ?>
-    <p id="sizeParagraphWarning"></p>
+    <p id="size-error"></p>
 </section>
 
 <section id="color">
@@ -85,10 +85,10 @@ $reviews = $templateParams["productData"]["reviews"];
                name="color" 
                value="<?php echo $color; ?>">
     <?php endforeach; ?>
-    <p id="colorParagraphWarning"></p>
+    <p id="color-error"></p>
 </section>
-<button id="addToCartButton" data-product-id="<?php echo htmlspecialchars($product['ID_Prodotto']); ?>"
-        <?php echo $product['Sta_Tipo'] !== 'disponibile' ? 'disabled' : ''; ?>>
+<p id="wishlist-cart-error"></p>
+<button id="addToCartButton" data-product-id="<?php echo htmlspecialchars($product['ID_Prodotto']); ?>">
     Add to cart
 </button>
 

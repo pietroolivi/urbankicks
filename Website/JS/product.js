@@ -40,8 +40,11 @@ addToCartButton.addEventListener('click', async () => {
     console.log("this is the idprod: "+productId+" this is the size of added: "+selectedSize+" and this the color: "+selectedColor);
 
     if (!selectedSize || !selectedColor) {
-        alert("Please select both a size and a color before adding to cart.");
-        return;
+        const sizeParagraph=document.getElementById("size-error");
+        sizeParagraph.textContent="missing size";
+        const colorParagraph=document.getElementById("color-error");
+        colorParagraph.textContent="missing color";
+        return
     }
 
 
@@ -68,22 +71,23 @@ addToCartButton.addEventListener('click', async () => {
        console.log(rawText);*/
         if (data.success) {
            // alert(data.message || "Product added to cart successfully!");
-
+           wishlistButton.textContent="";
         } else {
+            const cartError=document.getElementById('wishlist-cart-error');
+            cartError.textContent=data.message;
           //  alert(data.message || "Failed to add product to cart.");
-            if (selectedSize==null)
+           /* if (selectedSize===undefined)
             {
-                sizeParagraph=document.getElementById("sizeParagraphWarning");
+                let sizeParagraph=document.getElementById("sizeParagraphWarning");
                 sizeParagraph.value.textContent="missing size";
             }
-            if(selectedColor==null){
-                colorParagraph=document.getElementById("colorParagraphWarning");
+            if(selectedColor=== ndefined){
+                let colorParagraph=document.getElementById("colorParagraphWarning");
                 colorParagraph.value.textContent="missing color";
-            }
+            }*/
         }
     } catch (error) {
         console.error("Errore nella richiesta:", error);
-        alert("An error occurred while adding the product to cart.");
     }
 });
 
@@ -117,11 +121,11 @@ sizeOptions.forEach(input => {
 
 function updateButtonState() {
     // Checks if a color and a size are selected
-    const sizeSelected = Array.from(sizeOptions).some(input => input.checked);
+   /* const sizeSelected = Array.from(sizeOptions).some(input => input.checked);
     const colorSelected = Array.from(colorOptions).some(input => input.checked);
 
     //disable or enable the cart button
-    addToCartButton.disabled = !(sizeSelected && colorSelected);
+    addToCartButton.disabled = !(sizeSelected && colorSelected);*/
 }
 
 //function to disable sizes
@@ -289,7 +293,7 @@ async function updateDisabledColors(productId, size) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const wishlistButton = document.getElementById('wishlistButton');
-
+    const wishlistError=document.getElementById('wishlist-cart-error');
     wishlistButton.addEventListener('click', async () => {
         const inWishlist =wishlistButton.getAttribute('data-in-wishlist') === 'true'; // Stato attuale
         const productId = wishlistButton.getAttribute('data-product-id');
@@ -312,9 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Aggiorna il pulsante in base al nuovo stato
                 wishlistButton.dataset.inWishlist = (!inWishlist).toString();
                 wishlistButton.textContent = (!inWishlist ? 'Remove from' : 'Add to') + ' wishlist';
+                p.textContent='';
             } else {
-                alert(data.message || 'An error occurred while updating the wishlist.');
+             //   alert(data.message || 'An error occurred while updating the wishlist.');
                 console.error(data.message);
+                wishlistError.textContent=data.message;
             }
           /* const data = await response.text();
            console.log(data);*/

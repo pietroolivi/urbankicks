@@ -163,19 +163,26 @@ class DatabaseHelper {
                     }
                 }
     
-                if($row['Punteggio']) {
-                    $productData['reviews'][] = [
-                        'Punteggio' => $row['Punteggio'],
-                        'Descrizione' => $row['RecensioneDescrizione'],
-                        'Data_Recensione' => $row['Data_Recensione'],
-                        'Email' => $row['ReviewerEmail']
-                    ];
+                
+                // adding only unique reviews
+                if ($row['Punteggio']) {
+                    $reviewKey = $row['Punteggio'] . '_' . $row['ReviewerEmail'] . '_' . $row['Data_Recensione'];
+                    if (!isset($uniqueReviews[$reviewKey])) {
+                        $productData['reviews'][] = [
+                            'Punteggio' => $row['Punteggio'],
+                            'Descrizione' => $row['RecensioneDescrizione'],
+                            'Data_Recensione' => $row['Data_Recensione'],
+                            'Email' => $row['ReviewerEmail']
+                        ];
+                        $uniqueReviews[$reviewKey] = true;
+                    }
                 }
     
                 $productData['inWishlist'] = (bool)$row['InWishlist'];
                 $productData['inCart'] = (bool)$row['InCart'];
                 $productData['cartQuantity'] = $row['CartQuantity'] ?? 0;
             }
+            
     
             return $productData;
     
