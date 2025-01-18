@@ -221,31 +221,73 @@ class DatabaseHelper {
      * TRACKING QUERIES *
      *******************/
 
-    public function getOrderTracking($orderId) {
-        $query = "SELECT o.*, t.Posizione, t.Timestamp_Aggiornamento 
-                  FROM ORDINE o 
-                  LEFT JOIN Tracking_Spedizione t ON o.ID_Ordine = t.ID_Ordine 
-                  WHERE o.ID_Ordine = ?";
+     public function getOrderTracking($orderId) {
+        $query = "SELECT o.ID_Ordine, o.Tipo as status, o.Data_Ordine as order_date,
+                 ts.Posizione as location, ts.Timestamp_Aggiornamento as timestamp,
+                 p.ID_Prodotto as product_id, p.Nome as name, p.Prezzo as price,
+                 op.Prezzo_Acquisto as original_price, v.Colore as color,
+                 op.Taglia as size, op.Quantita as quantity,
+                 CONCAT(p.ID_Prodotto, '_', p.Genere, '1') as image
+                 FROM ORDINE o
+                 LEFT JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
+                 JOIN PRODOTTO_ORDINE op ON o.ID_Ordine = op.ID_Ordine 
+                 JOIN VARIANTE v ON op.ID_Prodotto = v.ID_Prodotto 
+                 JOIN PRODOTTO p ON op.ID_Prodotto = p.ID_Prodotto 
+                 WHERE o.ID_Ordine = ? 
+                 GROUP BY o.ID_Ordine, p.ID_Prodotto";
+    
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $orderId);
+        $stmt->bind_param("i", $orderId);
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result->fetch_assoc();
+        
+        $tracking = array();
+        while($row = $result->fetch_assoc()) {
+            if(empty($tracking)) {
+                $tracking['status'] = $row['status'];
+                $tracking['order_date'] = $row['order_date'];
+                $tracking['location'] = $row['location'];
+                $tracking['timestamp'] = $row['timestamp'];
+            }
+            $tracking[] = array(
+                'image' => $row['image'],
+                'name' => $row['name'],
+                'size' => $row['size'],
+                'quantity' => $row['quantity'],
+                'color' => $row['color'],
+                'price' => $row['price'],
+                'original_price' => $row['original_price']
+            );
+        }
+        
+        return $tracking;
     }
 
-    public function updateOrderStatus($orderId, $newStatus, $location) {
-        // Update order status
-        $query = "UPDATE ORDINE SET Tipo = ? WHERE ID_Ordine = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ss", $newStatus, $orderId);
-        $stmt->execute();
-
-        // Update tracking
-        $query = "INSERT INTO Tracking_Spedizione (ID_Ordine, Posizione, Timestamp_Aggiornamento) 
-                  VALUES (?, ?, NOW())";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ss", $orderId, $location);
-        return $stmt->execute();
+    public function updateOrderStatus($orderId, $status, $location) {
+        $this->db->begin_transaction();
+        try {
+            // Update order status
+            $query1 = "UPDATE ORDINE SET Tipo = ? WHERE ID_Ordine = ?";
+            $stmt1 = $this->db->prepare($query1);
+            $stmt1->bind_param("si", $status, $orderId);
+            $stmt1->execute();
+            
+            // Update tracking
+            $query2 = "INSERT INTO Tracking_Spedizione (ID_Ordine, Posizione, Timestamp_Aggiornamento) 
+                       VALUES (?, ?, NOW())
+                       ON DUPLICATE KEY UPDATE 
+                       Posizione = VALUES(Posizione),
+                       Timestamp_Aggiornamento = VALUES(Timestamp_Aggiornamento)";
+            $stmt2 = $this->db->prepare($query2);
+            $stmt2->bind_param("is", $orderId, $location);
+            $stmt2->execute();
+            
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
+        }
     }
 
     /*******************
@@ -844,9 +886,10 @@ class DatabaseHelper {
 
     // Get all items in cart
     public function getCartItems($cartId) {
-        $query = "SELECT c.*, p.Prezzo, p.Nome, p.Genere 
+        $query = "SELECT c.*, p.Prezzo, p.Nome, p.Genere, car.Valore_Totale 
                   FROM comprendere c 
                   JOIN PRODOTTO p ON c.ID_Prodotto = p.ID_Prodotto 
+                  JOIN Carrello car ON c.ID_Carrello = car.ID_Carrello 
                   WHERE c.ID_Carrello = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $cartId);
@@ -870,6 +913,21 @@ class DatabaseHelper {
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $newTotal, $cartId);
         return $stmt->execute();
+    }
+
+    // Check promo code is valid
+    public function checkPromoCode($code) {
+        $query = "SELECT ID_Sconto, Valore, TipoSconto 
+                  FROM SCONTO 
+                  WHERE ID_Sconto = ? 
+                  AND CURRENT_DATE BETWEEN Data_Inizio AND Data_Fine";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('s', $code);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        return $result->fetch_assoc();
     }
 
     /*********************
@@ -947,6 +1005,82 @@ class DatabaseHelper {
         $stmt->bind_param("ss", $email, $productId);
         $stmt->execute();
         return $stmt->get_result()->num_rows > 0;
+    }
+
+    /*********************
+     * ORDER FUNCTIONS *
+     *********************/
+    
+    // Get all orders for a user
+    public function getOrders($email) {
+        $query = "SELECT o.ID_Ordine,
+                         o.Data_Ordine,
+                         o.Costo_Totale,
+                         o.Metodo_Pagamento,
+                         o.Regalo,
+                         o.Tipo,
+                         o.ID_Sconto,
+                         ts.Posizione as tracking_location,
+                         ts.Timestamp_Aggiornamento as tracking_timestamp,
+                         p.ID_Prodotto,
+                         p.Nome,
+                         p.Genere,
+                         po.Prezzo_Acquisto,
+                         po.Quantita,
+                         po.Taglia,
+                         po.Colore
+                  FROM ORDINE o
+                  LEFT JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
+                  JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
+                  JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
+                  WHERE o.Email = ?
+                  ORDER BY o.Data_Ordine DESC, p.ID_Prodotto ASC";
+    
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        $orders = [];
+        while ($row = $result->fetch_assoc()) {
+            if (!isset($orders[$row['ID_Ordine']])) {
+                $orders[$row['ID_Ordine']] = [
+                    'ID_Ordine' => $row['ID_Ordine'],
+                    'Data_Ordine' => $row['Data_Ordine'],
+                    'Costo_Totale' => $row['Costo_Totale'],
+                    'Metodo_Pagamento' => $row['Metodo_Pagamento'],
+                    'Regalo' => $row['Regalo'],
+                    'Tipo' => $row['Tipo'],
+                    'ID_Sconto' => $row['ID_Sconto'],
+                    'tracking_location' => $row['tracking_location'],
+                    'tracking_timestamp' => $row['tracking_timestamp'],
+                    'products' => []
+                ];
+            }
+    
+            $orders[$row['ID_Ordine']]['products'][] = [
+                'ID_Prodotto' => $row['ID_Prodotto'],
+                'Nome' => $row['Nome'],
+                'Genere' => $row['Genere'],
+                'Immagine' => $row['Immagine'],
+                'Prezzo' => $row['Prezzo_Acquisto'],
+                'Quantita' => $row['Quantita'],
+                'Taglia' => $row['Taglia'],
+                'Colore' => $row['Colore']
+            ];
+        }
+    
+        return array_values($orders);
+    }
+    
+    // Add order review
+    public function addOrderReview($email, $productId, $rating, $comment) {
+        $query = "INSERT INTO RECENSIONE (ID_Prodotto, Email, Punteggio, Descrizione, Data_Recensione)
+                  VALUES (?, ?, ?, ?, CURDATE())";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("isds", $productId, $email, $rating, $comment);
+        return $stmt->execute();
     }
 }
 

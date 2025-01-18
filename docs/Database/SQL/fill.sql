@@ -1,8 +1,13 @@
 -- Aggiornamento dati nella tabella STATO_PRODOTTO
 INSERT INTO STATO_PRODOTTO (Tipo, Descrizione) VALUES
-    ('Disponibile', 'Il prodotto è attualmente disponibile in magazzino'),
-    ('Non disponibile', 'Il prodotto non è attualmente disponibile in magazzino'),
-    ('In arrivo', 'Il prodotto è previsto in arrivo prossimamente');
+    	('Disponibile', 'Il prodotto è attualmente disponibile in magazzino'),
+    	('Non disponibile', 'Il prodotto non è attualmente disponibile in magazzino'),
+    	('In arrivo', 'Il prodotto è previsto in arrivo prossimamente');
+
+-- Aggiornamento dati nella tabella STATO_SPEDIZIONE
+INSERT INTO STATO_SPEDIZIONE (Tipo, Descrizione) VALUES 
+    	('Placed', 'The payment has been successfully processed and we are starting to prepare the order!'),         	('Shipped', 'The order was handed over to the SDA express courier!'), 
+	('Delivered', 'The order has been delivered!');
 
 -- Inserimento dati nella tabella PRODOTTO
 INSERT INTO PRODOTTO (Nome, Descrizione, Marca, Tipo, Genere, Prezzo, Data_Aggiunta, Sta_Tipo) VALUES
