@@ -21,8 +21,7 @@ $templateParams["title"] = "Track Order";
 $templateParams["name"] = "tracking_content.php";
 $templateParams["js"] = [
     "JS/Objects/listenerObjectSetting.js",
-    "JS/Functions/listeners.js",
-    "JS/tracking.js"
+    "JS/Functions/listeners.js"
 ];
 
 require_once("Template/base.php");

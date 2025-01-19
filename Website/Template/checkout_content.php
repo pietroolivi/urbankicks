@@ -73,19 +73,19 @@
         <fieldset>
             <legend>DELIVERY OPTIONS</legend>
             <div id="standard-paid-option">
-                <input id="shipping-standard-paid" type="radio" name="delivery-options" value="5.00" data-cost="5.00"/>
+                <input id="shipping-standard-paid" type="radio" name="delivery-options" value="Standard" data-cost="5.00"/>
                 <label for="shipping-standard-paid"><img src="CSS/Images/Icons/shipping_standard.svg" alt="" />Standard</label>
                 <p>5-7 weekdays</p>
                 <p>+€5.00</p>
             </div>
             <div id="standard-free-option">
-                <input id="shipping-standard-free" type="radio" name="delivery-options" value="0.00" data-cost="0.00"/>
+                <input id="shipping-standard-free" type="radio" name="delivery-options" value="Standard" data-cost="0.00"/>
                 <label for="shipping-standard-free"><img src="CSS/Images/Icons/shipping_standard.svg" alt="">Standard</label>
                 <p>orders over €200</p>
                 <p>FREE</p>
             </div>
             <div>
-                <input id="shipping-express" type="radio" name="delivery-options" value="10.00" data-cost="10.00"/>
+                <input id="shipping-express" type="radio" name="delivery-options" value="Express" data-cost="10.00"/>
                 <label for="shipping-express"><img src="CSS/Images/Icons/shipping_express.svg" alt="" />Express</label>
                 <p>2-4 weekdays</p>
                 <p>+€10.00</p>
@@ -117,7 +117,7 @@
                 </div>
                 
                 <div onclick="changePaymentMethod('paypal')">
-                    <input id="paypal" type="radio" name="payment-method" value="paypal">
+                    <input id="paypal" type="radio" name="payment-method" value="Paypal">
                     <label for="paypal">PayPal</label>
                     <img src="CSS/Images/Icons/paypal.svg" alt="PayPal">
                 </div>

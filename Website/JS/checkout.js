@@ -76,7 +76,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({
                         paymentMethod: selectedMethod,
-                        total: total
+                        total: total,
+                        shippingType: document.querySelector('input[name="delivery-options"]:checked').value,
+                        firstName: document.getElementById('first-name-shipping').value,
+                        lastName: document.getElementById('last-name-shipping').value,
+                        discount: document.getElementById('promo-code-input').textContent,
                     })
                 });
                 
@@ -254,7 +258,7 @@ function showSection(step) {
             progressBar.src = 'CSS/Images/Illustrations/progress_bar3.svg';
             stepTitle.textContent = 'PAYMENT';
             // Update payment total when showing payment section
-            const total = document.getElementById('new-subtotal').textContent;
+            const total = document.getElementById('shipping-total').textContent;
             document.getElementById('payment-total').textContent = total;
             break;
         default:

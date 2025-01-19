@@ -42,7 +42,10 @@ try {
                 $_SESSION["user_email"],
                 $data['total'],
                 $data['paymentMethod'],
-                isset($_SESSION['gift_wrap']) ? true : false
+                $data['shippingType'],
+                isset($_SESSION['gift_wrap']) ? true : false,
+                $data['firstName'],
+                $data['lastName']
             );
             
             // Clear gift wrap session

@@ -1,19 +1,39 @@
-<?php if(!isset($templateParams["tracking"])): ?>
+<?php
+function getOrderStatusStep($status) {
+    $steps = [
+        'placed' => 1,
+        'in progress' => 2,
+        'shipped' => 3, 
+        'delivered' => 4
+    ];
+    return $steps[strtolower($status)] ?? 0;
+}
+
+if(!isset($templateParams["tracking"])): ?>
     <p>Order tracking information not available.</p>
-<?php else: ?>
+<?php else: 
+    $tracking = $templateParams["tracking"];
+    $orderInfo = $tracking['order_info'];
+    $trackingStates = $tracking['tracking_states'];
+    $products = $tracking['products'];
+    $currentStep = getOrderStatusStep($orderInfo['current_status']);
+?>
     <section class="tracking-section">
         <header>
-            <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." /></a>
+            <a href="javascript:history.back()" class="back">
+                <img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." />
+            </a>
             <h2>Track Order</h2>
         </header>
 
         <div class="order-info">
             <h3>#<?php echo htmlspecialchars($_GET["order"]); ?></h3>
+            <p>Shipping Type: <?php echo htmlspecialchars($orderInfo['shipping_type']); ?></p>
+            <p>Order Date: <?php echo (new DateTime($orderInfo['order_date']))->format('d M Y'); ?></p>
         </div>
 
         <ul class="products-overview">
-            <?php foreach($templateParams["tracking"] as $key => $item): 
-                if(!is_array($item) || in_array($key, ['status', 'order_date', 'location', 'timestamp'])) continue; ?>
+            <?php foreach($products as $item): ?>
                 <li>
                     <article>
                         <img src="CSS/Images/Products/<?php echo htmlspecialchars($item['image']); ?>.webp" 
@@ -21,8 +41,7 @@
                         <h4><?php echo htmlspecialchars($item['name']); ?></h4>
                         <p>Size: <?php echo htmlspecialchars($item['size']); ?> | Qty: <?php echo htmlspecialchars($item['quantity']); ?></p>
                         <p>Color: <?php echo htmlspecialchars($item['color']); ?></p>
-                        <p>€<?php echo number_format($item['price'], 2); ?>
-                        </p>
+                        <p>€<?php echo number_format($item['price'], 2); ?></p>
                     </article>
                 </li>
             <?php endforeach; ?>
@@ -31,37 +50,70 @@
         <section>
             <h3>ORDER DETAILS</h3>
             <p>Expected delivery date</p>
-            <p>03 Sep 2024</p>
+            <?php
+            $deliveryEstimate = null;
+            foreach($trackingStates as $state) {
+                if(strtolower($state['status']) == 'delivered') {
+                    $deliveryEstimate = $state['estimated_arrival'];
+                    break;
+                }
+            }
+            ?>
+            <p>
+                <?php if($deliveryEstimate): ?>
+                    <?php echo (new DateTime($deliveryEstimate))->format('d M Y'); ?>
+                <?php else: ?>
+                    Delivery date not yet available
+                <?php endif; ?>
+            </p>
             <p>Tracking ID</p>
-            <p><a href="#order-status">TRK452126542</a></p>
+            <p><a href="#order-status">TRK<?php echo str_pad($_GET["order"], 9, '0', STR_PAD_LEFT); ?></a></p>
         </section>
+
         <section id="order-status">                
             <h3>ORDER STATUS</h3>
             <div>
-                <img src="CSS/Images/Illustrations/tracking_step2.svg" alt="The second of four steps to complete the order was completed.">
+                <img src="CSS/Images/Illustrations/tracking_step<?php echo $currentStep; ?>.svg" 
+                    alt="Order is at step <?php echo $currentStep; ?> of 4">
                 <ol>
-                    <li>
-                        <em>Order placed</em>
-                        <p>23 Aug 2024, 04:25 PM</p>
-                    </li>
-                    <li>
-                        <em>In progress</em>
-                        <p>23 Aug 2024, 05:25 PM</p>
-                    </li>
-                    <li>
-                        <p>Shipped</p>
-                        <p>Expected 24 Aug 2024</p>
-                    </li>
-                    <li>
-                        <p>Delivered</p>
-                        <p>Expected 03 Sep 2024</p>
-                    </li>
+                    <?php
+                    $allStates = ['placed', 'in progress', 'shipped', 'delivered'];
+                    $trackingMap = array_column($trackingStates, null, 'status');
+                    
+                    foreach($allStates as $statusKey):
+                        $state = isset($trackingMap[ucfirst($statusKey)]) ? $trackingMap[ucfirst($statusKey)] : null;
+                        // Handle 'Placed' state specially
+                        if($statusKey === 'placed') {
+                            $isCompleted = true;
+                            $actualDate = $orderInfo['order_date'];
+                        } else {
+                            $isCompleted = $state && !empty($state['actual_arrival']);
+                            $actualDate = $state['actual_arrival'] ?? null;
+                        }
+                    ?>
+                        <li class="<?php echo $isCompleted ? 'completed' : ''; ?>">
+                            <em><?php echo ucfirst($statusKey); ?></em>
+                            <p>
+                                <?php if($isCompleted && $actualDate): ?>
+                                    <?php echo (new DateTime($actualDate))->format('d M Y, h:i A'); ?>
+                                <?php elseif($state && $state['estimated_arrival']): ?>
+                                    Expected <?php echo (new DateTime($state['estimated_arrival']))->format('d M Y'); ?>
+                                <?php else: ?>
+                                    Expected: Pending
+                                <?php endif; ?>
+                            </p>
+                        </li>
+                    <?php endforeach; ?>
                 </ol>
             </div>
         </section>
+
         <section>
             <h3>PARCEL LOCATION</h3>
-            <img src="CSS/Images/Illustrations/map.svg" alt="">
+            <?php if (isset($orderInfo['current_location'])): ?>
+                <p>Last updated: <?php echo (new DateTime($trackingStates[0]['timestamp']))->format('d M Y, h:i A'); ?></p>
+            <?php endif; ?>
+            <img src="CSS/Images/Illustrations/map.svg" alt="Map showing parcel location">
         </section>
     </section>
 <?php endif; ?>

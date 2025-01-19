@@ -123,10 +123,10 @@ CREATE TABLE IF NOT EXISTS ORDINE (
      Data_Ordine DATETIME NOT NULL,
      Costo_Totale DECIMAL(10,2) NOT NULL,
      Metodo_Pagamento VARCHAR(50) NOT NULL,
+     Tipo_Spedizione VARCHAR(20) NOT NULL,
      Regalo TINYINT(1) NOT NULL,
-     NomeRegalo VARCHAR(50),
-     CognomeRegalo VARCHAR(50),
-     Tipo VARCHAR(20) NOT NULL,
+     NomeDestinatario VARCHAR(50) NOT NULL,
+     CognomeDestinatario VARCHAR(50) NOT NULL,
      Email VARCHAR(100) NOT NULL,
      ID_Sconto INT,
      CONSTRAINT ID_ORDINE_ID PRIMARY KEY (ID_Ordine),
@@ -169,8 +169,10 @@ CREATE TABLE IF NOT EXISTS Tracking_Spedizione (
      ID_Ordine INT NOT NULL,
      Posizione VARCHAR(255) NOT NULL,
      Stato VARCHAR(20) NOT NULL,
+     Arrivo_Effettivo DATETIME,
+     Arrivo_Stimato DATETIME NOT NULL,
      Timestamp_Aggiornamento DATETIME NOT NULL,
-     CONSTRAINT ID_Track_ORDIN_ID PRIMARY KEY (ID_Ordine),
+     CONSTRAINT ID_Track_ORDIN_ID PRIMARY KEY (ID_Ordine, Stato),
      FOREIGN KEY (ID_Ordine) REFERENCES ORDINE(ID_Ordine) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 

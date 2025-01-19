@@ -221,48 +221,107 @@ class DatabaseHelper {
      * TRACKING QUERIES *
      *******************/
 
-     public function getOrderTracking($orderId) {
-        $query = "SELECT o.ID_Ordine, o.Tipo as status, o.Data_Ordine as order_date,
-                 ts.Posizione as location, ts.Timestamp_Aggiornamento as timestamp,
-                 p.ID_Prodotto as product_id, p.Nome as name, p.Prezzo as price,
-                 op.Prezzo_Acquisto as original_price, v.Colore as color,
-                 op.Taglia as size, op.Quantita as quantity,
-                 CONCAT(p.ID_Prodotto, '_', p.Genere, '1') as image
-                 FROM ORDINE o
-                 LEFT JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
-                 JOIN PRODOTTO_ORDINE op ON o.ID_Ordine = op.ID_Ordine 
-                 JOIN VARIANTE v ON op.ID_Prodotto = v.ID_Prodotto 
-                 JOIN PRODOTTO p ON op.ID_Prodotto = p.ID_Prodotto 
-                 WHERE o.ID_Ordine = ? 
-                 GROUP BY o.ID_Ordine, p.ID_Prodotto";
+    // Get order tracking information
+    public function getOrderTracking($orderId) {
+        try {
+            $query = "SELECT 
+                o.ID_Ordine,
+                o.Tipo_Spedizione as shipping_type,
+                o.Data_Ordine as order_date,
+                ts.Posizione as location,
+                ts.Stato as status,
+                ts.Arrivo_Effettivo as actual_arrival,
+                ts.Arrivo_Stimato as estimated_arrival,
+                ts.Timestamp_Aggiornamento as timestamp,
+                p.ID_Prodotto as product_id,
+                p.Nome as name,
+                p.Prezzo as price,
+                po.Prezzo_Acquisto as original_price,
+                po.Colore as color,
+                po.Taglia as size,
+                po.Quantita as quantity,
+                CONCAT(p.ID_Prodotto, '_', p.Genere, '1') as image
+            FROM ORDINE o
+            LEFT JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine
+            JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
+            JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
+            WHERE o.ID_Ordine = ?
+            ORDER BY ts.Timestamp_Aggiornamento DESC";
     
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("i", $orderId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        $tracking = array();
-        while($row = $result->fetch_assoc()) {
-            if(empty($tracking)) {
-                $tracking['status'] = $row['status'];
-                $tracking['order_date'] = $row['order_date'];
-                $tracking['location'] = $row['location'];
-                $tracking['timestamp'] = $row['timestamp'];
+            $stmt = $this->db->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Failed to prepare statement");
             }
-            $tracking[] = array(
-                'image' => $row['image'],
-                'name' => $row['name'],
-                'size' => $row['size'],
-                'quantity' => $row['quantity'],
-                'color' => $row['color'],
-                'price' => $row['price'],
-                'original_price' => $row['original_price']
-            );
+    
+            $stmt->bind_param("i", $orderId);
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to execute query");
+            }
+    
+            $result = $stmt->get_result();
+            
+            $tracking = [
+                'order_info' => null,
+                'tracking_states' => [],
+                'products' => []
+            ];
+    
+            while ($row = $result->fetch_assoc()) {
+                // Set order info only once
+                if (!$tracking['order_info']) {
+                    $tracking['order_info'] = [
+                        'shipping_type' => $row['shipping_type'],
+                        'order_date' => $row['order_date'],
+                        'current_status' => $row['status'],
+                        'current_location' => $row['location'],
+                        'estimated_arrival' => $row['estimated_arrival']
+                    ];
+                }
+    
+                // Add tracking state if new
+                if ($row['status'] && !isset($tracking['tracking_states'][$row['timestamp']])) {
+                    $tracking['tracking_states'][$row['timestamp']] = [
+                        'status' => $row['status'],
+                        'location' => $row['location'],
+                        'timestamp' => $row['timestamp'],
+                        'estimated_arrival' => $row['estimated_arrival'],
+                        'actual_arrival' => $row['actual_arrival']
+                    ];
+                }
+    
+                // Add product if not already added
+                $productKey = $row['product_id'] . '_' . $row['size'] . '_' . $row['color'];
+                if (!isset($tracking['products'][$productKey])) {
+                    $tracking['products'][$productKey] = [
+                        'image' => $row['image'],
+                        'name' => $row['name'],
+                        'size' => $row['size'],
+                        'quantity' => $row['quantity'],
+                        'color' => $row['color'],
+                        'price' => $row['price'],
+                        'original_price' => $row['original_price']
+                    ];
+                }
+            }
+    
+            // Sort tracking states chronologically
+            krsort($tracking['tracking_states']);
+            $tracking['tracking_states'] = array_values($tracking['tracking_states']);
+            $tracking['products'] = array_values($tracking['products']);
+    
+            return $tracking;
+    
+        } catch (Exception $e) {
+            error_log("Error in getOrderTracking: " . $e->getMessage());
+            return null;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
         }
-        
-        return $tracking;
     }
 
+    // TBModified
     public function updateOrderStatus($orderId, $status, $location) {
         $this->db->begin_transaction();
         try {
@@ -1041,7 +1100,7 @@ class DatabaseHelper {
                          o.Costo_Totale,
                          o.Metodo_Pagamento,
                          o.Regalo,
-                         o.Tipo,
+                         o.Tipo_Spedizione as Tipo,
                          o.ID_Sconto,
                          ts.Posizione as tracking_location,
                          ts.Timestamp_Aggiornamento as tracking_timestamp,
@@ -1085,7 +1144,6 @@ class DatabaseHelper {
                 'ID_Prodotto' => $row['ID_Prodotto'],
                 'Nome' => $row['Nome'],
                 'Genere' => $row['Genere'],
-                'Immagine' => $row['Immagine'],
                 'Prezzo' => $row['Prezzo_Acquisto'],
                 'Quantita' => $row['Quantita'],
                 'Taglia' => $row['Taglia'],
@@ -1097,7 +1155,7 @@ class DatabaseHelper {
     }
     
     // Add new function to DatabaseHelper class
-    public function placeOrder($email, $total, $paymentMethod, $isGift = false) {
+    public function placeOrder($email, $total, $paymentMethod, $shippingType, $isGift = false, $giftFirstName = null, $giftLastName = null) {
         try {
             $this->db->begin_transaction();
             
@@ -1105,11 +1163,19 @@ class DatabaseHelper {
             $cart = $this->getCartByEmail($email);
             
             // Create new order
-            $query = "INSERT INTO ORDINE (Data_Ordine, Costo_Totale, Metodo_Pagamento, Regalo, Tipo, Email) 
-                    VALUES (NOW(), ?, ?, ?, 'placed', ?)";
+            $query = "INSERT INTO ORDINE (Data_Ordine, Costo_Totale, Metodo_Pagamento, Tipo_Spedizione, Regalo, NomeDestinatario, CognomeDestinatario, Email) 
+                VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?)";
             
             $stmt = $this->db->prepare($query);
-            $stmt->bind_param("dsss", $total, $paymentMethod, $isGift, $email);
+            $stmt->bind_param("dssisss", 
+                $total, 
+                $paymentMethod,
+                $shippingType,
+                $isGift,
+                $giftFirstName,
+                $giftLastName,
+                $email
+            );
             $stmt->execute();
             $orderId = $this->db->insert_id;
             
@@ -1131,6 +1197,76 @@ class DatabaseHelper {
                 $stmt->execute();
             }
             
+            // Create tracking entries
+            $orderDate = new DateTime();
+            $isExpress = stripos($shippingType, 'express') !== false;
+            $expectedDates = $this->calculateExpectedDates($orderDate, $isExpress);
+
+            $trackingQuery = "INSERT INTO Tracking_Spedizione 
+                (ID_Ordine, Posizione, Stato, Arrivo_Effettivo, Arrivo_Stimato, Timestamp_Aggiornamento) 
+                VALUES (?, ?, ?, ?, ?, NOW())";
+
+            // Store dates in variables for proper binding
+            $currentTime = $orderDate->format('Y-m-d H:i:s');
+            $inProgressDate = $expectedDates['in_progress']->format('Y-m-d H:i:s');
+            $shippedDate = $expectedDates['shipped']->format('Y-m-d H:i:s');
+            $deliveredDate = $expectedDates['delivered']->format('Y-m-d H:i:s');
+            $nullDate = null;
+
+            // Placed status
+            $position = $this->getRandomItalianLocation();
+            $status = "Placed";
+            $stmt = $this->db->prepare($trackingQuery);
+            $stmt->bind_param(
+                "issss",
+                $orderId,
+                $position,
+                $status,
+                $currentTime,
+                $inProgressDate
+            );
+            $stmt->execute();
+
+            // In Progress status
+            $position = "";
+            $status = "In progress";
+            $stmt = $this->db->prepare($trackingQuery);
+            $stmt->bind_param(
+                "issss",
+                $orderId,
+                $position,
+                $status,
+                $nullDate,
+                $shippedDate
+            );
+            $stmt->execute();
+
+            // Shipped status
+            $status = "Shipped";
+            $stmt = $this->db->prepare($trackingQuery);
+            $stmt->bind_param(
+                "issss",
+                $orderId,
+                $position,
+                $status,
+                $nullDate,
+                $deliveredDate
+            );
+            $stmt->execute();
+
+            // Delivered status
+            $status = "Delivered";
+            $stmt = $this->db->prepare($trackingQuery);
+            $stmt->bind_param(
+                "issss",
+                $orderId,
+                $position,
+                $status,
+                $nullDate,
+                $deliveredDate
+            );
+            $stmt->execute();
+            
             // Clear cart
             $this->db->query("DELETE FROM comprendere WHERE ID_Carrello = " . $cart['ID_Carrello']);
             $this->db->query("UPDATE CARRELLO SET Valore_Totale = 0 WHERE ID_Carrello = " . $cart['ID_Carrello']);
@@ -1142,6 +1278,33 @@ class DatabaseHelper {
             $this->db->rollback();
             throw $e;
         }
+    }
+
+    // Add this helper function inside DatabaseHelper class
+    private function calculateExpectedDates($orderDate, $isExpress) {
+        $dates = [];
+        $inProgress = clone $orderDate;
+        $inProgress->modify('+1 weekday');
+        
+        $shipped = clone $inProgress;
+        $shipped->modify('+2 weekday');
+        
+        $delivered = clone $shipped;
+        $delivered->modify($isExpress ? '+2 weekday' : '+5 weekday');
+        
+        return [
+            'in_progress' => $inProgress,
+            'shipped' => $shipped,
+            'delivered' => $delivered
+        ];
+    }
+
+    // Get random Italian location
+    private function getRandomItalianLocation() {
+        // Italy bounds: lat 35-47, long 6-19
+        $lat = rand(3500, 4700) / 100;
+        $lng = rand(600, 1900) / 100;
+        return "$lat, $lng";
     }
 }
 
