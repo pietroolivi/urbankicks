@@ -5,6 +5,7 @@ startDtTag.max = new Date().toISOString().split("T")[0];
 endDtTag.max = startDtTag.max;
 endDtTag.value = endDtTag.max;
 updateLineGraph();
+updateMonthsBarChart();
 /* ********************************************************************************** */
 /* We must now ensure that the end date of the interval is chronologically later than */                         
 /* the start date, and if that does not happen then we set the dates to the same day. */
@@ -88,6 +89,12 @@ function changeBarGraph() {
     }
 }
 
+/* **************************************************************************************************************************** */
+/* On the page we have two graphs that must change dynamically depending on the input provided by the user when consulting      */
+/* the statistics: the line graph, where the start/end dates and step can be altered, and the monthly bar graph, where the      */
+/* year can be switched. We make sure that the generation of these 2 graphs is encapsulated in a function that we call whenever */ 
+/* we register a change in the HTML controls (as well as of course at the time the page is loaded for the first time).          */
+/* **************************************************************************************************************************** */
 function updateLineGraph() {
     const xValuesLine = ["5-03-2021","6-03-2021","7-03-2021","8-03-2021","9-03-2021","10-03-2021","11-03-2021","12-03-2021","13-03-2021","14-03-2021","15-03-2021"];
     const yValuesLine = [700,800,850,950,800,900,700,950,650,700,800];
@@ -116,30 +123,32 @@ function updateLineGraph() {
     });
 }
 
-const xValuesBar1 = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const yValuesBar1 = [55, 49, 44, 24, 15, 55, 49, 44, 24, 15, 77, 10];
-const barColors1 = ["#332288", "#6699cc", "#88ccee", "#44aa99", "#117733", "#999933", "#ddcc77", "#661100", "#cc6677", "#aa4466", "#882255", "#aa4499"];
-new Chart("bar-chart-months-profit", {
-    type: "bar",
-    data: {
-        labels: xValuesBar1,
-        datasets: [{
-            backgroundColor: barColors1,
-            data: yValuesBar1
-        }]
-    },
-    options: {
-        legend: {display: false},
-        scales: {
-            yAxes: [{
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Euro (€)'
-                }
+function updateMonthsBarChart() {
+    const xValuesBar1 = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const yValuesBar1 = [55, 49, 44, 24, 15, 55, 49, 44, 24, 15, 77, 10];
+    const barColors1 = ["#332288", "#6699cc", "#88ccee", "#44aa99", "#117733", "#999933", "#ddcc77", "#661100", "#cc6677", "#aa4466", "#882255", "#aa4499"];
+    new Chart("bar-chart-months-profit", {
+        type: "bar",
+        data: {
+            labels: xValuesBar1,
+            datasets: [{
+                backgroundColor: barColors1,
+                data: yValuesBar1
             }]
+        },
+        options: {
+            legend: {display: false},
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Euro (€)'
+                    }
+                }]
+            }
         }
-    }
-});
+    });
+}
 
 const xValuesBar2 = ["2020", "2021", "2022", "2023", "2024"];
 const yValuesBar2 = [55, 49, 44, 24, 15];

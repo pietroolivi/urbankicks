@@ -61,7 +61,7 @@
                     <label for="bar-chart-group-by-year">Group by year</label>
                     <input type="radio" value="bar-chart-group-by-year" name="bar-chart-group-by" id="bar-chart-group-by-year" onchange="changeBarGraph()"/>
                     <label for="year-for-months-analysis">Year whose months you wish to compare</label>
-                    <select name="year-for-months-analysis" id="year-for-months-analysis">
+                    <select name="year-for-months-analysis" id="year-for-months-analysis" onchange="updateMonthsBarChart()">
                         <option value="2020">2020</option>
                         <option value="2021">2021</option>
                         <option value="2022">2022</option>
