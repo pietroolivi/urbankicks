@@ -719,39 +719,62 @@ class DatabaseHelper {
 
     // Add product to cart
     public function addToCart($email, $productId, $color, $size, $quantity = 1) {
-        // First get the cart ID
-        $cartInfo = $this->getCartByEmail($email);
-        if (!$cartInfo) {
-            return false;
-        }
-        $cartId = $cartInfo['ID_Carrello'];
-        
-        // Check if item already exists in cart
-        $checkQuery = "SELECT Quantita FROM comprendere 
-                    WHERE ID_Carrello = ? AND ID_Prodotto = ? 
-                    AND Colore = ? AND Taglia = ?";
-        $checkStmt = $this->db->prepare($checkQuery);
-        $checkStmt->bind_param("iisd", $cartId, $productId, $color, $size);
-        $checkStmt->execute();
-        $existingItem = $checkStmt->get_result()->fetch_assoc();
-        
-        if ($existingItem) {
-            // Update quantity if item exists
-            $newQuantity = $existingItem['Quantita'] + $quantity;
-            $updateQuery = "UPDATE comprendere 
-                        SET Quantita = ? 
+        try {
+            $this->db->begin_transaction();
+            
+            // First get the cart ID
+            $cartInfo = $this->getCartByEmail($email);
+            if (!$cartInfo) {
+                return false;
+            }
+            $cartId = $cartInfo['ID_Carrello'];
+            
+            // Check if item already exists in cart
+            $checkQuery = "SELECT Quantita FROM comprendere 
                         WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                         AND Colore = ? AND Taglia = ?";
-            $updateStmt = $this->db->prepare($updateQuery);
-            $updateStmt->bind_param("iiisd", $newQuantity, $cartId, $productId, $color, $size);
-            return $updateStmt->execute();
-        } else {
-            // Add new item if it doesn't exist
-            $insertQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
-                        VALUES (?, ?, ?, ?, ?)";
-            $insertStmt = $this->db->prepare($insertQuery);
-            $insertStmt->bind_param("iisdi", $cartId, $productId, $color, $size, $quantity);
-            return $insertStmt->execute();
+            $checkStmt = $this->db->prepare($checkQuery);
+            $checkStmt->bind_param("iisd", $cartId, $productId, $color, $size);
+            $checkStmt->execute();
+            $existingItem = $checkStmt->get_result()->fetch_assoc();
+            
+            if ($existingItem) {
+                // Update quantity if item exists
+                $newQuantity = $existingItem['Quantita'] + $quantity;
+                $updateQuery = "UPDATE comprendere 
+                            SET Quantita = ? 
+                            WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                            AND Colore = ? AND Taglia = ?";
+                $updateStmt = $this->db->prepare($updateQuery);
+                $updateStmt->bind_param("iiisd", $newQuantity, $cartId, $productId, $color, $size);
+                $updateStmt->execute();
+            } else {
+                // Add new item if it doesn't exist
+                $insertQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
+                            VALUES (?, ?, ?, ?, ?)";
+                $insertStmt = $this->db->prepare($insertQuery);
+                $insertStmt->bind_param("iisdi", $cartId, $productId, $color, $size, $quantity);
+                $insertStmt->execute();
+            }
+    
+            // Update cart total value
+            $updateTotalQuery = "UPDATE CARRELLO c 
+                               SET c.Valore_Totale = (
+                                   SELECT SUM(comp.Quantita * p.Prezzo)
+                                   FROM comprendere comp
+                                   JOIN PRODOTTO p ON comp.ID_Prodotto = p.ID_Prodotto
+                                   WHERE comp.ID_Carrello = c.ID_Carrello
+                               )
+                               WHERE c.ID_Carrello = ?";
+            $updateTotalStmt = $this->db->prepare($updateTotalQuery);
+            $updateTotalStmt->bind_param("i", $cartId);
+            $updateTotalStmt->execute();
+    
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            return false;
         }
     }
     
@@ -1073,14 +1096,52 @@ class DatabaseHelper {
         return array_values($orders);
     }
     
-    // Add order review
-    public function addOrderReview($email, $productId, $rating, $comment) {
-        $query = "INSERT INTO RECENSIONE (ID_Prodotto, Email, Punteggio, Descrizione, Data_Recensione)
-                  VALUES (?, ?, ?, ?, CURDATE())";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("isds", $productId, $email, $rating, $comment);
-        return $stmt->execute();
+    // Add new function to DatabaseHelper class
+    public function placeOrder($email, $total, $paymentMethod, $isGift = false) {
+        try {
+            $this->db->begin_transaction();
+            
+            // Get cart info
+            $cart = $this->getCartByEmail($email);
+            
+            // Create new order
+            $query = "INSERT INTO ORDINE (Data_Ordine, Costo_Totale, Metodo_Pagamento, Regalo, Tipo, Email) 
+                    VALUES (NOW(), ?, ?, ?, 'placed', ?)";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("dsss", $total, $paymentMethod, $isGift, $email);
+            $stmt->execute();
+            $orderId = $this->db->insert_id;
+            
+            // Move items from cart to order
+            $cartItems = $this->getCartItems($cart['ID_Carrello']);
+            foreach ($cartItems as $item) {
+                $query = "INSERT INTO PRODOTTO_ORDINE (ID_Prodotto, Colore, Taglia, Quantita, ID_Ordine, Prezzo_Acquisto) 
+                        VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $this->db->prepare($query);
+                $stmt->bind_param(
+                    "isdiid",
+                    $item['ID_Prodotto'],
+                    $item['Colore'],
+                    $item['Taglia'],
+                    $item['Quantita'],
+                    $orderId,
+                    $item['Prezzo']
+                );
+                $stmt->execute();
+            }
+            
+            // Clear cart
+            $this->db->query("DELETE FROM comprendere WHERE ID_Carrello = " . $cart['ID_Carrello']);
+            $this->db->query("UPDATE CARRELLO SET Valore_Totale = 0 WHERE ID_Carrello = " . $cart['ID_Carrello']);
+            
+            $this->db->commit();
+            return $orderId;
+            
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
+        }
     }
 }
 
