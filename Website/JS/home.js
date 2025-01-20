@@ -71,6 +71,9 @@ class ProductManager {
                     genre: product.Genere,
                     description: product.Descrizione,
                     state: product.Sta_Tipo,
+                    //added for discounted logic v
+                    isDiscounted: product.isDiscounted === 1,
+                    //discounted logic           ^
                     created_at: product.Data_Aggiunta,
                     variants: [],
                     baseProduct: product
@@ -174,7 +177,9 @@ class ProductManager {
             let categoryMatch = true;
             switch(this.filters.category) {
                 case 'discounted':
-                    categoryMatch = product.variants.some(v => v.discount > 0);
+                    //categoryMatch = product.variants.some(v => v.discount > 0);
+                    categoryMatch=product.isDiscounted;
+                    
                     break;
                 case 'novelties':
                     const oneMonthAgo = new Date();

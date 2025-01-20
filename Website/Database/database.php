@@ -15,7 +15,7 @@ class DatabaseHelper {
      *******************/
 
     // Returns filtered products
-    public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
+ /*   public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
         $query = "SELECT p.*, v.Colore, v.Quantita, v.Taglia 
             FROM PRODOTTO p 
             LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
@@ -61,7 +61,71 @@ class DatabaseHelper {
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
+    }*/
+
+    public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
+        $query = "
+            SELECT 
+                p.*, 
+                v.Colore, 
+                v.Quantita, 
+                v.Taglia,
+                CASE 
+                    WHEN ps.Prezzo IS NOT NULL AND p.Prezzo < ps.Prezzo THEN 1
+                    ELSE 0 
+                END AS isDiscounted
+            FROM PRODOTTO p
+            LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
+            LEFT JOIN (
+                SELECT ID_Prodotto, Prezzo 
+                FROM prodotto_storico 
+                ORDER BY Data_Modifica DESC
+            ) ps ON p.ID_Prodotto = ps.ID_Prodotto
+            WHERE 1=1";
+        
+        $params = [];
+        $types = "";
+        
+        if ($brand) {
+            $query .= " AND p.Marca = ?";
+            $params[] = $brand;
+            $types .= "s";
+        }
+        if ($type) {
+            $query .= " AND p.Tipo = ?";
+            $params[] = $type;
+            $types .= "s";
+        }
+        if ($size) {
+            $query .= " AND v.Taglia = ?";
+            $params[] = $size;
+            $types .= "d";
+        }
+        if ($color) {
+            $query .= " AND v.Colore = ?";
+            $params[] = $color;
+            $types .= "s";
+        }
+        if ($minPrice) {
+            $query .= " AND p.Prezzo >= ?";
+            $params[] = $minPrice;
+            $types .= "d";
+        }
+        if ($maxPrice) {
+            $query .= " AND p.Prezzo <= ?";
+            $params[] = $maxPrice;
+            $types .= "d";
+        }
+    
+        $stmt = $this->db->prepare($query);
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
+
 
     // Admin: Add new product
     public function addProduct($productId, $name, $description, $brand, $type, $price) {
@@ -86,6 +150,45 @@ class DatabaseHelper {
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ds", $newPrice, $productId);
         return $stmt->execute();
+    }
+
+    public function isProductDiscounted($productId) {
+        $query = "
+            SELECT 
+                CASE 
+                    WHEN ps.Prezzo IS NOT NULL AND p.Prezzo < ps.Prezzo THEN 1 
+                    ELSE 0 
+                END AS Scontato
+            FROM prodotto p
+            LEFT JOIN (
+                SELECT ID_Prodotto, Prezzo 
+                FROM prodotto_storico 
+                WHERE ID_Prodotto = ? 
+                ORDER BY Data_Modifica DESC 
+                LIMIT 1
+            ) ps ON p.ID_Prodotto = ps.ID_Prodotto
+            WHERE p.ID_Prodotto = ?
+        ";
+    
+        try {
+            $stmt = $this->db->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Failed to prepare the statement: " . $this->db->error);
+            }
+    
+            $stmt->bind_param("ii", $productId, $productId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+    
+            if ($row = $result->fetch_assoc()) {
+                return (bool)$row['Scontato'];
+            }
+    
+            return false;
+        } catch (Exception $e) {
+            error_log("Error in isProductDiscounted: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function getProductData($productId, $userEmail = null) {
