@@ -352,15 +352,8 @@ class DatabaseHelper {
             ORDER BY ts.Timestamp_Aggiornamento DESC";
     
             $stmt = $this->db->prepare($query);
-            if (!$stmt) {
-                throw new Exception("Failed to prepare statement");
-            }
-    
             $stmt->bind_param("i", $orderId);
-            if (!$stmt->execute()) {
-                throw new Exception("Failed to execute query");
-            }
-    
+            $stmt->execute();
             $result = $stmt->get_result();
             
             $tracking = [
@@ -369,6 +362,19 @@ class DatabaseHelper {
                 'products' => []
             ];
     
+            $states = ['Placed', 'In progress', 'Shipped', 'Delivered'];
+            $tracking = [
+                'order_info' => null,
+                'tracking_states' => array_fill_keys($states, [
+                    'status' => null,
+                    'location' => null,
+                    'timestamp' => null,
+                    'estimated_arrival' => null,
+                    'actual_arrival' => null
+                ]),
+                'products' => []
+            ];
+
             while ($row = $result->fetch_assoc()) {
                 // Set order info only once
                 if (!$tracking['order_info']) {
@@ -380,10 +386,10 @@ class DatabaseHelper {
                         'estimated_arrival' => $row['estimated_arrival']
                     ];
                 }
-    
-                // Add tracking state if new
-                if ($row['status'] && !isset($tracking['tracking_states'][$row['timestamp']])) {
-                    $tracking['tracking_states'][$row['timestamp']] = [
+
+                // Update tracking state if status exists
+                if ($row['status'] && isset($tracking['tracking_states'][$row['status']])) {
+                    $tracking['tracking_states'][$row['status']] = [
                         'status' => $row['status'],
                         'location' => $row['location'],
                         'timestamp' => $row['timestamp'],
@@ -391,7 +397,7 @@ class DatabaseHelper {
                         'actual_arrival' => $row['actual_arrival']
                     ];
                 }
-    
+
                 // Add product if not already added
                 $productKey = $row['product_id'] . '_' . $row['size'] . '_' . $row['color'];
                 if (!isset($tracking['products'][$productKey])) {
@@ -406,21 +412,15 @@ class DatabaseHelper {
                     ];
                 }
             }
-    
-            // Sort tracking states chronologically
-            krsort($tracking['tracking_states']);
+
+            // Convert tracking states to indexed array maintaining order
             $tracking['tracking_states'] = array_values($tracking['tracking_states']);
             $tracking['products'] = array_values($tracking['products']);
-    
+
             return $tracking;
-    
         } catch (Exception $e) {
             error_log("Error in getOrderTracking: " . $e->getMessage());
             return null;
-        } finally {
-            if (isset($stmt)) {
-                $stmt->close();
-            }
         }
     }
 
@@ -1296,9 +1296,10 @@ class DatabaseHelper {
             }
             
             // Create tracking entries
-            $orderDate = new DateTime();
+            $orderDate = new DateTimeImmutable();
             $isExpress = stripos($shippingType, 'express') !== false;
             $expectedDates = $this->calculateExpectedDates($orderDate, $isExpress);
+            error_log(print_r($expectedDates, true));
 
             $trackingQuery = "INSERT INTO Tracking_Spedizione 
                 (ID_Ordine, Posizione, Stato, Arrivo_Effettivo, Arrivo_Stimato, Timestamp_Aggiornamento) 
@@ -1312,30 +1313,30 @@ class DatabaseHelper {
             $nullDate = null;
 
             // Placed status
-            $position = $this->getRandomItalianLocation();
+            $destination = $this->getUniversityLocation();
+            $source = $this->getWarehouseLocation();
             $status = "Placed";
             $stmt = $this->db->prepare($trackingQuery);
             $stmt->bind_param(
                 "issss",
                 $orderId,
-                $position,
+                $source,
                 $status,
                 $currentTime,
-                $inProgressDate
+                $currentTime
             );
             $stmt->execute();
 
             // In Progress status
-            $position = "";
             $status = "In progress";
             $stmt = $this->db->prepare($trackingQuery);
             $stmt->bind_param(
                 "issss",
                 $orderId,
-                $position,
+                $source,
                 $status,
                 $nullDate,
-                $shippedDate
+                $inProgressDate
             );
             $stmt->execute();
 
@@ -1345,10 +1346,10 @@ class DatabaseHelper {
             $stmt->bind_param(
                 "issss",
                 $orderId,
-                $position,
+                $source,
                 $status,
                 $nullDate,
-                $deliveredDate
+                $shippedDate
             );
             $stmt->execute();
 
@@ -1358,7 +1359,7 @@ class DatabaseHelper {
             $stmt->bind_param(
                 "issss",
                 $orderId,
-                $position,
+                $destination,
                 $status,
                 $nullDate,
                 $deliveredDate
@@ -1379,17 +1380,12 @@ class DatabaseHelper {
     }
 
     // Add this helper function inside DatabaseHelper class
-    private function calculateExpectedDates($orderDate, $isExpress) {
-        $dates = [];
-        $inProgress = clone $orderDate;
-        $inProgress->modify('+1 weekday');
-        
-        $shipped = clone $inProgress;
-        $shipped->modify('+2 weekday');
-        
-        $delivered = clone $shipped;
-        $delivered->modify($isExpress ? '+2 weekday' : '+5 weekday');
-        
+    private function calculateExpectedDates(DateTimeImmutable $orderDate, bool $isExpress): array 
+    {
+        $inProgress = $orderDate->modify('+1 hour');
+        $shipped = $inProgress->modify('+1 weekday');
+        $delivered = $shipped->modify($isExpress ? '+2 weekday' : '+5 weekday');
+
         return [
             'in_progress' => $inProgress,
             'shipped' => $shipped,
@@ -1397,12 +1393,14 @@ class DatabaseHelper {
         ];
     }
 
-    // Get random Italian location
-    private function getRandomItalianLocation() {
-        // Italy bounds: lat 35-47, long 6-19
-        $lat = rand(3500, 4700) / 100;
-        $lng = rand(600, 1900) / 100;
-        return "$lat, $lng";
+    // Get University Location
+    private function getUniversityLocation() {
+        return "44.147613, 12.235779";
+    }
+
+    // Get Warehouse Location
+    private function getWarehouseLocation() {
+        return "39.082520, -94.582306";
     }
 }
 

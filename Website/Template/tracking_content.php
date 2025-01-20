@@ -1,12 +1,19 @@
 <?php
-function getOrderStatusStep($status) {
+function getOrderStatusStep($trackingStates) {
     $steps = [
         'placed' => 1,
         'in progress' => 2,
         'shipped' => 3, 
         'delivered' => 4
     ];
-    return $steps[strtolower($status)] ?? 0;
+
+    foreach ($trackingStates as $state) {
+        if (empty($state['actual_arrival'])) {
+            return $steps[strtolower($state['status'])] - 1;
+        }
+    }
+
+    return 4;
 }
 
 if(!isset($templateParams["tracking"])): ?>
@@ -16,7 +23,7 @@ if(!isset($templateParams["tracking"])): ?>
     $orderInfo = $tracking['order_info'];
     $trackingStates = $tracking['tracking_states'];
     $products = $tracking['products'];
-    $currentStep = getOrderStatusStep($orderInfo['current_status']);
+    $currentStep = getOrderStatusStep($trackingStates);
 ?>
     <section class="tracking-section">
         <header>
@@ -28,8 +35,6 @@ if(!isset($templateParams["tracking"])): ?>
 
         <div class="order-info">
             <h3>#<?php echo htmlspecialchars($_GET["order"]); ?></h3>
-            <p>Shipping Type: <?php echo htmlspecialchars($orderInfo['shipping_type']); ?></p>
-            <p>Order Date: <?php echo (new DateTime($orderInfo['order_date']))->format('d M Y'); ?></p>
         </div>
 
         <ul class="products-overview">
@@ -110,9 +115,6 @@ if(!isset($templateParams["tracking"])): ?>
 
         <section>
             <h3>PARCEL LOCATION</h3>
-            <?php if (isset($orderInfo['current_location'])): ?>
-                <p>Last updated: <?php echo (new DateTime($trackingStates[0]['timestamp']))->format('d M Y, h:i A'); ?></p>
-            <?php endif; ?>
             <img src="CSS/Images/Illustrations/map.svg" alt="Map showing parcel location">
         </section>
     </section>
