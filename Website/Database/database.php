@@ -1205,8 +1205,6 @@ class DatabaseHelper {
                          o.Regalo,
                          o.Tipo_Spedizione as Tipo,
                          o.ID_Sconto,
-                         ts.Posizione as tracking_location,
-                         ts.Timestamp_Aggiornamento as tracking_timestamp,
                          p.ID_Prodotto,
                          p.Nome,
                          p.Genere,
@@ -1215,7 +1213,6 @@ class DatabaseHelper {
                          po.Taglia,
                          po.Colore
                   FROM ORDINE o
-                  LEFT JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
                   JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
                   JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
                   WHERE o.Email = ?
@@ -1237,8 +1234,6 @@ class DatabaseHelper {
                     'Regalo' => $row['Regalo'],
                     'Tipo' => $row['Tipo'],
                     'ID_Sconto' => $row['ID_Sconto'],
-                    'tracking_location' => $row['tracking_location'],
-                    'tracking_timestamp' => $row['tracking_timestamp'],
                     'products' => []
                 ];
             }
