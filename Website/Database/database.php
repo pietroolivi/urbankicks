@@ -15,10 +15,11 @@ class DatabaseHelper {
      *******************/
 
     // Returns filtered products
-    public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
-        $query = "SELECT DISTINCT p.* FROM PRODOTTO p 
-                  LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto 
-                  WHERE 1=1";
+ /*   public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
+        $query = "SELECT p.*, v.Colore, v.Quantita, v.Taglia 
+            FROM PRODOTTO p 
+            LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
+            WHERE 1=1";
         $params = [];
         $types = "";
         
@@ -60,7 +61,71 @@ class DatabaseHelper {
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
+    }*/
+
+    public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
+        $query = "
+            SELECT 
+                p.*, 
+                v.Colore, 
+                v.Quantita, 
+                v.Taglia,
+                CASE 
+                    WHEN ps.Prezzo IS NOT NULL AND p.Prezzo < ps.Prezzo THEN 1
+                    ELSE 0 
+                END AS isDiscounted
+            FROM PRODOTTO p
+            LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
+            LEFT JOIN (
+                SELECT ID_Prodotto, Prezzo 
+                FROM prodotto_storico 
+                ORDER BY Data_Modifica DESC
+            ) ps ON p.ID_Prodotto = ps.ID_Prodotto
+            WHERE 1=1";
+        
+        $params = [];
+        $types = "";
+        
+        if ($brand) {
+            $query .= " AND p.Marca = ?";
+            $params[] = $brand;
+            $types .= "s";
+        }
+        if ($type) {
+            $query .= " AND p.Tipo = ?";
+            $params[] = $type;
+            $types .= "s";
+        }
+        if ($size) {
+            $query .= " AND v.Taglia = ?";
+            $params[] = $size;
+            $types .= "d";
+        }
+        if ($color) {
+            $query .= " AND v.Colore = ?";
+            $params[] = $color;
+            $types .= "s";
+        }
+        if ($minPrice) {
+            $query .= " AND p.Prezzo >= ?";
+            $params[] = $minPrice;
+            $types .= "d";
+        }
+        if ($maxPrice) {
+            $query .= " AND p.Prezzo <= ?";
+            $params[] = $maxPrice;
+            $types .= "d";
+        }
+    
+        $stmt = $this->db->prepare($query);
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
+
 
     // Admin: Add new product
     public function addProduct($productId, $name, $description, $brand, $type, $price) {
@@ -85,6 +150,149 @@ class DatabaseHelper {
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ds", $newPrice, $productId);
         return $stmt->execute();
+    }
+
+    public function isProductDiscounted($productId) {
+        $query = "
+            SELECT 
+                CASE 
+                    WHEN ps.Prezzo IS NOT NULL AND p.Prezzo < ps.Prezzo THEN 1 
+                    ELSE 0 
+                END AS Scontato
+            FROM prodotto p
+            LEFT JOIN (
+                SELECT ID_Prodotto, Prezzo 
+                FROM prodotto_storico 
+                WHERE ID_Prodotto = ? 
+                ORDER BY Data_Modifica DESC 
+                LIMIT 1
+            ) ps ON p.ID_Prodotto = ps.ID_Prodotto
+            WHERE p.ID_Prodotto = ?
+        ";
+    
+        try {
+            $stmt = $this->db->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Failed to prepare the statement: " . $this->db->error);
+            }
+    
+            $stmt->bind_param("ii", $productId, $productId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+    
+            if ($row = $result->fetch_assoc()) {
+                return (bool)$row['Scontato'];
+            }
+    
+            return false;
+        } catch (Exception $e) {
+            error_log("Error in isProductDiscounted: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getProductData($productId, $userEmail = null) {
+        $query = "SELECT 
+            p.*,
+            v.Colore,
+            v.Taglia,
+            v.Quantita,
+            r.Punteggio,
+            r.Descrizione as RecensioneDescrizione,
+            r.Data_Recensione,
+            r.Email as ReviewerEmail,
+            CASE WHEN w.Email IS NOT NULL THEN 1 ELSE 0 END as InWishlist,
+            CASE WHEN cart.ID_Prodotto IS NOT NULL THEN 1 ELSE 0 END as InCart,
+            cart.Quantita as CartQuantity
+        FROM PRODOTTO p
+        LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
+        LEFT JOIN RECENSIONE r ON p.ID_Prodotto = r.ID_Prodotto
+        LEFT JOIN (
+            SELECT a.ID_Prodotto, w.Email 
+            FROM WISHLIST w 
+            JOIN aggiungere a ON w.Email = a.Email 
+            WHERE w.Email = ?
+        ) w ON p.ID_Prodotto = w.ID_Prodotto
+        LEFT JOIN (
+            SELECT comp.ID_Prodotto, comp.Quantita 
+            FROM CARRELLO c 
+            JOIN comprendere comp ON c.ID_Carrello = comp.ID_Carrello 
+            WHERE c.Email = ?
+        ) cart ON p.ID_Prodotto = cart.ID_Prodotto
+        WHERE p.ID_Prodotto = ?";
+    
+        try {
+            $stmt = $this->db->prepare($query);
+            if($stmt === false) {
+                throw new Exception("Error preparing statement: " . $this->db->error);
+            }
+    
+            $stmt->bind_param("ssi", $userEmail, $userEmail, $productId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+    
+            $productData = [
+                'product' => null,
+                'variants' => [],
+                'reviews' => [],
+                'inWishlist' => false,
+                'inCart' => false,
+                'cartQuantity' => 0
+            ];
+    
+            while($row = $result->fetch_assoc()) {
+                if(!$productData['product']) {
+                    $productData['product'] = [
+                        'ID_Prodotto' => $row['ID_Prodotto'],
+                        'Nome' => $row['Nome'],
+                        'Descrizione' => $row['Descrizione'],
+                        'Marca' => $row['Marca'],
+                        'Tipo' => $row['Tipo'],
+                        'Genere' => $row['Genere'],
+                        'Prezzo' => $row['Prezzo'],
+                        'Data_Aggiunta' => $row['Data_Aggiunta'],
+                        'Sta_Tipo' => $row['Sta_Tipo']
+                    ];
+                }
+    
+                if($row['Colore'] && $row['Taglia']) {
+                    $variantKey = $row['Colore'] . '_' . $row['Taglia'];
+                    if(!isset($productData['variants'][$variantKey])) {
+                        $productData['variants'][$variantKey] = [
+                            'Colore' => $row['Colore'],
+                            'Taglia' => $row['Taglia'],
+                            'Quantita' => $row['Quantita']
+                        ];
+                    }
+                }
+    
+                
+                // adding only unique reviews
+                if ($row['Punteggio']) {
+                    $reviewKey = $row['Punteggio'] . '_' . $row['ReviewerEmail'] . '_' . $row['Data_Recensione'];
+                    if (!isset($uniqueReviews[$reviewKey])) {
+                        $productData['reviews'][] = [
+                            'Punteggio' => $row['Punteggio'],
+                            'Descrizione' => $row['RecensioneDescrizione'],
+                            'Data_Recensione' => $row['Data_Recensione'],
+                            'Email' => $row['ReviewerEmail']
+                        ];
+                        $uniqueReviews[$reviewKey] = true;
+                    }
+                }
+    
+                $productData['inWishlist'] = (bool)$row['InWishlist'];
+                $productData['inCart'] = (bool)$row['InCart'];
+                $productData['cartQuantity'] = $row['CartQuantity'] ?? 0;
+            }
+            
+    
+            return $productData;
+    
+        } catch(Exception $e) {
+            error_log("Error in getProductData: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     /*******************
@@ -116,31 +324,132 @@ class DatabaseHelper {
      * TRACKING QUERIES *
      *******************/
 
+    // Get order tracking information
     public function getOrderTracking($orderId) {
-        $query = "SELECT o.*, t.Posizione, t.Timestamp_Aggiornamento 
-                  FROM ORDINE o 
-                  LEFT JOIN Tracking_Spedizione t ON o.ID_Ordine = t.ID_Ordine 
-                  WHERE o.ID_Ordine = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $orderId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
+        try {
+            $query = "SELECT 
+                o.ID_Ordine,
+                o.Tipo_Spedizione as shipping_type,
+                o.Data_Ordine as order_date,
+                ts.Posizione as location,
+                ts.Stato as status,
+                ts.Arrivo_Effettivo as actual_arrival,
+                ts.Arrivo_Stimato as estimated_arrival,
+                ts.Timestamp_Aggiornamento as timestamp,
+                p.ID_Prodotto as product_id,
+                p.Nome as name,
+                p.Prezzo as price,
+                po.Prezzo_Acquisto as original_price,
+                po.Colore as color,
+                po.Taglia as size,
+                po.Quantita as quantity,
+                CONCAT(p.ID_Prodotto, '_', p.Genere, '1') as image
+            FROM ORDINE o
+            LEFT JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine
+            JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
+            JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
+            WHERE o.ID_Ordine = ?
+            ORDER BY ts.Timestamp_Aggiornamento DESC";
+    
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("i", $orderId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            $tracking = [
+                'order_info' => null,
+                'tracking_states' => [],
+                'products' => []
+            ];
+    
+            $states = ['Placed', 'In progress', 'Shipped', 'Delivered'];
+            $tracking = [
+                'order_info' => null,
+                'tracking_states' => array_fill_keys($states, [
+                    'status' => null,
+                    'location' => null,
+                    'timestamp' => null,
+                    'estimated_arrival' => null,
+                    'actual_arrival' => null
+                ]),
+                'products' => []
+            ];
+
+            while ($row = $result->fetch_assoc()) {
+                // Set order info only once
+                if (!$tracking['order_info']) {
+                    $tracking['order_info'] = [
+                        'shipping_type' => $row['shipping_type'],
+                        'order_date' => $row['order_date'],
+                        'current_status' => $row['status'],
+                        'current_location' => $row['location'],
+                        'estimated_arrival' => $row['estimated_arrival']
+                    ];
+                }
+
+                // Update tracking state if status exists
+                if ($row['status'] && isset($tracking['tracking_states'][$row['status']])) {
+                    $tracking['tracking_states'][$row['status']] = [
+                        'status' => $row['status'],
+                        'location' => $row['location'],
+                        'timestamp' => $row['timestamp'],
+                        'estimated_arrival' => $row['estimated_arrival'],
+                        'actual_arrival' => $row['actual_arrival']
+                    ];
+                }
+
+                // Add product if not already added
+                $productKey = $row['product_id'] . '_' . $row['size'] . '_' . $row['color'];
+                if (!isset($tracking['products'][$productKey])) {
+                    $tracking['products'][$productKey] = [
+                        'image' => $row['image'],
+                        'name' => $row['name'],
+                        'size' => $row['size'],
+                        'quantity' => $row['quantity'],
+                        'color' => $row['color'],
+                        'price' => $row['price'],
+                        'original_price' => $row['original_price']
+                    ];
+                }
+            }
+
+            // Convert tracking states to indexed array maintaining order
+            $tracking['tracking_states'] = array_values($tracking['tracking_states']);
+            $tracking['products'] = array_values($tracking['products']);
+
+            return $tracking;
+        } catch (Exception $e) {
+            error_log("Error in getOrderTracking: " . $e->getMessage());
+            return null;
+        }
     }
 
-    public function updateOrderStatus($orderId, $newStatus, $location) {
-        // Update order status
-        $query = "UPDATE ORDINE SET Tipo = ? WHERE ID_Ordine = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ss", $newStatus, $orderId);
-        $stmt->execute();
-
-        // Update tracking
-        $query = "INSERT INTO Tracking_Spedizione (ID_Ordine, Posizione, Timestamp_Aggiornamento) 
-                  VALUES (?, ?, NOW())";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ss", $orderId, $location);
-        return $stmt->execute();
+    // TBModified
+    public function updateOrderStatus($orderId, $status, $location) {
+        $this->db->begin_transaction();
+        try {
+            // Update order status
+            $query1 = "UPDATE ORDINE SET Tipo = ? WHERE ID_Ordine = ?";
+            $stmt1 = $this->db->prepare($query1);
+            $stmt1->bind_param("si", $status, $orderId);
+            $stmt1->execute();
+            
+            // Update tracking
+            $query2 = "INSERT INTO Tracking_Spedizione (ID_Ordine, Posizione, Timestamp_Aggiornamento) 
+                       VALUES (?, ?, NOW())
+                       ON DUPLICATE KEY UPDATE 
+                       Posizione = VALUES(Posizione),
+                       Timestamp_Aggiornamento = VALUES(Timestamp_Aggiornamento)";
+            $stmt2 = $this->db->prepare($query2);
+            $stmt2->bind_param("is", $orderId, $location);
+            $stmt2->execute();
+            
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
+        }
     }
 
     /*******************
@@ -174,11 +483,11 @@ class DatabaseHelper {
      *******************/
 
     // Create notification
-    public function createNotification($notificationId, $type, $message, $email) {
-        $query = "INSERT INTO NOTIFICA (ID_Notifica, TipoNotifica, Messaggio, Timestamp_Invio, Tipo, Email) 
-                  VALUES (?, ?, ?, NOW(), ?, ?)";
+    public function createNotification($type, $message, $email) {
+        $query = "INSERT INTO NOTIFICA (TipoNotifica, Messaggio, Timestamp_Invio, Tipo, Email) 
+                  VALUES (?, ?, NOW(), ?, ?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssss", $notificationId, $type, $message, $type, $email);
+        $stmt->bind_param("ssss", $type, $message, $type, $email);
         return $stmt->execute();
     }
 
@@ -192,31 +501,29 @@ class DatabaseHelper {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Create a stock notification when a product is back in stocl
-    public function createStockNotification($productId, $size, $color) {
-        $query = "SELECT p.Nome, v.Taglia, v.Colore 
+    // Create a stock notification when a product is back in stock
+    public function createStockNotification($productId) {
+        $query = "SELECT p.Nome
                  FROM PRODOTTO p 
-                 JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto 
-                 WHERE p.ID_Prodotto = ? AND v.Taglia = ? AND v.Colore = ?";
+                 WHERE p.ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ids", $productId, $size, $color);
+        $stmt->bind_param("i", $productId);
         $stmt->execute();
         $product = $stmt->get_result()->fetch_assoc();
         
         // Get users who have this item in their wishlist
-        $wishlistQuery = "SELECT DISTINCT w.Email 
-                         FROM aggiungere w 
-                         WHERE w.ID_Prodotto = ? AND w.Taglia = ? AND w.Colore = ?";
+        $wishlistQuery = "SELECT DISTINCT a.Email 
+                         FROM aggiungere a 
+                         WHERE a.ID_Prodotto = ?";
         $wishlistStmt = $this->db->prepare($wishlistQuery);
-        $wishlistStmt->bind_param("ids", $productId, $size, $color);
+        $wishlistStmt->bind_param("i", $productId);
         $wishlistStmt->execute();
         $users = $wishlistStmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         foreach ($users as $user) {
-            $message = "Great news! The size {$size} of the {$product['Nome']} is back in stock";
+            $message = "Great news! The product {$product['Nome']} [$productId] is back in stock";
             $this->createNotification(
-                uniqid('stock_'),
-                'product_stock',
+                'Stock Product',
                 $message,
                 $user['Email']
             );
@@ -234,15 +541,14 @@ class DatabaseHelper {
         $order = $stmt->get_result()->fetch_assoc();
 
         $messages = [
-            'placed' => "Your payment has been successfully processed and we are starting to prepare your order",
-            'shipped' => "Your order #{$orderId} was handed over to the SDA express courier",
-            'delivered' => "Your order #{$orderId} has been delivered"
+            'placed' => "Your payment has been successfully processed and we are starting to prepare your order [$orderId]",
+            'shipped' => "Your order [$orderId] was handed over to the SDA express courier",
+            'delivered' => "Your order [$orderId] has been delivered"
         ];
 
         if (isset($messages[$status])) {
             $this->createNotification(
-                uniqid('order_'),
-                'order_status',
+                'Order Status',
                 $messages[$status],
                 $order['Email']
             );
@@ -260,19 +566,18 @@ class DatabaseHelper {
         $product = $stmt->get_result()->fetch_assoc();
 
         // Get users who have this item in their wishlist
-        $wishlistQuery = "SELECT DISTINCT w.Email 
-                         FROM aggiungere w 
-                         WHERE w.ID_Prodotto = ?";
+        $wishlistQuery = "SELECT DISTINCT a.Email 
+                         FROM aggiungere a 
+                         WHERE a.ID_Prodotto = ?";
         $wishlistStmt = $this->db->prepare($wishlistQuery);
         $wishlistStmt->bind_param("i", $productId);
         $wishlistStmt->execute();
         $users = $wishlistStmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         foreach ($users as $user) {
-            $message = "Your favorite product {$product['Nome']} is now {$discountPercentage}% off for a short time";
+            $message = "Your favorite product {$product['Nome']} [$productId] is now {$discountPercentage}% off for a short time";
             $this->createNotification(
-                uniqid('sale_'),
-                'flash_sale',
+                'Flash Sale',
                 $message,
                 $user['Email']
             );
@@ -294,8 +599,7 @@ class DatabaseHelper {
         if ($result && $result['count'] > 0) {
             $message = "You spend a lot of time browsing but, just spend a minute to make them yours!";
             $this->createNotification(
-                uniqid('cart_'),
-                'cart_reminder',
+                'Cart Reminder',
                 $message,
                 $email
             );
@@ -304,7 +608,7 @@ class DatabaseHelper {
 
     // Create a review request notification
     public function createReviewRequestNotification($orderId) {
-        $query = "SELECT o.Email, p.Nome 
+        $query = "SELECT o.Email, p.Nome, p.ID_Prodotto 
                  FROM ORDINE o 
                  JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine 
                  JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto 
@@ -320,19 +624,26 @@ class DatabaseHelper {
         $items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         foreach ($items as $item) {
-            $message = "How do you like your {$item['Nome']}? Share your experience!";
+            $message = "How do you like your {$item['Nome']} [{$item['ID_Prodotto']}]? Share your experience!";
             $this->createNotification(
-                uniqid('review_'),
-                'review_request',
+                'Review Request',
                 $message,
                 $item['Email']
             );
         }
     }
 
+    public function createAdminMessageNotification($email, $message) {
+        $this->createNotification(
+            'Admin Message',
+            $message,
+            $email
+        );
+    }
+
     // Mark notifications as read
     public function markNotificationsAsRead($email, $notificationIds = null) {
-        $query = "UPDATE NOTIFICA SET Tipo = 'read' WHERE Email = ?";
+        $query = "UPDATE NOTIFICA SET Tipo = 'Letta' WHERE Email = ?";
         $params = [$email];
         $types = "s";
 
@@ -415,33 +726,39 @@ class DatabaseHelper {
     }
 
     // User registration
-    public function registerUser($email, $firstName, $lastName, $password, $phone = null) {
-        // Hash password
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        
-        // Insert new user
-        $query = "INSERT INTO UTENTE (Email, Nome, Cognome, Password, Telefono, Data_Registrazione, Preferenze_Newsletter, Ruolo) 
-                VALUES (?, ?, ?, ?, ?, NOW(), 'N', 'customer')";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssss", $email, $firstName, $lastName, $hashedPassword, $phone);
-        
-        if ($stmt->execute()) {
+    public function registerUser($email, $firstName, $lastName, $password, $newsletter, $phone = null) {
+        try {
+            $this->db->begin_transaction();
+            
+            /// Hash password
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Insert new user
+            $userQuery = "INSERT INTO UTENTE (Email, Nome, Cognome, Password, Telefono, Data_Registrazione, Preferenze_Newsletter, Ruolo) 
+                        VALUES (?, ?, ?, ?, ?, NOW(), ?, 'Customer')";
+            $userStmt = $this->db->prepare($userQuery);
+            $userStmt->bind_param("sssssi", $email, $firstName, $lastName, $hashedPassword, $phone, $newsletter);
+            $userStmt->execute();
+
             // Create cart for new user
-            $cartQuery = "INSERT INTO CARRELLO (Email, Data_Creazione, Data_Modifica, Valore_Totale) 
-                        VALUES (?, NOW(), NOW(), 0)";
+            $cartQuery = "INSERT INTO CARRELLO (Email, Data_Modifica, Valore_Totale) 
+                        VALUES (?, NOW(), 0)";
             $cartStmt = $this->db->prepare($cartQuery);
             $cartStmt->bind_param("s", $email);
             $cartStmt->execute();
 
             // Create wishlist for new user
-            $wishlistQuery = "INSERT INTO WISHLIST (Email, Data_Creazione) VALUES (?, NOW())";
+            $wishlistQuery = "INSERT INTO WISHLIST (Email, Data_Modifica) VALUES (?, NOW())";
             $wishlistStmt = $this->db->prepare($wishlistQuery);
             $wishlistStmt->bind_param("s", $email);
             $wishlistStmt->execute();
 
+            $this->db->commit();
             return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
         }
-        return false;
     }
 
     // User login
@@ -464,26 +781,12 @@ class DatabaseHelper {
     }
 
     // Change password
-    public function changePassword($email, $currentPassword, $newPassword) {
-        // First verify current password
-        $query = "SELECT Password FROM UTENTE WHERE Email = ?";
+    public function changePassword($email, $password) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $query = "UPDATE UTENTE SET Password = ? WHERE Email = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows === 1) {
-            $user = $result->fetch_assoc();
-            if (password_verify($currentPassword, $user['Password'])) {
-                // Update to new password
-                $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-                $updateQuery = "UPDATE UTENTE SET Password = ? WHERE Email = ?";
-                $updateStmt = $this->db->prepare($updateQuery);
-                $updateStmt->bind_param("ss", $hashedNewPassword, $email);
-                return $updateStmt->execute();
-            }
-        }
-        return false;
+        $stmt->bind_param("ss", $hashedPassword, $email);
+        return $stmt->execute();
     }
 
     // Get user profile
@@ -504,12 +807,8 @@ class DatabaseHelper {
 
     // Get user's wishlist items
     public function getWishlistItems($email) {
-        $query = "SELECT p.*, v.Colore, v.Taglia, v.Quantita 
-                  FROM PRODOTTO p
+        $query = "SELECT p.* FROM PRODOTTO p
                   JOIN aggiungere a ON p.ID_Prodotto = a.ID_Prodotto
-                  JOIN VARIANTE v ON (a.ID_Prodotto = v.ID_Prodotto 
-                                    AND a.Colore = v.Colore 
-                                    AND a.Taglia = v.Taglia)
                   WHERE a.Email = ?
                   ORDER BY p.Nome";
         $stmt = $this->db->prepare($query);
@@ -520,33 +819,31 @@ class DatabaseHelper {
     }
 
     // Add item to wishlist
-    public function addToWishlist($email, $productId, $color, $size) {
+    public function addToWishlist($email, $productId) {
         // Check if item already exists in wishlist
         $checkQuery = "SELECT 1 FROM aggiungere 
-                      WHERE Email = ? AND ID_Prodotto = ? 
-                      AND Colore = ? AND Taglia = ?";
+                      WHERE Email = ? AND ID_Prodotto = ?";
         $checkStmt = $this->db->prepare($checkQuery);
-        $checkStmt->bind_param("sssd", $email, $productId, $color, $size);
+        $checkStmt->bind_param("ss", $email, $productId);
         $checkStmt->execute();
         if ($checkStmt->get_result()->num_rows > 0) {
-            return false; // Item already in wishlist
+            return true; // Item already in wishlist
         }
 
         // Add item to wishlist
-        $query = "INSERT INTO aggiungere (Email, ID_Prodotto, Colore, Taglia) 
-                  VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO aggiungere (Email, ID_Prodotto) 
+                  VALUES (?, ?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        $stmt->bind_param("ss", $email, $productId);
         return $stmt->execute();
     }
 
     // Remove item from wishlist
-    public function removeFromWishlist($email, $productId, $color, $size) {
+    public function removeFromWishlist($email, $productId) {
         $query = "DELETE FROM aggiungere 
-                  WHERE Email = ? AND ID_Prodotto = ? 
-                  AND Colore = ? AND Taglia = ?";
+                  WHERE Email = ? AND ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        $stmt->bind_param("ss", $email, $productId);
         return $stmt->execute();
     }
 
@@ -569,43 +866,13 @@ class DatabaseHelper {
     }
 
     // Check if item is in wishlist
-    public function isInWishlist($email, $productId, $color, $size) {
+    public function isInWishlist($email, $productId) {
         $query = "SELECT 1 FROM aggiungere 
-                  WHERE Email = ? AND ID_Prodotto = ? 
-                  AND Colore = ? AND Taglia = ?";
+                  WHERE Email = ? AND ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssd", $email, $productId, $color, $size);
+        $stmt->bind_param("ss", $email, $productId);
         $stmt->execute();
         return $stmt->get_result()->num_rows > 0;
-    }
-
-    // Move item from wishlist to cart
-    public function moveToCart($email, $productId, $color, $size, $quantity = 1) {
-        $this->db->begin_transaction();
-        try {
-            // Get user's cart ID
-            $cartQuery = "SELECT ID_Carrello FROM CARRELLO WHERE Email = ?";
-            $cartStmt = $this->db->prepare($cartQuery);
-            $cartStmt->bind_param("s", $email);
-            $cartStmt->execute();
-            $cartId = $cartStmt->get_result()->fetch_assoc()['ID_Carrello'];
-
-            // Add to cart
-            $addToCartQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
-                              VALUES (?, ?, ?, ?, ?)";
-            $addToCartStmt = $this->db->prepare($addToCartQuery);
-            $addToCartStmt->bind_param("issdi", $cartId, $productId, $color, $size, $quantity);
-            $addToCartStmt->execute();
-
-            // Remove from wishlist
-            $this->removeFromWishlist($email, $productId, $color, $size);
-
-            $this->db->commit();
-            return true;
-        } catch (Exception $e) {
-            $this->db->rollback();
-            return false;
-        }
     }
 
     /*******************
@@ -614,46 +881,69 @@ class DatabaseHelper {
 
     // Add product to cart
     public function addToCart($email, $productId, $color, $size, $quantity = 1) {
-        // First get the cart ID
-        $cartInfo = $dbh->getCartByEmail($email);
-        if (!$cartInfo) {
-            return false;
-        }
-        $cartId = $cartInfo['ID_Carrello'];
-        
-        // Check if item already exists in cart
-        $checkQuery = "SELECT Quantita FROM comprendere 
-                    WHERE ID_Carrello = ? AND ID_Prodotto = ? 
-                    AND Colore = ? AND Taglia = ?";
-        $checkStmt = $this->db->prepare($checkQuery);
-        $checkStmt->bind_param("issd", $cartId, $productId, $color, $size);
-        $checkStmt->execute();
-        $existingItem = $checkStmt->get_result()->fetch_assoc();
-        
-        if ($existingItem) {
-            // Update quantity if item exists
-            $newQuantity = $existingItem['Quantita'] + $quantity;
-            $updateQuery = "UPDATE comprendere 
-                        SET Quantita = ? 
+        try {
+            $this->db->begin_transaction();
+            
+            // First get the cart ID
+            $cartInfo = $this->getCartByEmail($email);
+            if (!$cartInfo) {
+                return false;
+            }
+            $cartId = $cartInfo['ID_Carrello'];
+            
+            // Check if item already exists in cart
+            $checkQuery = "SELECT Quantita FROM comprendere 
                         WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                         AND Colore = ? AND Taglia = ?";
-            $updateStmt = $this->db->prepare($updateQuery);
-            $updateStmt->bind_param("iissd", $newQuantity, $cartId, $productId, $color, $size);
-            return $updateStmt->execute();
-        } else {
-            // Add new item if it doesn't exist
-            $insertQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
-                        VALUES (?, ?, ?, ?, ?)";
-            $insertStmt = $this->db->prepare($insertQuery);
-            $insertStmt->bind_param("issdi", $cartId, $productId, $color, $size, $quantity);
-            return $insertStmt->execute();
+            $checkStmt = $this->db->prepare($checkQuery);
+            $checkStmt->bind_param("iisd", $cartId, $productId, $color, $size);
+            $checkStmt->execute();
+            $existingItem = $checkStmt->get_result()->fetch_assoc();
+            
+            if ($existingItem) {
+                // Update quantity if item exists
+                $newQuantity = $existingItem['Quantita'] + $quantity;
+                $updateQuery = "UPDATE comprendere 
+                            SET Quantita = ? 
+                            WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                            AND Colore = ? AND Taglia = ?";
+                $updateStmt = $this->db->prepare($updateQuery);
+                $updateStmt->bind_param("iiisd", $newQuantity, $cartId, $productId, $color, $size);
+                $updateStmt->execute();
+            } else {
+                // Add new item if it doesn't exist
+                $insertQuery = "INSERT INTO comprendere (ID_Carrello, ID_Prodotto, Colore, Taglia, Quantita) 
+                            VALUES (?, ?, ?, ?, ?)";
+                $insertStmt = $this->db->prepare($insertQuery);
+                $insertStmt->bind_param("iisdi", $cartId, $productId, $color, $size, $quantity);
+                $insertStmt->execute();
+            }
+    
+            // Update cart total value
+            $updateTotalQuery = "UPDATE CARRELLO c 
+                               SET c.Valore_Totale = (
+                                   SELECT SUM(comp.Quantita * p.Prezzo)
+                                   FROM comprendere comp
+                                   JOIN PRODOTTO p ON comp.ID_Prodotto = p.ID_Prodotto
+                                   WHERE comp.ID_Carrello = c.ID_Carrello
+                               )
+                               WHERE c.ID_Carrello = ?";
+            $updateTotalStmt = $this->db->prepare($updateTotalQuery);
+            $updateTotalStmt->bind_param("i", $cartId);
+            $updateTotalStmt->execute();
+    
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            return false;
         }
     }
     
      // Remove item from cart
     public function removeFromCart($email, $productId, $color, $size) {
         // First get the cart ID
-        $cartInfo = $dbh->getCartByEmail($email);
+        $cartInfo = $this->getCartByEmail($email);
         if (!$cartInfo) {
             return false;
         }
@@ -663,48 +953,128 @@ class DatabaseHelper {
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                   AND Colore = ? AND Taglia = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("issd", $cartId, $productId, $color, $size);
+        $stmt->bind_param("iisd", $cartId, $productId, $color, $size);
         return $stmt->execute();
     }
 
     // Adjust item quantity in cart
-    public function adjustCartQuantity($cartId, $productId, $color, $size, $adjustment) {
+    public function adjustCartQuantity($cartId, $productId, $color, $size, $quantity) {
         $query = "UPDATE comprendere 
-                  SET Quantita = GREATEST(1, Quantita + ?) 
+                  SET Quantita = ? 
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
                   AND Colore = ? AND Taglia = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("iissd", $adjustment, $cartId, $productId, $color, $size);
+        $stmt->bind_param("iiisd", $quantity, $cartId, $productId, $color, $size);
         return $stmt->execute();
     }
 
-    // Update item size in cart
-    public function updateCartItemSize($cartId, $productId, $color, $newSize) {
-        $query = "UPDATE comprendere 
-                  SET Taglia = ? 
-                  WHERE ID_Carrello = ? AND ID_Prodotto = ? 
-                  AND Colore = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("disc", $newSize, $cartId, $productId, $color);
+    // Update product size in cart
+    public function updateSizeOnly($cartId, $productId, $color, $oldSize, $newSize) {
+        $stmt = $this->db->prepare(
+            "UPDATE comprendere 
+                SET Taglia = ? 
+                WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                AND Colore = ? AND Taglia = ?"
+        );
+        $stmt->bind_param("diisd", $newSize, $cartId, $productId, $color, $oldSize);
+        return $stmt->execute();
+    }
+    
+    // Update product color and size in cart
+    public function updateSizeAndColor($cartId, $productId, $oldColor, $oldSize, $newColor, $newSize) {
+        $stmt = $this->db->prepare(
+            "UPDATE comprendere 
+                SET Colore = ?, Taglia = ? 
+                WHERE ID_Carrello = ? AND ID_Prodotto = ? 
+                AND Colore = ? AND Taglia = ?"
+        );
+        $stmt->bind_param("sdiisd", $newColor, $newSize, $cartId, $productId, $oldColor, $oldSize);
         return $stmt->execute();
     }
 
     // Update item color in cart
-    public function updateCartItemColor($cartId, $productId, $newColor, $size) {
+    public function updateCartItemColor($cartId, $productId, $oldColor, $newColor, $size) {
         $query = "UPDATE comprendere 
                   SET Colore = ? 
                   WHERE ID_Carrello = ? AND ID_Prodotto = ? 
-                  AND Taglia = ?";
+                  AND Taglia = ? AND Colore = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sisd", $newColor, $cartId, $productId, $size);
+        $stmt->bind_param("siids", $newColor, $cartId, $productId, $size, $oldColor);
         return $stmt->execute();
+    }
+
+    // Get all Colors of a product size
+    public function getColorsBySize($productId, $size) {
+        $query = "SELECT DISTINCT Colore 
+                  FROM VARIANTE 
+                  WHERE ID_Prodotto = ? 
+                  AND Taglia = ? 
+                  AND Quantita > 0 
+                  ORDER BY Colore";
+                  
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ss", $productId, $size);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get all Sizes of a product color
+    public function getSizesByColor($productId, $color) {
+        $query = "SELECT DISTINCT v.Taglia, v.Quantita 
+                FROM VARIANTE v 
+                WHERE v.ID_Prodotto = ? 
+                AND v.Colore = ? 
+                AND v.Quantita > 0 
+                ORDER BY v.Taglia";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("is", $productId, $color);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get all Colors of a product
+    public function getProductColors($productId) {
+        $query = "SELECT DISTINCT v.Colore 
+                FROM VARIANTE v 
+                WHERE v.ID_Prodotto = ? 
+                AND v.Quantita > 0 
+                ORDER BY v.Colore";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get all Sizes of a product
+    public function getProductSizes($productId) {
+        $query = "SELECT DISTINCT v.Taglia 
+                FROM VARIANTE v 
+                WHERE v.ID_Prodotto = ? 
+                AND v.Quantita > 0 
+                ORDER BY v.Taglia";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get max product quantity
+    public function getProductMaxQuantity($productId, $color, $size) {
+        $query = "SELECT Quantita FROM VARIANTE 
+                  WHERE ID_Prodotto = ? AND Colore = ? AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("isd", $productId, $color, $size);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc()['Quantita'];
     }
 
     // Get all items in cart
     public function getCartItems($cartId) {
-        $query = "SELECT c.*, p.Prezzo, p.Nome 
+        $query = "SELECT c.*, p.Prezzo, p.Nome, p.Genere, car.Valore_Totale 
                   FROM comprendere c 
                   JOIN PRODOTTO p ON c.ID_Prodotto = p.ID_Prodotto 
+                  JOIN Carrello car ON c.ID_Carrello = car.ID_Carrello 
                   WHERE c.ID_Carrello = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $cartId);
@@ -719,6 +1089,30 @@ class DatabaseHelper {
         $stmt->bind_param("s", $email);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
+    }
+
+    // Modify cart total value
+    public function modifyCartTotalValue($cartId, $newTotal) {
+        $query = "UPDATE CARRELLO 
+            SET Valore_Totale = ? WHERE ID_Carrello = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $newTotal, $cartId);
+        return $stmt->execute();
+    }
+
+    // Check promo code is valid
+    public function checkPromoCode($code) {
+        $query = "SELECT ID_Sconto, Valore, TipoSconto 
+                  FROM SCONTO 
+                  WHERE ID_Sconto = ? 
+                  AND CURRENT_DATE BETWEEN Data_Inizio AND Data_Fine";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('s', $code);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        return $result->fetch_assoc();
     }
 
     /*********************
@@ -796,6 +1190,217 @@ class DatabaseHelper {
         $stmt->bind_param("ss", $email, $productId);
         $stmt->execute();
         return $stmt->get_result()->num_rows > 0;
+    }
+
+    /*********************
+     * ORDER FUNCTIONS *
+     *********************/
+    
+    // Get all orders for a user
+    public function getOrders($email) {
+        $query = "SELECT o.ID_Ordine,
+                         o.Data_Ordine,
+                         o.Costo_Totale,
+                         o.Metodo_Pagamento,
+                         o.Regalo,
+                         o.Tipo_Spedizione as Tipo,
+                         o.ID_Sconto,
+                         p.ID_Prodotto,
+                         p.Nome,
+                         p.Genere,
+                         po.Prezzo_Acquisto,
+                         po.Quantita,
+                         po.Taglia,
+                         po.Colore
+                  FROM ORDINE o
+                  JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
+                  JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
+                  WHERE o.Email = ?
+                  ORDER BY o.Data_Ordine DESC, p.ID_Prodotto ASC";
+    
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        $orders = [];
+        while ($row = $result->fetch_assoc()) {
+            if (!isset($orders[$row['ID_Ordine']])) {
+                $orders[$row['ID_Ordine']] = [
+                    'ID_Ordine' => $row['ID_Ordine'],
+                    'Data_Ordine' => $row['Data_Ordine'],
+                    'Costo_Totale' => $row['Costo_Totale'],
+                    'Metodo_Pagamento' => $row['Metodo_Pagamento'],
+                    'Regalo' => $row['Regalo'],
+                    'Tipo' => $row['Tipo'],
+                    'ID_Sconto' => $row['ID_Sconto'],
+                    'products' => []
+                ];
+            }
+    
+            $orders[$row['ID_Ordine']]['products'][] = [
+                'ID_Prodotto' => $row['ID_Prodotto'],
+                'Nome' => $row['Nome'],
+                'Genere' => $row['Genere'],
+                'Prezzo' => $row['Prezzo_Acquisto'],
+                'Quantita' => $row['Quantita'],
+                'Taglia' => $row['Taglia'],
+                'Colore' => $row['Colore']
+            ];
+        }
+    
+        return array_values($orders);
+    }
+    
+    // Add new function to DatabaseHelper class
+    public function placeOrder($email, $total, $paymentMethod, $shippingType, $isGift = false, $giftFirstName = null, $giftLastName = null) {
+        try {
+            $this->db->begin_transaction();
+            
+            // Get cart info
+            $cart = $this->getCartByEmail($email);
+            
+            // Create new order
+            $query = "INSERT INTO ORDINE (Data_Ordine, Costo_Totale, Metodo_Pagamento, Tipo_Spedizione, Regalo, NomeDestinatario, CognomeDestinatario, Email) 
+                VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?)";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("dssisss", 
+                $total, 
+                $paymentMethod,
+                $shippingType,
+                $isGift,
+                $giftFirstName,
+                $giftLastName,
+                $email
+            );
+            $stmt->execute();
+            $orderId = $this->db->insert_id;
+            
+            // Move items from cart to order
+            $cartItems = $this->getCartItems($cart['ID_Carrello']);
+            foreach ($cartItems as $item) {
+                $query = "INSERT INTO PRODOTTO_ORDINE (ID_Prodotto, Colore, Taglia, Quantita, ID_Ordine, Prezzo_Acquisto) 
+                        VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $this->db->prepare($query);
+                $stmt->bind_param(
+                    "isdiid",
+                    $item['ID_Prodotto'],
+                    $item['Colore'],
+                    $item['Taglia'],
+                    $item['Quantita'],
+                    $orderId,
+                    $item['Prezzo']
+                );
+                $stmt->execute();
+            }
+            
+            // Create tracking entries
+            $orderDate = new DateTimeImmutable();
+            $isExpress = stripos($shippingType, 'express') !== false;
+            $expectedDates = $this->calculateExpectedDates($orderDate, $isExpress);
+            error_log(print_r($expectedDates, true));
+
+            $trackingQuery = "INSERT INTO Tracking_Spedizione 
+                (ID_Ordine, Posizione, Stato, Arrivo_Effettivo, Arrivo_Stimato, Timestamp_Aggiornamento) 
+                VALUES (?, ?, ?, ?, ?, NOW())";
+
+            // Store dates in variables for proper binding
+            $currentTime = $orderDate->format('Y-m-d H:i:s');
+            $inProgressDate = $expectedDates['in_progress']->format('Y-m-d H:i:s');
+            $shippedDate = $expectedDates['shipped']->format('Y-m-d H:i:s');
+            $deliveredDate = $expectedDates['delivered']->format('Y-m-d H:i:s');
+            $nullDate = null;
+
+            // Placed status
+            $destination = $this->getUniversityLocation();
+            $source = $this->getWarehouseLocation();
+            $status = "Placed";
+            $stmt = $this->db->prepare($trackingQuery);
+            $stmt->bind_param(
+                "issss",
+                $orderId,
+                $source,
+                $status,
+                $currentTime,
+                $currentTime
+            );
+            $stmt->execute();
+
+            // In Progress status
+            $status = "In progress";
+            $stmt = $this->db->prepare($trackingQuery);
+            $stmt->bind_param(
+                "issss",
+                $orderId,
+                $source,
+                $status,
+                $nullDate,
+                $inProgressDate
+            );
+            $stmt->execute();
+
+            // Shipped status
+            $status = "Shipped";
+            $stmt = $this->db->prepare($trackingQuery);
+            $stmt->bind_param(
+                "issss",
+                $orderId,
+                $source,
+                $status,
+                $nullDate,
+                $shippedDate
+            );
+            $stmt->execute();
+
+            // Delivered status
+            $status = "Delivered";
+            $stmt = $this->db->prepare($trackingQuery);
+            $stmt->bind_param(
+                "issss",
+                $orderId,
+                $destination,
+                $status,
+                $nullDate,
+                $deliveredDate
+            );
+            $stmt->execute();
+            
+            // Clear cart
+            $this->db->query("DELETE FROM comprendere WHERE ID_Carrello = " . $cart['ID_Carrello']);
+            $this->db->query("UPDATE CARRELLO SET Valore_Totale = 0 WHERE ID_Carrello = " . $cart['ID_Carrello']);
+            
+            $this->db->commit();
+            return $orderId;
+            
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
+        }
+    }
+
+    // Add this helper function inside DatabaseHelper class
+    private function calculateExpectedDates(DateTimeImmutable $orderDate, bool $isExpress): array 
+    {
+        $inProgress = $orderDate->modify('+1 hour');
+        $shipped = $inProgress->modify('+1 weekday');
+        $delivered = $shipped->modify($isExpress ? '+2 weekday' : '+5 weekday');
+
+        return [
+            'in_progress' => $inProgress,
+            'shipped' => $shipped,
+            'delivered' => $delivered
+        ];
+    }
+
+    // Get University Location
+    private function getUniversityLocation() {
+        return "44.147613, 12.235779";
+    }
+
+    // Get Warehouse Location
+    private function getWarehouseLocation() {
+        return "39.082520, -94.582306";
     }
 }
 

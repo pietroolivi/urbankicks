@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="CSS/style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Barrio&display=swap" rel="stylesheet" />
+        <title>UrbanKicks - Home</title>
+    </head>
+    <body>
+        <!-- 
+        Although the hamburger icon and the profile icon are rendered in the <header> container, we put them in 
+        <body> because in CSS we should be able to select sidebars when there is a change of state in the respective 
+        checkboxes, and this can only be done via a selector if the <label>,<aside> pairs have at least a sibling 
+        relationship, so separating them in <header> and <body> we would then fail to retrieve the sidebar via combinators.
+        -->
+        <header>
+            <h1>URBANKICKS</h1>
+            <a class="cart-icon" href="#"><img src="CSS/Images/Icons/cart.svg" alt="My shopping cart." /></a>
+        </header>
+        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. The first label is placed to perform its normal function & pass the accessibility check, while the second is used as a checkbox container, and will come in particularly handy in the style sheet. -->
+        <label for="hamburger-icon">Open/close the pop-up sidebar.</label>
+        <label class="hamburger-menu"><input id="hamburger-icon" type="checkbox"></label>
+        <aside class="hamburger-sidebar">
+            <form>
+                <div class="search">
+                    <span class="search-icon"><img src="CSS/Images/Icons/search.svg" alt="Execute search." /></span>
+                    <label for="search">Please, type the words that will be searched among the product names and descriptions.</label>
+                    <input id="search" class="search-input" type="search" placeholder="Search within the site">
+                </div>
+            </form>
+            <!-- A radio button is a great way to implement a three-state toggle switch, each corresponding to the gender for which the clothing is to be displayed, since one and only one choice is allowed at a time. -->
+            <fieldset>
+                <legend>Please select gender:</legend>
+                <input type="radio" id="man" name="gender" value="man" checked="checked"><label for="man">MAN</label><input type="radio" id="woman" name="gender" value="woman"><label for="woman">WOMAN</label><input type="radio" id="kids" name="gender" value="kids"><label for="kids">KIDS</label>
+            </fieldset>
+            <nav class="main-hamburger-nav">
+                <ul>
+                    <li><a href="#">VIEW ALL</a></li>
+                    <li><a href="#">SNEAKERS</a></li>
+                    <li><a href="#">SANDALS</a></li>
+                    <li><a href="#">SLIDERS</a></li>
+                    <li><a href="#">PROMO</a></li>
+                    <li><a href="#">LATEST</a></li>
+                    <li><a href="#">POPULAR</a></li>
+                </ul>
+            </nav>
+            <nav class="secondary-hamburger-nav">
+                <ul>
+                    <li><a href="#">CONTACT US</a></li>
+                    <li><a href="#">SHIPPING & RETURNS</a></li>
+                </ul>
+            </nav>
+            <p>URBANKICKS</p>
+        </aside>
+        <!-- A checkbox is a great way for us to check if something is currently being clicked and to toggle between an open and closed state. The first label is placed to perform its normal function & pass the accessibility check, while the second is used as a checkbox container, and will come in particularly handy in the style sheet. -->
+        <label for="profile-icon">Open/close the pop-up user menu.</label>
+        <label class="profile-menu"><input id="profile-icon" type="checkbox"></label>
+        <aside class="profile-sidebar">
+            <nav>
+                <ul>
+                    <li><a href="#">MY ORDERS</a></li>
+                    <li><a href="#">WISHLIST</a></li>
+                    <li><a href="#">NOTIFICATIONS</a></li>
+                    <li><a href="#">SETTINGS</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main>
+            <header>
+                <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." /></a>
+                <h2>Track Order</h2>
+            </header>
+            <h3>#609327855</h3>
+            <ul class="products-overview">
+                <li>
+                    <article>
+                        <img src="CSS/Images/Illustrations/sneaker_test1.webp" alt="" />
+                        <h4>ADIDAS SPEZIAL</h4>
+                        <p>Size: 44 | Qty: 1</p>
+                        <p>Color: blue</p>
+                        <p>€80.00 <s>€109.99</s></p>
+                    </article>
+                </li>
+                <li>
+                    <article>
+                        <img src="CSS/Images/Illustrations/sneaker_test2.webp" alt="" />
+                        <h4>NEW BALANCE 740</h4>
+                        <p>Size: 44 | Qty: 1</p>
+                        <p>Color: blue</p>
+                        <p>€119.99</p>
+                    </article>
+                </li>
+            </ul>
+            <section>
+                <h3>ORDER DETAILS</h3>
+                <p>Expected delivery date</p>
+                <p>03 Sep 2024</p>
+                <p>Tracking ID</p>
+                <p><a href="#order-status">TRK452126542</a></p>
+            </section>
+            <section id="order-status">                
+                <h3>ORDER STATUS</h3>
+                <div>
+                    <img src="CSS/Images/Illustrations/tracking_step2.svg" alt="The second of four steps to complete the order was completed.">
+                    <ol>
+                        <li>
+                            <em>Order placed</em>
+                            <p>23 Aug 2024, 04:25 PM</p>
+                        </li>
+                        <li>
+                            <em>In progress</em>
+                            <p>23 Aug 2024, 05:25 PM</p>
+                        </li>
+                        <li>
+                            <p>Shipped</p>
+                            <p>Expected 24 Aug 2024</p>
+                        </li>
+                        <li>
+                            <p>Delivered</p>
+                            <p>Expected 03 Sep 2024</p>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+            <section>
+                <h3>PARCEL LOCATION</h3>
+                <img src="CSS/Images/Illustrations/map.svg" alt="">
+            </section>
+        </main>
+        <footer>
+            <!-- We separate the footer links into 4 parts as they belong to different domains: page navigators, site information, social media and lastly bureaucratic consents. -->
+            <nav>
+                <a href="#"><img src="CSS/Images/Icons/anchor.svg" alt="Top of the page."></a>
+            </nav>
+            <nav>
+                <ul>
+                    <li><a href="about_us.html">About Us</a></li>
+                    <li><a href="contact_us.html">Contact Us</a></li>
+                    <li><a href="accessibility.html">Accessibility</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                </ul>
+            </nav>
+            <nav>
+                <ul>
+                    <li class="social-media-link"><a href="https://www.facebook.com"><img src="CSS/Images/Icons/facebook.svg" alt="Facebook"></a></li>
+                    <li class="social-media-link"><a href="https://www.instagram.com"><img src="CSS/Images/Icons/instagram.svg" alt="Instagram"></a></li>
+                    <li class="social-media-link"><a href="https://www.whatsapp.com"><img src="CSS/Images/Icons/whatsapp.svg" alt="Whatsapp"></a></li>
+                </ul>
+            </nav>
+            <nav>
+                <ul>
+                    <li><a href="terms_and_conditions.html">Terms & Conditions</a></li>
+                    <li><a href="privacy_policy.html">Privacy Policy</a></li>
+                </ul>
+            </nav>
+        </footer>
+    </body>
+</html>

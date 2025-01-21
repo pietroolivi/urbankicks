@@ -2,29 +2,54 @@
 //from all the other js scripts.
 
 
-//this can be generalized into a utility script (for instance listenerObjectSetting I consider it a Utility script)
 /**
- * This function add an eventListener to a button "idElement" and after the event fires off it appends
- * the HTML structure identified by "idHTMLStructure" then, if needed, it adds other listeners from "additionalListeners"
- * to some of the "new" HTML elements that now are visible/appended.
- *  
- * @param {*} idElement the html id of the element which listen
- * @param {*} idHTMLStructure the id of the <section>/<article>/<div> I make visible
- * @param {*} apiPHPfile  this only if we decide to use the php to get the code
- * @param {*} additionalListeners these are additional listeners to the event
- * @param {Function} [optionalAsyncCallback] an additional function containing an http request to the server
+ * This function adds an eventListener to handle multi-step form navigation
+ * @param {string} idElement - Button ID that triggers the transition
+ * @param {string} idHTMLStructure - ID of section to show
+ * @param {Function} [optionalAsyncCallback] - Optional async callback
+ * @param {Array} [additionalListeners] - Array of additional listener functions
+ * @param {string} [idPrevHTMLStructure] - ID of section to hide
  */
-function eventListenerAppendHTML(idElement,idHTMLStructure,additionalListeners,optionalAsyncCallback){
+function eventListenerAppendHTML(idElement,idHTMLStructure,optionalAsyncCallback,additionalListeners,idPrevHTMLStructure){
     const button = document.getElementById(idElement);
     const HTMLStructure = document.getElementById(idHTMLStructure);
-    button.addEventListener("click",
-        async function(){
-            //I suppose the hidden elements have a class that hides them
-            //called hidden.
-            HTMLStructure.classList.remove("hidden");
-            await optionalAsyncCallback();
-            additionalListeners.forEach(lis=>lis());
-        });
+    button.addEventListener("click", async function(event) {
+        event.preventDefault();
+
+        // Handle previous section
+        if (idPrevHTMLStructure) {
+            const prevSection = document.getElementById(idPrevHTMLStructure);
+            if (prevSection) {
+                prevSection.style.display = 'none';
+            }
+        }
+
+        // Show current section
+        HTMLStructure.style.display = 'block';
+        HTMLStructure.classList.remove("hidden");
+
+        // Handle async callback if provided
+        if (optionalAsyncCallback && typeof optionalAsyncCallback === 'function') {
+            try {
+                await optionalAsyncCallback();
+            } catch (error) {
+                console.error('Async callback error:', error);
+            }
+        }
+
+        // Execute additional listeners if provided
+        if (Array.isArray(additionalListeners)) {
+            additionalListeners.forEach(listener => {
+                if (typeof listener === 'function') {
+                    try {
+                        listener();
+                    } catch (error) {
+                        console.error('Listener execution error:', error);
+                    }
+                }
+            });
+        }
+    });
 }
 
 /**
@@ -49,34 +74,33 @@ function eventListenerFormLoginWarning(idElement, idParagraph, typeOfEvent, apiP
                 //if there's something in the input field that has been written, only then I want to execute the logic
                 // (you can't have done something wrong if you have done nothing)
                 if(valueOfElement.length!==0){
-                    console.log("string is not empty");
-                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&${"check_email_only"}=${encodeURIComponent("true")}`;
+                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&check_email_only=true`;
                     try{
                         //the callback is a fetch with POST because we want to send to the server
                         //what is inside the element.
-                    const response = await fetch(apiPHPfile, { 
-                        method: "POST",
-                        //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
-                        //questo metodo encodeURIComponent
-                        body: bodyMessage
-                    });
-                    if (!response.ok) {
-                        throw new Error("Errore nella risposta del server.");
-                    }
-                    const json = await response.json();
+                        const response = await fetch(apiPHPfile, { 
+                            method: "POST",
+                            //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
+                            //questo metodo encodeURIComponent
+                            body: bodyMessage
+                        });
+                        if (!response.ok) {
+                            throw new Error("Errore nella risposta del server.");
+                        }
+                        const json = await response.json();
 
-                    if (json.exists) {
-                        error.textContent = listenerJsonDataExpected.jsonExpectedValue;
-                        error.style.color = "green";
-                    } else {
-                        error.style.display = 'block';
-                        error.textContent = listenerParagraphSetting.textContent;
-                        error.style.color = listenerParagraphSetting.textColor;
-                    }
+                        if (json.exists) {
+                            error.textContent = listenerJsonDataExpected.jsonExpectedValue;
+                            error.style.color = "green";
+                        } else {
+                            error.style.display = 'block';
+                            error.textContent = listenerParagraphSetting.textContent;
+                            error.style.color = listenerParagraphSetting.textColor;
+                        }
                     } catch (errorEx) {
                         console.error("Errore:", errorEx);
                     }
@@ -87,52 +111,99 @@ function eventListenerFormLoginWarning(idElement, idParagraph, typeOfEvent, apiP
 
 function eventListenerFormRegisterWarning(idElement, idParagraph, typeOfEvent, apiPHPfile, bodyPrefixName, 
     listenerParagraphSetting, listenerJsonDataExpected){
-
+        
     const element = document.getElementById(idElement);
     const error = document.getElementById(idParagraph);
     element.addEventListener(typeOfEvent,
         async function() {
+                console.log("BLURBLURBLURBLURBLURBLURBULRBRLUBRLU");
                 const valueOfElement = element.value;
                 //if there's something in the input field that has been written, only then I want to execute the logic
                 // (you can't have done something wrong if you have done nothing)
                 if(valueOfElement.length!==0){
-                    console.log("string is not empty");
-                    const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&${"check_email_only"}=${encodeURIComponent("true")}`;
+                    const bodyMessage = `${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&check_email_only=true`;
                     try{
                         //the callback is a fetch with POST because we want to send to the server
                         //what is inside the element.
-                    const response = await fetch(apiPHPfile, { 
-                        method: "POST",
-                        //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
-                        //questo metodo encodeURIComponent
-                        body: bodyMessage
-                    });
-                    if (!response.ok) {
-                        throw new Error("Errore nella risposta del server.");
-                    }
-                    const json = await response.json();
+                        const response = await fetch(apiPHPfile, { 
+                            method: "POST",
+                            //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
+                            //questo metodo encodeURIComponent
+                            body: bodyMessage
+                        });
+                        if (!response.ok) {
+                            throw new Error("Errore nella risposta del server.");
+                        }
+                        const json = await response.json();
 
-                    if (json.success) {
-                        error.textContent = listenerJsonDataExpected.jsonExpectedValue;
-                        error.style.color = "green";
-                    } else {
-                        error.style.display = 'block';
-                        error.textContent = json.message;
-                        error.style.color = listenerParagraphSetting.textColor;
-                    }
+                        if (json.success) {
+                            document.getElementById("register-button").disabled = false;
+                            //error.textContent = listenerJsonDataExpected.jsonExpectedValue;
+                            //error.style.color = "green";
+                        } else {
+                            document.getElementById("register-button").disabled = true;
+                            error.style.display = 'block';
+                            error.textContent = json.message;
+                            error.style.color = listenerParagraphSetting.textColor;
+                        }
                     } catch (errorEx) {
                         console.error("Errore:", errorEx);
                     }
+                }
+                else{
+                    error.innerHTML = "STRINGA VUOTAAAAAAAAAA",
+                    error.style.display = 'block';
+                    error.style.color = listenerParagraphSetting.textColor;
                 }
     });
     return null;
 }
 
+function eventListenerRegisterButton(idSubmit,idEmail,idName,idLastName,idPassword,typeOfEvent,apiPHPfile){
 
+    const button=document.getElementById(idSubmit);
+    const email=document.getElementById(idEmail);
+    const name=document.getElementById(idName);
+    const lastName=document.getElementById(idLastName);
+    const password=document.getElementById(idPassword);
+
+    button.addEventListener(typeOfEvent,
+        async function(){
+            const valueOfEmail = email.value;
+            const valueOfName = name.value;
+            const valueOfLastName = lastName.value;
+            const valuePassword = password.value;
+            const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}
+                                &${"first-name"}=${encodeURIComponent(valueOfName)}
+                                &${"last-name"}=${encodeURIComponent(valueOfLastName)}
+                                &${"password"}=${encodeURIComponent(valueOfPassword)}`;
+            try{
+                const response = await fetch(apiPHPfile,{
+                    method: "POST",
+                    //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
+                    //questo metodo encodeURIComponent
+                    body: bodyMessage
+                })
+                const json = await response.json();
+
+                if (json.success) 
+                    console.log("successo registrazione");
+            }
+            catch(errorEx){
+                console.error("Errore:", errorEx);
+            }
+        }
+
+    )
+}
 
 //the same logic of eventListenerFormInputWarning but the event and the value to be checked
 //are into two different HTML element (used for example to check a input field of a form, after the pressing of a button.)
@@ -150,6 +221,7 @@ function eventListenerFormInputButtonWarning(idElement, idForward, idParagraph, 
                     try{
                         //the callback is a fetch with POST because we want to send to the server
                         //what is inside the element.
+                        const bodyMessage=`${bodyPrefixName}=${encodeURIComponent(valueOfElement)}&${"check_email_only"}=${encodeURIComponent("true")}`;
                     const response = await fetch(apiPHPfile, { //richiesta POST HTTP alla pagina login-api.php
                         method: "POST",
                         //parameter to use to have the content of this message inside $_POST[bodyPrefixName]
@@ -158,17 +230,19 @@ function eventListenerFormInputButtonWarning(idElement, idForward, idParagraph, 
                         },
                         //nel body c'è il valore da passare e siccome la mail contiene caratteri speciali come @ è saggio usare
                         //questo metodo encodeURIComponent
-                        body: bodyPrefixName + encodeURIComponent(valueOfElement),
+                        body: bodyMessage
                     });
                     if (!response.ok) {
                         throw new Error("Errore nella risposta del server.");
                     }
                     const json = await response.json();
 
-                    if (json.success && json[listenerJsonDataExpected.textContent]===listenerJsonDataExpected.jsonExpectedValue) {
+                
+                    if (json.exists) {
                         error.textContent = listenerJsonDataExpected.jsonExpectedValue;
                         error.style.color = "green";
                     } else {
+                        error.style.display = 'block';
                         error.textContent = listenerParagraphSetting.textContent;
                         error.style.color = listenerParagraphSetting.textColor;
                     }
@@ -201,58 +275,69 @@ function eventListenerButtonNotCheckedWarning(idElement, idCheckbox,idParagraph,
 
 
 
-function eventListenerFormInputComparisonWarning(idFirstElement, idSecondElement, idParagraph, listenerParagraphSetting){
-    const element1 = document.getElementById(idFirstElement);
-    const element2 = document.getElementById(idSecondElement);
-    const error = document.getElementById(idParagraph);
-    element2.addEventListener("blur",
-        async function() {
-                const valueOfElement1 = element1.value;
-                const valueOfElement2=element2.value;
-                //if there's something in the first input field that has been written, and also something in the second input field
-                //and the comparison fails, it adds the text to the error paragraph
-                if(valueOfElement1 && valueOfElement2 && (valueOfElement1 !== valueOfElement2)){
-                    error.textContent = listenerParagraphSetting.textContent;
-                    error.style.color = listenerParagraphSetting.textColor;
-                }
-    });
+function eventListenerFormInputComparisonWarning(input1Id, input2Id, paragraphWarningId, listenerSetting) {
+    const input1 = document.getElementById(input1Id);
+    const input2 = document.getElementById(input2Id);
+    const submitButton = document.getElementById('submit-2');
+    
+    function checkMatch() {
+        if (input1.value === '' || input2.value === '') {
+            submitButton.disabled = true;
+            return;
+        }
+        
+        if (input1.value === input2.value) {
+            document.querySelectorAll('.pswd-format-error').forEach(p => {
+                p.style.color = 'green';
+                p.style.display = 'none';
+            });
+            submitButton.disabled = false;
+        } else {
+            document.querySelectorAll('.pswd-format-error').forEach(p => {
+                p.style.color = listenerSetting.color;
+                p.style.display = 'block';
+            });
+            submitButton.disabled = true;
+        }
+    }
 
-
-    return null;
+    input1.addEventListener('input', checkMatch);
+    input2.addEventListener('input', checkMatch);
 }
 
 
 function eventListenerPasswordRules(idPassword,warningListClass,listenerParagraphSetting){
     const passwordElement= document.getElementById(idPassword);
-    passwordElement.addEventListener("blur", 
-        async function(){
-            const valueOfElement=passwordElement.value;
-            //regular expressions to check if the string contains letters and numbers and the length is correct
-            const passwordHasLetters=/[a-zA-Z]/.test(valueOfElement);
-            const emailHasNumber = /\d/.test(valueOfElement);
-            const emailRightLength=(valueOfElement)=>{return (valueOfElement.length) >=8 && (valueOfElement.length<=20)};
-            const passwordHasSpecialCharacter = /[!"#$%&'()*+,-./:;<=>?]/.test(valueOfElement);
-            if(passwordHasLetters && emailHasNumber && emailRightLength && passwordHasSpecialCharacter)
-            {
-                //need to think if we need to make it visible or not.
-                const warningElements = document.getElementsByClassName(warningListClass);
-                for (let i = 0; i < warningElements.length; i++) {
-                    warningElements.style.display="none";
-                    warningElements[i].textContent="";
-                    warningElements[i].color="";
-                }
-                return null;
-            }
-            else{
-                const warningElements = document.getElementsByClassName(warningListClass);
-                for (let i = 0; i < warningElements.length; i++) {
-                    warningElements.style.display="block";
-                   /* warningElements[i].textContent="• "+listenerParagraphSetting[i].textContent;
-                    warningElements[i].color=listenerParagraphSetting[i].textColor;*/
-                }
-            }
+    const warningElements = document.getElementsByClassName(warningListClass);
 
+    const validatePassword = (value) => {
+        const rules = {
+            length: value.length >= 8 && value.length <= 20,
+            letters: /[a-zA-Z]/.test(value),
+            numbers: /\d/.test(value),
+            special: /[!"#$%&'()*+,-./:;<=>?]/.test(value)
+        };
+
+        return rules;
+    };
+
+    passwordElement.addEventListener("input", function() {
+        const valueOfElement = passwordElement.value;
+        const validation = validatePassword(valueOfElement);
+        
+        // Update warning messages
+        Array.from(warningElements).forEach((element, index) => {
+            if (index === 0 && !validation.length ||
+                index === 1 && !(validation.letters && validation.numbers) ||
+                index === 2 && !validation.special) {
+                element.style.display = "block";
+                element.style.color = "red";
+            } else {
+                element.style.display = "none";
+                element.style.color = "green";
+            }
         });
+    });
 }
 
 
@@ -351,7 +436,7 @@ function eventListenerItemWish(classCheckboxHeart,apiPHPfile){
  * @param {*} idElement the element that is like the <select> having all the choices
  * @param {*} idParagraph the element that is the paragraph of the warning
  */
-function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idElement,idParagraph,listenerParagraphSetting) {
+/*function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idElement,idParagraph,listenerParagraphSetting) {
 
     const button=document.getElementById(idButton);
 
@@ -366,7 +451,7 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
                 /*body.no-scroll {
                     overflow: hidden;
                 }*/
-                const body = document.body;
+               /* const body = document.body;
                 body.classList.add("no-scroll");
                 //this simulates the length of the animation (0.5 sec) at the end it will remove the class that disables the scroll.
                 setTimeout(() => {
@@ -384,6 +469,7 @@ function eventListenerScrollToElementWarningEmpty(idScrollElement,idButton,idEle
 
         });
 }
+*/
 
 
 
@@ -512,3 +598,35 @@ function eventListenerApplyFilters(){
     });
 
 }*/
+
+// function setupBackButtons() {
+//     // Back button from section 2 to 1
+//     document.querySelector('#section-register2 .back-btn').addEventListener('click', () => {
+//         // Show section 1
+//         document.getElementById('section-register2').style.display = 'none';
+//         document.getElementById('section-register1').style.display = 'block';
+
+//         // Restore section 1 data
+//         document.getElementById('first-name').value = sessionStorage.getItem('firstname') || '';
+//         document.getElementById('last-name').value = sessionStorage.getItem('lastname') || '';
+//         document.getElementById('email-register').value = sessionStorage.getItem('email') || '';
+        
+//         history.pushState({}, '', '?step=1');
+//     });
+
+//     // Back button from section 3 to 2
+//     document.querySelector('#section-register3 .back-btn').addEventListener('click', () => {
+//         // Show section 2
+//         document.getElementById('section-register3').style.display = 'none';
+//         document.getElementById('section-register2').style.display = 'block';
+        
+//         // Restore section 2 data
+//         document.getElementById('password-register').value = sessionStorage.getItem('password') || '';
+//         document.getElementById('phone-register').value = sessionStorage.getItem('phone') || '';
+        
+//         history.pushState({}, '', '?step=2');
+//     });
+// }
+
+// Initialize back buttons
+// document.addEventListener('DOMContentLoaded', setupBackButtons);

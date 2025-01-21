@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="CSS/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Barrio&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+        <script src="https://nagix.github.io/chartjs-plugin-colorschemes.js"></script>
+        <title>UrbanKicks - Statistics</title>
+    </head>
+    <body>
+        <header>
+            <h1>URBANKICKS</h1>
+        </header>
+        <main>
+            <header>
+                <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
+                <h2>Statistics</h2>
+            </header>
+            <section>
+                <h3>DAILY EARNINGS GIVEN PERIOD AND FREQUENCY</h3>
+                <!--
+                We want to give as much insight as possible from the graphs. In the first two-dimensional graph, the unit 
+                of the x-axis will always be the single day which is mapped with the profit recorded over those 24 hours. 
+                We give the possibility to check the earnings in a specific day, week, month, year or any continuous 
+                period. The step (set to 1 by default) will instead allow us to skip data and target specific recurrences 
+                e.g. I might want to look, by setting an annual step, at the revenue on black friday of each year.
+                -->
+                <div class="line-graph-settings">
+                    <label for="start-date-line-graph">Start date</label>
+                    <input id="start-date-line-graph" type="date" value="2020-01-01" min="2020-01-01" onchange="fixDate()"/>
+                    <label for="end-date-line-graph">End date</label>
+                    <input id="end-date-line-graph" type="date" min="2020-01-01" onchange="fixDate()"/>
+                    <label for="step-line-graph">Step</label>
+                    <select name="step-line-graph" id="step-line-graph" onchange="fixStep()">
+                        <option value="daily" selected>daily</option>
+                        <option value="monthly">monthly</option>
+                        <option value="yearly">yearly</option>
+                    </select>
+                </div>
+                <canvas id="line-graph-day-profit" style="width:100%;max-width:700px"></canvas>
+                <footer>
+                    <p>Total income in the selected period:</p>
+                    <p>€1750.00</p>
+                </footer>
+            </section>
+            <section>
+                <h3 id="heading-group-by-month">MONTHLY EARNINGS IN A CHOSEN YEAR</h3>
+                <h3 id="heading-group-by-year" style="display:none;">ANNUAL EARNINGS</h3>
+                <!-- 
+                A weakness of the previous chart is that it fails to compare multiple non-overlapping continuous 
+                intervals of days, each mapped to a representative profit. We overcome this lack with the use of a 
+                bar chart, where we offer the possibility of comparing months of a given year or years with each other. 
+                -->
+                <div class="bar-chart-settings">
+                    <label for="bar-chart-group-by-month">Group by month</label>
+                    <input type="radio" value="bar-chart-group-by-month" name="bar-chart-group-by" id="bar-chart-group-by-month" checked="checked" onchange="changeBarGraph()"/>
+                    <label for="bar-chart-group-by-year">Group by year</label>
+                    <input type="radio" value="bar-chart-group-by-year" name="bar-chart-group-by" id="bar-chart-group-by-year" onchange="changeBarGraph()"/>
+                    <label for="year-for-months-analysis">Year whose months you wish to compare</label>
+                    <select name="year-for-months-analysis" id="year-for-months-analysis" onchange="updateMonthsBarChart()">
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+                <canvas id="bar-chart-months-profit" style="width:100%;max-width:600px"></canvas>
+                <canvas id="bar-chart-years-profit" style="width:100%;max-width:600px;display:none;"></canvas>
+                <p>Earnings from all months added up:</p>
+                <p>€1750.00</p>
+                <p style="display:none;">Earnings from all years added up:</p>
+                <p style="display:none;">€30000.00</p>
+            </section>
+            <!-- Finally, we offer a statistic on the percentage that each brand occupies in total sales, firstly in terms of the number of items sold compared to the total, then by considering the revenue that each brand generated compared to the total. We then do the same by considering models and not more brands. -->
+            <section>
+                <h3>SHARE OF TOP BRANDS ON NUMBER OF ITEMS SOLD</h3>
+                <canvas id="doughnut-chart-brand-sales-number" style="width:100%;max-width:600px"></canvas>
+            </section>
+            <section>
+                <h3>SHARE OF TOP BRANDS IN TOTAL EARNINGS</h3>
+                <canvas id="doughnut-chart-brand-sales-value" style="width:100%;max-width:600px"></canvas>
+            </section>
+            <section>
+                <h3>PERCENTAGE OF TOP MODELS ON NUMBER OF ITEMS SOLD</h3>
+                <canvas id="pie-chart-model-sales-number" style="width:100%;max-width:600px"></canvas>
+            </section>
+            <section>
+                <h3>PERCENTAGE OF TOP MODELS IN TOTAL EARNINGS</h3>
+                <canvas id="pie-chart-model-sales-value" style="width:100%;max-width:600px"></canvas>
+            </section>
+        </main>
+        <script src="admin_statistics_script.js"></script>
+    </body>
+</html>

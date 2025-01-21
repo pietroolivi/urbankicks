@@ -1,6 +1,5 @@
 <?php
 require_once("bootstrap.php");
-
 header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -19,16 +18,59 @@ try {
     $action = $_POST["action"];
 
     switch ($action) {
+        case "get_disabled_sizes":
+            if (!isset($_POST["product_id"], $_POST["color"])) {
+                throw new Exception("Missing required fields");
+            }
+    
+            $productId = $_POST["product_id"];
+            $color = $_POST["color"];
+    
+
+            $availableSizes = $dbh->getSizesByColor($productId, $color);
+    
+            $allSizes = array_unique(array_column($dbh->getProductSizes($productId), 'Taglia')); 
+            $disabledSizes = array_values(array_diff($allSizes, array_column($availableSizes, 'Taglia')));
+    
+            $response = [
+                "success" => true,
+                "disabledSizes" => $disabledSizes
+            ];
+            break;
+    
+        case "get_disabled_colors":
+
+            if (!isset($_POST["product_id"], $_POST["size"])) {
+                throw new Exception("Missing required fields");
+            }
+    
+            $productId = $_POST["product_id"];
+            $size = floatval($_POST["size"]);
+
+            $availableColors = $dbh->getColorsBySize($productId, $size);
+   
+            $allColors = array_unique(array_column($dbh->getProductColors($productId), 'Colore')); 
+            $disabledColors = array_values(array_diff($allColors, array_column($availableColors, 'Colore')));
+    
+            $response = [
+                "success" => true,
+                "disabledColors" => $disabledColors
+            ];
+            break;
+
         case "add_to_cart":
             // Validate required fields
             if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"])) {
                 throw new Exception("Missing required fields");
             }
-            if (!isset($_POST["email"]) || empty($_POST["email"])) {
+         /*   if (!isset($_POST["email"]) || empty($_POST["email"])) {
                 throw new Exception("User must be logged in");
+            }*/
+            if(!isset($_SESSION['user_email'])){
+                throw new Exception("You need to be logged in");
             }
-
-            $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+            $email = $_SESSION['user_email'];
+          //  $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
             $productId = $_POST["product_id"];
             $size = floatval($_POST["size"]);
             $color = $_POST["color"];
@@ -62,45 +104,57 @@ try {
             break;
 
         case "add_to_wishlist":
-            if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"], $_POST["email"])) {
+          /*  if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"], $_POST["email"])) {
                 throw new Exception("Missing required fields");
-            }
-
-            $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+            }*/
+            if(!isset($_POST["product_id"], $_SESSION['user_email']))
+                throw new Exception("You need to be logged in");
+            $email = filter_var($_SESSION['user_email'], FILTER_SANITIZE_EMAIL);
             $productId = $_POST["product_id"];
-            $size = floatval($_POST["size"]);
-            $color = $_POST["color"];
-
-            $success = $dbh->addToWishlist($email, $productId, $color, $size);
+         /*   $size = floatval($_POST["size"]);
+            $color = $_POST["color"];*/
+            
+            $success = $dbh->addToWishlist($email, $productId);
             if (!$success) {
                 throw new Exception("Failed to add item to wishlist");
             }
             $response = ["success" => true, "message" => "Product added to wishlist"];
             break;
 
-        case "remove_from_wishlist":
-            if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"], $_POST["email"])) {
-                throw new Exception("Missing required fields");
-            }
-
-            $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
-            $productId = $_POST["product_id"];
-            $size = floatval($_POST["size"]);
-            $color = $_POST["color"];
-
-            $success = $dbh->removeFromWishlist($email, $productId, $color, $size);
-            if (!$success) {
-                throw new Exception("Failed to remove item from wishlist");
-            }
-            $response = ["success" => true, "message" => "Product removed from wishlist"];
-            break;
+            case "remove_from_wishlist":
+                if (!isset($_POST["product_id"])) {
+                    throw new Exception("Missing required fields");
+                }
+            
+                if (!isset($_SESSION["user_email"])) {
+                    
+                    $response = ["success" => false, "message" => "User not logged in"];
+                    echo json_encode($response);
+                    exit();
+                }
+            
+                $email = filter_var($_SESSION["user_email"], FILTER_SANITIZE_EMAIL);
+                $productId = $_POST["product_id"];
+            
+                $success = $dbh->removeFromWishlist($email, $productId);
+                if (!$success) {
+                    throw new Exception("Failed to remove item from wishlist");
+                }
+            
+                $response = ["success" => true, "message" => "Product removed from wishlist"];
+               // echo json_encode($response);
+                break;
 
         case "add_review":
-            if (!isset($_POST["product_id"], $_POST["rating"], $_POST["comment"], $_POST["email"])) {
+            if(!isset($_SESSION["user_email"])){
+                throw new Exception("You need to be logged in");
+            }
+
+            if (!isset($_POST["product_id"], $_POST["rating"], $_POST["comment"])) {
                 throw new Exception("Missing required fields");
             }
 
-            $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+            $email = filter_var($_SESSION['user_email'], FILTER_SANITIZE_EMAIL);
             $productId = $_POST["product_id"];
             $rating = intval($_POST["rating"]);
             $comment = filter_var($_POST["comment"], FILTER_SANITIZE_STRING);
@@ -123,7 +177,7 @@ try {
             break;
 
         case "notify_availability":
-            if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"], $_POST["email"])) {
+            if (!isset($_POST["product_id"], $_POST["size"], $_POST["color"], $_SESSION['user_email'])) {
                 throw new Exception("Missing required fields");
             }
 

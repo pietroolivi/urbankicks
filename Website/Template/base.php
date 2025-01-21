@@ -10,6 +10,8 @@ require_once("bootstrap.php");
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Barrio&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
         <title>UrbanKicks - <?php echo $templateParams["title"]; ?></title>
         <?php 
         if(isset($templateParams["js"])):
@@ -24,7 +26,7 @@ require_once("bootstrap.php");
     <body>
         <header>
             <h1>URBANKICKS</h1>
-            <a class="cart-icon" href="#"><img src="CSS/Images/Icons/cart.svg" alt="My shopping cart."></a>
+            <a class="cart-icon" href="cart.php"><img src="CSS/Images/Icons/cart.svg" alt="My shopping cart."></a>
         </header>
         
         <label for="hamburger-icon">Open/close the pop-up sidebar.</label>
@@ -45,13 +47,25 @@ require_once("bootstrap.php");
             </fieldset>
             <nav class="main-hamburger-nav">
                 <ul>
-                    <li><a href="#">VIEW ALL</a></li>
-                    <li><a href="#">SNEAKERS</a></li>
-                    <li><a href="#">SANDALS</a></li>
-                    <li><a href="#">SLIDERS</a></li>
-                    <li><a href="#">PROMO</a></li>
-                    <li><a href="#">LATEST</a></li>
-                    <li><a href="#">POPULAR</a></li>
+                    <li><a href="home.php">VIEW ALL</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&type=sneakers'">SNEAKERS</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&type=sandals'">SANDALS</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&type=sliders'">SLIDERS</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&category=discounted'">PROMO</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&category=novelties'">LATEST</a></li>
+                    <li><a href="#" onclick="window.location.href='home.php?genre=' 
+                    + document.querySelector('input[name=\'gender\']:checked').value 
+                    + '&category=popular'">POPULAR</a></li>
                 </ul>
             </nav>
             <nav class="secondary-hamburger-nav">
@@ -68,10 +82,16 @@ require_once("bootstrap.php");
         <aside class="profile-sidebar">
             <nav>
                 <ul>
-                    <li><a href="#">MY ORDERS</a></li>
-                    <li><a href="#">WISHLIST</a></li>
-                    <li><a href="#">NOTIFICATIONS</a></li>
-                    <li><a href="#">SETTINGS</a></li>
+                    <?php if(isset($_SESSION['user_email'])): ?>
+                        <li><a href="orders.php">MY ORDERS</a></li>
+                        <li><a href="wishlist.php">WISHLIST</a></li>
+                        <li><a href="notifications.php">NOTIFICATIONS</a></li>
+                        <li><a href="account.php">SETTINGS</a></li>
+                        <li><a href="logout.php">LOGOUT</a></li>
+                    <?php else: ?>
+                        <li><a href="login.php">LOGIN</a></li>
+                        <li><a href="register.php">REGISTER</a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </aside>
@@ -87,7 +107,7 @@ require_once("bootstrap.php");
             <nav>
                 <ul>
                     <li><a href="about_us.html">About Us</a></li>
-                    <li><a href="contact_us.html">Contact Us</a></li>
+                    <li><a href="contact_us.php">Contact Us</a></li>
                     <li><a href="accessibility.html">Accessibility</a></li>
                     <li><a href="faq.html">FAQ</a></li>
                 </ul>

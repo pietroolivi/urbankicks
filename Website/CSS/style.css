@@ -72,7 +72,7 @@ body {
 /* colored - it's simply space. Padding on the other hand provides space around */
 /* the inside of the element's box and is colored and affected by other styles. */
 /* **************************************************************************** */
-header {
+body > header {
   text-align: center;
   background-color: black;
   padding: 1% 0;
@@ -81,7 +81,7 @@ header {
   z-index: 2;
 }
 
-header > h1 {
+body > header > h1 {
   color: white;
   font-family: 'Barrio', sans-serif;
   font-size: 3em;
@@ -92,7 +92,7 @@ header > h1 {
 /* that it also contains the top margin of the topmost element and the bottom margin */
 /* of the bottommost element, preventing them from exiting the parent tag (footer).  */
 /* ********************************************************************************* */
-footer {
+body > footer {
   background-color: black;
   font-family: 'Beatrice Headline Trial', sans-serif;
   text-align: center;
@@ -101,14 +101,14 @@ footer {
   padding: 2% 0;
 }
 
-footer a, footer a:visited {
+body > footer a, body > footer a:visited {
   color: white;
 }
 
 /* ********************************************************************************* */
 /* Vertical space between lists, not doubled because assigned to every second <nav>. */
 /* ********************************************************************************* */
-footer > nav:nth-child(2n) {
+body > footer > nav:nth-child(2n) {
   padding: 3% 0;
 }
 
@@ -117,7 +117,7 @@ footer > nav:nth-child(2n) {
 /* with elements on different rows, since in lists with elements side by   */
 /* side it would have resulted in increased space between different lists  */
 /* *********************************************************************** */
-footer > nav:nth-child(2) > ul > li:not(:first-child) {
+body > footer > nav:nth-child(2) > ul > li:not(:first-child) {
   padding-top: 3%;
 }
 
@@ -141,24 +141,24 @@ footer > nav:nth-child(2) > ul > li:not(:first-child) {
 /* do not use padding but the margin because, being the first type of space inside the     */
 /* container, the separator bar would widen vertically, differing from the mock-up.        */
 /* *************************************************************************************** */
-footer > nav:nth-child(4) > ul {
+body > footer > nav:nth-child(4) > ul {
   display: flex;
   justify-content: center;
 }
 
-footer > nav:nth-child(4) > ul > li {
+body > footer > nav:nth-child(4) > ul > li {
   padding: 0 5%;
   margin: 1.5% 0;
   width: 40%;
 }
 
-footer > nav:nth-child(4) > ul > li:nth-child(1) {
+body > footer > nav:nth-child(4) > ul > li:nth-child(1) {
   border-right: 1px solid white;
   box-sizing: border-box;
   text-align: right;
 }
 
-footer > nav:nth-child(4) > ul > li:nth-child(2) {
+body > footer > nav:nth-child(4) > ul > li:nth-child(2) {
   text-align: left;
 }
 
@@ -166,7 +166,7 @@ main {
   background-color: #efefef;
 }
 
-main > div > img {
+main > .explore-section > img {
   width: 100%;
   height: auto;
 }
@@ -795,29 +795,174 @@ main > .filters-and-sorters > .category-switch {
   display: none;
 }
 
-
-
-
-
-
-
+#email-register-error,
+#email-forgot-error,
+#code-forgot-error,
+#email-login-error {
+  display: none;
+}
 
 .authentication-error {
   display: none;
 }
 
-
 s {
   text-decoration: line-through;
 }
 
-.filter-sidebar label {
+#section-forgot1,
+#section-forgot2,
+#section-forgot3 {
   display: none;
 }
 
-.filter-sidebar legend {
+textarea {
+  resize: none;
+}
+
+[style^=--rating] {
+  --color: #fb0;
+  display: inline-block;
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+[style^=--rating]::after {
+  content: "★★★★★";
+  font-size: 4em;
+  white-space: nowrap;
+  background: linear-gradient(90deg, var(--color) calc(var(--rating) * 20%), #ddd calc(var(--rating) * 20%)); /* To pass the rating value from the template to the gradient image percentage. */
+  background-clip: text; /* To paint the star characters with a linear-gradient background. */
+  -webkit-background-clip: text;
+  color: #0000;
+}
+
+#reviews ul li article p {
+  font-family: 'Menlo Regular', sans-serif;
+}
+
+.main {
+  width: 600px;
+  margin: 100px auto;
+  justify-content: center;
+}
+
+.track {
+  margin-bottom: 10px;
+}
+
+.main .track ul {
+  position: relative;
+  list-style-type: none;
+  padding: 0;
+  height: 400px;
+  width: 100%;
+}
+
+.main .track ul li {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 400px;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.main .track ul li:first-child {
+  opacity: 1;
+}
+
+.main .track ul li img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  background-color: white;
+}
+
+.slides {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+}
+
+.slides a {
+  height: 100px;
+  background-color: white;
+  border-radius: 20px;
+}
+
+.slides a img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.main .track ul li:target {
+  opacity: 1;
+}
+
+.slides a:hover {
+  border: 2px solid black;
+}
+
+.product-details img {
+  width: 60%;
+}
+
+.product-details .item-info label {
+  display: none;
+}
+
+#shipping-form legend {
   display: unset;
-  color: black;
+  text-align: center;
+}
+
+.products-overview img {
+  width: 200px;
+}
+
+.promo-code label {
+  display: none;
+}
+
+#payment-form legend {
+  display: none;
+}
+
+.product-admin img {
+  width: 100px;
+}
+
+#error-images-product-admin {
+  display: none;
+  color: red;
+}
+
+#quantity-size-color label {
+  display: none;
+}
+
+.images-product-to-delete img, .images-product-to-add img, .images-product-to-edit img {
+  width: 50px;
+}
+
+input:disabled[type='file'],#images-product-admin-edit {
+  color: transparent;
+}
+
+@media (max-width: 600px) {
+  .main {
+    width: 100%;
+    margin: 60px auto;
+  }
+
+  .slides {
+    grid-gap: 10px;
+
+  }
 }
  
 /*
