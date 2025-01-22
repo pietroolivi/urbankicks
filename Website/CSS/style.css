@@ -75,7 +75,7 @@ body {
 body > header {
   text-align: center;
   background-color: black;
-  padding: 1% 0;
+  padding: 8px 0;
   position: sticky;
   top: 0;
   z-index: 2;
@@ -84,8 +84,16 @@ body > header {
 body > header > h1 {
   color: white;
   font-family: 'Barrio', sans-serif;
-  font-size: 3em;
+  font-size: 2em;
+  display: inline-block;
+  margin-right: calc(-2 * var(--icon-width) + 20px);
+  margin-left: calc(-1 * var(--bar-width));
 }
+
+body > header > h1 > a:visited {
+  color: white;
+}
+
 
 /* ********************************************************************************* */
 /* The ‘overflow’ property results in the height of the footer being enlarged so     */
@@ -220,12 +228,13 @@ aside p {
 }
 
 :root {
-  --bar-width: 30px;
-  --bar-height: 4px;
-  --hamburger-gap: 5px;
+  --bar-width: 24px;
+  --icon-width: 30px;
+  --bar-height: 3.2px;
+  --hamburger-gap: 4px;
   --foreground: white;
   --background: white;
-  --hamburger-margin: 20px;
+  --hamburger-margin: 16px;
   --animation-timing: 200ms ease-in-out;
   --hamburger-height: calc(var(--bar-height) * 3 + var(--hamburger-gap) * 2); /* Height of the 3 bars added to the 2 gaps */
 }
@@ -239,15 +248,16 @@ aside p {
 /* ********************************************************************************************************* */
 .hamburger-menu {
   --x-width: calc(var(--hamburger-height) * 1.41421356237); /*The width of each bar when we are in the form X: h * sqrt(2) */
-
-  display: flex;
+  vertical-align: top;
+  display: inline-flex;
   flex-direction: column;
   gap: var(--hamburger-gap);
   width: max-content;
-  position: fixed;
-  top: var(--hamburger-margin);
-  left: var(--hamburger-margin);
+  position: sticky;
   z-index: 3;
+  float: left;
+  left: 30px;
+  margin-top: 8px;
   cursor: pointer;
 }
 
@@ -346,15 +356,10 @@ label[for="sort-icon"] {
   translate: -100%;
   background-color: var(--foreground);
   color: var(--background);
-  max-width: 20rem;  /* no matter what size the screen is, it's always only taking up that space */ 
-  min-height: 100vh; /* that's going to fill 100% of the height */
+  width: 70%;
+  height: 100%; /* that's going to fill 100% of the height */
   position: fixed;
   z-index: 3;
-}
-
-/* We select the adjacent sibling sidebar */
-.hamburger-menu:has(input:checked) + .hamburger-sidebar {
-  translate: 0;
 }
 
 /* **************************************************************************** */
@@ -447,7 +452,7 @@ label[for="sort-icon"] {
 /* ***************************************************************************************** */
 .profile-sidebar { 
   transition: translate var(--animation-timing); 
-  translate: 0 -271px;
+  translate: 0 -300%;
   background-color: var(--foreground);
   color: var(--background);
   text-align: center;
@@ -457,26 +462,25 @@ label[for="sort-icon"] {
   z-index: 1;
 }
 
-/* We select the adjacent sibling sidebar */
-.profile-menu:has(input:checked) + .profile-sidebar {
-  translate: 0;
-}
-
 .profile-menu > input[type=checkbox] {
   display: none;
 }
 
 .profile-menu {
-  width: var(--bar-width);
-  height: var(--bar-width);
-  transform: scale(1.1);
-  position: fixed;
-  top: calc(var(--hamburger-margin) * 0.7);
-  right: calc(var(--hamburger-margin) * 5);
+  width: var(--icon-width);
+  height: var(--icon-width);
+  /*transform: scale(1.1);*/
+  position: sticky;
+  top: 9px;
+  right: 15%;
   cursor: pointer;
-  background: url("./Images/Icons/user_profile.svg") no-repeat;
-  /* background-size: cover; */
   z-index: 3;
+  float: right;
+}
+
+.profile-menu > img,
+.cart-icon > img {
+  width: 100%;
 }
 
 .profile-sidebar > nav > ul > li > a,
@@ -522,14 +526,15 @@ label[for="sort-icon"] {
 }
 
 .cart-icon{
-  width: var(--bar-width);
-  height: var(--bar-width);
-  transform: scale(1.1);
-  position: fixed;
-  top: calc(var(--hamburger-margin) * 0.8);
-  right: calc(var(--hamburger-margin) * 2);
+  width: var(--icon-width);
+  height: var(--icon-width);
+  position: sticky;
+  top: 9px;
+  right: 5%;
   cursor: pointer;
   z-index: 3;
+  float: right;
+  margin-right: -20px;
 }
 
 .brands {
@@ -601,6 +606,9 @@ h2 {
 
 
 /* ************************** SVILUPPO SOSPESO A FAVORE DELLA PARTE DI LOGIN ******************************* */
+
+
+
 
 main > .filters-and-sorters {
   width: 100%;
@@ -963,14 +971,123 @@ input:disabled[type='file'],#images-product-admin-edit {
 
   }
 }
- 
-/*
-– [CSS] Vogliamo che il testo “a” all’interno di un bottone si illumini anche se sono sopra il bottone ma non sopra il testo con il cursore (e dunque che l’utente venga re-indirizzato quando questa parte viene cliccata), per questo motivo devo allargare l’area di “a” a tutto il “listItem” (e non gestire gli spazi con il padding internamente al “listItem”, altrimenti l’area di a rimarrebbe la stessa). Tuttavia per far ciò dovremmo cambiare la natura in-line di “a” attraverso “display: in- line block” poiché altrimenti occuperebbe solamente la larghezza del contenuto, ed impostare “height” e “width” a 100%. Anche se ci sarà del padding per centrare il testo il link si attiverà anche ai bordi.
 
-*/ 
-@media screen and (min-width:768px) {
-  * {
-      background-color: red;
-      color: red;
+
+
+@media only screen and (min-width: 600px) {
+
+  .hamburger-sidebar {
+    width: 50%;
   }
+
+  body > header > h1 {
+    font-size: 3em;
+  }
+
+}
+
+@media screen and (min-width: 768px) {
+
+  body > header > h1 {
+    font-size: 4em;
+  }
+
+}
+
+@media screen and (min-width:1200px) {
+
+  :root {
+    --bar-width: 36px;
+    --bar-height: 4.8px;
+    --icon-width: 40px;
+    --hamburger-gap: 6px;
+    --foreground: white;
+    --background: white;
+    --hamburger-margin: 28px;
+    --animation-timing: 200ms ease-in-out;
+    --hamburger-height: calc(var(--bar-height) * 3 + var(--hamburger-gap) * 2); /* Height of the 3 bars added to the 2 gaps */
+    --x-width: calc(var(--hamburger-height) * 1.41421356237); /* The width of each bar when we are in the form X: h * sqrt(2) */
+  }
+
+  /* *************************************************************************** */
+  /* The centering of <h1> is altered by icons with float positioning, we        */
+  /* tackle this by applying negative margin equal to the width of such symbols. */
+  /* *************************************************************************** */
+  body > header > h1 {
+    font-size: 5em;
+    display: inline-block;
+    margin-right: calc(-2 * var(--icon-width));
+    margin-left: calc(-1 * var(--bar-width));
+  }
+
+  body > header {
+    text-align: center;
+    background-color: black;
+    padding: 18px 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .hamburger-menu {
+    gap: var(--hamburger-gap);
+    left: 80px;
+    margin-top: 12px;
+  }
+
+  .profile-menu {
+    width: var(--icon-width);
+    height: var(--icon-width);
+    top: 18px;
+    right: 20%;
+  }
+
+  .cart-icon{
+    /*display: inline-block;*/
+    width: var(--icon-width);
+    height: var(--icon-width);
+    top: 18px;
+    right: 10%;
+  }
+
+  .hamburger-sidebar {
+    font-size: 150%;
+  }
+
+  .search {
+    --padding: 24px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: var(--padding);
+    border-radius: 0;
+    background: transparent;
+    transition: border 0.25s;
+  }
+
+  .search-input {
+    font-size: 24px;
+    font-family: 'Beatrice Headline Trial', sans-serif;
+    color: black;
+    margin-left: var(--padding);
+    outline: none;
+    border: none;
+    background: transparent;
+  }
+  
+  .search-icon > img {
+    transform: scale(1.5);
+  }
+
+
+
+}
+
+@media screen and (min-width: 1920px) {
+
+  body > header > h1 {
+    font-size: 7em;
+  }
+
+
 }

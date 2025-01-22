@@ -340,7 +340,7 @@ function eventListenerPasswordRules(idPassword,warningListClass,listenerParagrap
     });
 }
 
-
+/*
 function eventListenerSideBarFocus(){
     //document body
     const body = document.body;
@@ -356,7 +356,7 @@ function eventListenerSideBarFocus(){
             //you need to add a no-scroll class in the style.css:
             /*body.no-scroll {
                 overflow: hidden;
-            }*/
+            }
 
            //classlist is a property to get the collection of classes of a DOM element.
              body.classList.add("no-scroll");
@@ -382,6 +382,7 @@ function eventListenerSideBarFocus(){
             }
     }, true);
 }
+*/
 
 //used both for when a heart of the whishlist is clicked on the home,
 //and for the star swipe

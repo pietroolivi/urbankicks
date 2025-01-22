@@ -18,20 +18,6 @@
                 <input type="password" id="password-login" name="password-login" autocomplete="current-password" required>
                 <span><img id="eye-icon" src="CSS/Images/Icons/eye_open.svg" alt="Makes the password visible."></span>
                 <a href="recovery.php" id="forgot-password-link">Forgot Password?</a>
-                <script>
-                    let eyeIcon = document.getElementById("eye-icon");
-                    let password = document.getElementById("password-login");
-                    eyeIcon.onclick = function() {
-                        if (password.type == "password") {
-                            password.type = "text";
-                            eyeIcon.src = "CSS/Images/Icons/eye_closed.svg";
-                            eyeIcon.alt = "Makes the password masked.";
-                        } else {
-                            password.type = "password";
-                            eyeIcon.src = "CSS/Images/Icons/eye_open.svg";
-                            eyeIcon.alt = "Makes the password visible.";
-                        }
-                    }
                 </script>
             </li>
             <li>
@@ -41,7 +27,6 @@
         </ul>
     </form>
 </section>
-
 <script>
     let eyeIcon = document.getElementById("eye-icon");
     let password = document.getElementById("password");
