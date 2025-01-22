@@ -424,32 +424,22 @@ class DatabaseHelper {
         }
     }
 
-    // TBModified
-    public function updateOrderStatus($orderId, $status, $location) {
-        $this->db->begin_transaction();
-        try {
-            // Update order status
-            $query1 = "UPDATE ORDINE SET Tipo = ? WHERE ID_Ordine = ?";
-            $stmt1 = $this->db->prepare($query1);
-            $stmt1->bind_param("si", $status, $orderId);
-            $stmt1->execute();
-            
-            // Update tracking
-            $query2 = "INSERT INTO Tracking_Spedizione (ID_Ordine, Posizione, Timestamp_Aggiornamento) 
-                       VALUES (?, ?, NOW())
-                       ON DUPLICATE KEY UPDATE 
-                       Posizione = VALUES(Posizione),
-                       Timestamp_Aggiornamento = VALUES(Timestamp_Aggiornamento)";
-            $stmt2 = $this->db->prepare($query2);
-            $stmt2->bind_param("is", $orderId, $location);
-            $stmt2->execute();
-            
-            $this->db->commit();
-            return true;
-        } catch (Exception $e) {
-            $this->db->rollback();
-            throw $e;
-        }
+    // Update Order status
+    public function updateOrderStatus($orderId, $newStatus) {
+        $currentTimestamp = date('Y-m-d H:i:s');
+        
+        // Mark current status as completed
+        $query = "UPDATE Tracking_Spedizione 
+                    SET Arrivo_Effettivo = ?,
+                        Timestamp_Aggiornamento = ?
+                    WHERE ID_Ordine = ? AND Stato = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ssis", $currentTimestamp, $currentTimestamp, $orderId, $newStatus);
+        $stmt->execute();
+
+        // Create notification
+        $this->createOrderNotification($orderId, strtolower($newStatus));
+        return true;
     }
 
     /*******************
@@ -485,9 +475,9 @@ class DatabaseHelper {
     // Create notification
     public function createNotification($type, $message, $email) {
         $query = "INSERT INTO NOTIFICA (TipoNotifica, Messaggio, Timestamp_Invio, Tipo, Email) 
-                  VALUES (?, ?, NOW(), ?, ?)";
+                  VALUES (?, ?, NOW(), 'Unread', ?)";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ssss", $type, $message, $type, $email);
+        $stmt->bind_param("sss", $type, $message, $email);
         return $stmt->execute();
     }
 
@@ -539,13 +529,14 @@ class DatabaseHelper {
         $stmt->bind_param("i", $orderId);
         $stmt->execute();
         $order = $stmt->get_result()->fetch_assoc();
-
+    
         $messages = [
             'placed' => "Your payment has been successfully processed and we are starting to prepare your order [$orderId]",
+            'in progress' => "Your order [$orderId] is being processed and prepared for shipping",
             'shipped' => "Your order [$orderId] was handed over to the SDA express courier",
             'delivered' => "Your order [$orderId] has been delivered"
         ];
-
+    
         if (isset($messages[$status])) {
             $this->createNotification(
                 'Order Status',
@@ -1407,7 +1398,7 @@ class DatabaseHelper {
      * ADMIN FUNCTIONS *
      *********************/
 
-     function getCompletedOrders() {
+    public function getCompletedOrders() {
         $query = "SELECT COUNT(DISTINCT o.ID_Ordine) as count 
                 FROM ORDINE o 
                 JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
@@ -1420,7 +1411,7 @@ class DatabaseHelper {
         return number_format($row['count']);
     }
     
-    function getPendingOrders() {
+    public function getPendingOrders() {
         $query = "SELECT COUNT(DISTINCT o.ID_Ordine) as count 
                 FROM ORDINE o 
                 JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
@@ -1433,7 +1424,7 @@ class DatabaseHelper {
         return number_format($row['count']);
     }
     
-    function getTotalUsers() {
+    public function getTotalUsers() {
         $query = "SELECT COUNT(*) as count 
                 FROM UTENTE 
                 WHERE Ruolo = 'Customer'";
@@ -1444,7 +1435,7 @@ class DatabaseHelper {
         return number_format($row['count']);
     }
     
-    function getBestSeller() {
+    public function getBestSeller() {
         $query = "SELECT p.Nome as product_name, SUM(po.Quantita) as total_sold 
                 FROM PRODOTTO p 
                 JOIN PRODOTTO_ORDINE po ON p.ID_Prodotto = po.ID_Prodotto 
@@ -1459,6 +1450,70 @@ class DatabaseHelper {
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         return $row['product_name'] ?? 'No sales yet';
+    }
+
+    public function getOrdersByStatus($status = null) {
+        $query = "SELECT 
+            o.ID_Ordine,
+            o.Data_Ordine,
+            o.Costo_Totale,
+            o.Metodo_Pagamento,
+            o.NomeDestinatario,
+            o.CognomeDestinatario,
+            ts.Stato as Status,
+            ts.Arrivo_Effettivo,
+            p.ID_Prodotto,
+            p.Nome,
+            p.Genere,
+            p.Prezzo,
+            po.Prezzo_Acquisto,
+            po.Colore,
+            po.Taglia,
+            po.Quantita
+        FROM ORDINE o
+        JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
+        JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
+        JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine
+        WHERE ts.Stato = COALESCE(?, ts.Stato)
+        AND (SELECT Arrivo_Effettivo 
+            FROM Tracking_Spedizione ts2 
+            WHERE ts2.ID_Ordine = o.ID_Ordine 
+            AND ts2.Stato = ?) IS NOT NULL
+        ORDER BY o.Data_Ordine DESC";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ss", $status, $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $orders = [];
+        while ($row = $result->fetch_assoc()) {
+            if (!isset($orders[$row['ID_Ordine']])) {
+                $orders[$row['ID_Ordine']] = [
+                    'ID_Ordine' => $row['ID_Ordine'],
+                    'Data_Ordine' => $row['Data_Ordine'],
+                    'Status' => $row['Status'],
+                    'Costo_Totale' => $row['Costo_Totale'],
+                    'Metodo_Pagamento' => $row['Metodo_Pagamento'],
+                    'NomeDestinatario' => $row['NomeDestinatario'],
+                    'CognomeDestinatario' => $row['CognomeDestinatario'],
+                    'products' => []
+                ];
+            }
+
+            $orders[$row['ID_Ordine']]['products'][] = [
+                'ID_Prodotto' => $row['ID_Prodotto'],
+                'Nome' => $row['Nome'],
+                'Genere' => $row['Genere'],
+                'Prezzo_Attuale' => $row['Prezzo'],
+                'Prezzo_Acquisto' => $row['Prezzo_Acquisto'],
+                'Colore' => $row['Colore'],
+                'Taglia' => $row['Taglia'], 
+                'Quantita' => $row['Quantita']
+            ];
+        }
+
+        return array_values($orders);
     }
 }
 

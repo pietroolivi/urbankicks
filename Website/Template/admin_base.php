@@ -23,7 +23,7 @@ require_once("bootstrap.php");
     </head>
     <body>
         <header>
-            <h1><a href="dashboard.php">URBANKICKS ADMIN</a></h1>
+            <h1><a href="admin_home.php">URBANKICKS</a></h1>
         </header>
         <main>
             <?php require($templateParams["name"]); ?>

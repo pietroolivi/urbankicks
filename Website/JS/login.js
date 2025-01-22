@@ -94,7 +94,7 @@ class LoginHandler {
             
             if (data.success) {
                 if (data.role === 'Admin') {
-                    window.location.href = 'dashboard.php';
+                    window.location.href = 'admin_home.php';
                 } else {
                     window.location.href = 'index.php';
                 }

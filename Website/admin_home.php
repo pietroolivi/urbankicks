@@ -2,7 +2,7 @@
 require_once("bootstrap.php");
 
 // Check if user is logged in and is admin
-if (!isset($_SESSION["user_email"]) || !isset($_SESSION["role"])) {
+if (!isset($_SESSION["user_email"]) || !isset($_SESSION["role"]) || $_SESSION["role"] !== "Admin") {
     header("Location: login.php");
     exit();
 }
@@ -14,7 +14,7 @@ $templateParams["best_seller"] = $dbh->getBestSeller();
 
 // Define template parameters
 $templateParams["title"] = "Dashboard";
-$templateParams["name"] = "dashboard_content.php";
+$templateParams["name"] = "admin_home_content.php";
 
-require_once("Template/base_admin.php");
+require_once("Template/admin_base.php");
 ?>
