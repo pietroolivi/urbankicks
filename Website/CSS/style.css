@@ -67,6 +67,27 @@ body {
   font-family: 'Beatrice Headline Trial', sans-serif;
 }
 
+/* ****************************************************************************************************** */
+/* We have inserted a child tag of <body> by placing it between <main> and <footer> that will dynamically */
+/* grow to fill the screen vertically if there would be empty space left between the end of <footer>      */
+/* and the end of the viewport (as in the case where there are no products that comply with all the       */
+/* filters entered). The flex-grow CSS property sets the flex grow factor, which specifies how much of    */
+/* the flex container's positive free space, if any, should be assigned to the flex item's main size.     */
+/* ****************************************************************************************************** */
+html {
+  height: 100%;
+}
+
+#fill-height {
+  flex-grow : 1;
+}
+
+body {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
 /* **************************************************************************** */
 /* Margin is providing space beyond the element's box and therefore won't be    */
 /* colored - it's simply space. Padding on the other hand provides space around */

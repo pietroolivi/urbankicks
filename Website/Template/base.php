@@ -166,8 +166,9 @@ require_once("bootstrap.php");
                     </ul>
                 </nav>
             </aside>
-            <?php require($templateParams["name"]); ?>
+            <?php require($templateParams["name"]); ?>            
         </main>
+        <div id="fill-height"></div>
         <footer>
             <nav>
                 <a href="#"><img src="CSS/Images/Icons/anchor.svg" alt="Top of the page."></a>
