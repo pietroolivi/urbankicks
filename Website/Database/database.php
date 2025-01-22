@@ -1402,6 +1402,64 @@ class DatabaseHelper {
     private function getWarehouseLocation() {
         return "39.082520, -94.582306";
     }
+
+    /*********************
+     * ADMIN FUNCTIONS *
+     *********************/
+
+     function getCompletedOrders() {
+        $query = "SELECT COUNT(DISTINCT o.ID_Ordine) as count 
+                FROM ORDINE o 
+                JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
+                WHERE ts.Stato = 'Delivered' 
+                AND ts.Arrivo_Effettivo IS NOT NULL";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return number_format($row['count']);
+    }
+    
+    function getPendingOrders() {
+        $query = "SELECT COUNT(DISTINCT o.ID_Ordine) as count 
+                FROM ORDINE o 
+                JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
+                WHERE ts.Stato = 'Delivered' 
+                AND ts.Arrivo_Effettivo IS NULL";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return number_format($row['count']);
+    }
+    
+    function getTotalUsers() {
+        $query = "SELECT COUNT(*) as count 
+                FROM UTENTE 
+                WHERE Ruolo = 'Customer'";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return number_format($row['count']);
+    }
+    
+    function getBestSeller() {
+        $query = "SELECT p.Nome as product_name, SUM(po.Quantita) as total_sold 
+                FROM PRODOTTO p 
+                JOIN PRODOTTO_ORDINE po ON p.ID_Prodotto = po.ID_Prodotto 
+                JOIN ORDINE o ON po.ID_Ordine = o.ID_Ordine 
+                JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine 
+                WHERE ts.Stato = 'Delivered'
+                GROUP BY p.ID_Prodotto, p.Nome 
+                ORDER BY total_sold DESC 
+                LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row['product_name'] ?? 'No sales yet';
+    }
 }
 
 ?>

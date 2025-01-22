@@ -93,7 +93,11 @@ class LoginHandler {
             const data = await response.json();
             
             if (data.success) {
-                window.location.href = 'index.php';
+                if (data.role === 'Admin') {
+                    window.location.href = 'dashboard.php';
+                } else {
+                    window.location.href = 'index.php';
+                }
             } else {
                 this.showError('email-login-error', data.message);
             }

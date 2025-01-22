@@ -70,7 +70,7 @@ require_once("bootstrap.php");
                 </nav>
                 <nav class="secondary-hamburger-nav">
                     <ul>
-                        <li><a href="#">CONTACT US</a></li>
+                        <li><a href="contact_us.php">CONTACT US</a></li>
                         <li><a href="#">SHIPPING & RETURNS</a></li>
                     </ul>
                 </nav>

@@ -1,3 +1,6 @@
+-- Inserimento Utente ADMIN
+INSERT INTO UTENTE (Email, Nome, Cognome, Password, Data_Registrazione, Preferenze_Newsletter, Ruolo) VALUES ("tomassimartin@hotmail.com", "UrbanKicks", "Admin", "$2y$10$l4Llx3ynDp0HbOYyADATEOBmFUNaELDU0LI4VYIncpajnTYJCfdFa", NOW(), 0, "Admin")
+
 -- Aggiornamento dati nella tabella STATO_PRODOTTO
 INSERT INTO STATO_PRODOTTO (Tipo, Descrizione) VALUES
     	('Disponibile', 'Il prodotto è attualmente disponibile in magazzino'),
@@ -37,125 +40,81 @@ INSERT INTO PRODOTTO (Nome, Descrizione, Marca, Tipo, Genere, Prezzo, Data_Aggiu
     ('Under Armour HOVR', 'Scarpa da corsa ammortizzata', 'Under Armour', 'Sneakers', 'Woman', 110.00, '2025-01-08', 'Disponibile'),
     ('Diadora N9000', 'Scarpa sportiva retrò', 'Diadora', 'Sneakers', 'Man', 95.00, '2025-01-08', 'Disponibile');
 
--- Inserimento varianti per ogni ID prodotto
-INSERT INTO VARIANTE (ID_Prodotto, Colore, Taglia, Quantita) VALUES
-    (1, 'Black', 42, 50),
-    (1, 'White', 43, 45),
-    (1, 'Blue', 44, 40),
-    (1, 'Red', 41, 30),
-    (1, 'Green', 45, 35),
-    (2, 'White', 38, 30),
-    (2, 'Black', 39, 25),
-    (2, 'Pink', 37, 20),
-    (2, 'Blue', 40, 35),
-    (2, 'Gray', 41, 15),
-    (3, 'Green', 28, 20),
-    (3, 'Black', 27, 25),
-    (3, 'Blue', 29, 30),
-    (3, 'Red', 28, 15),
-    (3, 'Yellow', 30, 20),
-    (4, 'Blue', 44, 40),
-    (4, 'Black', 43, 35),
-    (4, 'White', 45, 30),
-    (4, 'Green', 42, 20),
-    (4, 'Red', 41, 25),
-    (5, 'Pink', 37, 25),
-    (5, 'Blue', 36, 20),
-    (5, 'Black', 38, 15),
-    (5, 'White', 39, 10),
-    (5, 'Gray', 40, 20),
-    (6, 'Gray', 39, 15),
-    (6, 'Blue', 40, 25),
-    (6, 'Black', 38, 20),
-    (6, 'White', 41, 30),
-    (6, 'Green', 42, 35),
-    (7, 'Brown', 43, 35),
-    (7, 'Black', 44, 30),
-    (7, 'Blue', 45, 25),
-    (7, 'White', 42, 20),
-    (7, 'Green', 41, 15),
-    (8, 'Black', 37, 15),
-    (8, 'Blue', 38, 20),
-    (8, 'Pink', 39, 25),
-    (8, 'White', 40, 30),
-    (9, 'Yellow', 30, 45),
-    (9, 'Black', 29, 40),
-    (9, 'Blue', 28, 35),
-    (9, 'White', 31, 30),
-    (9, 'Green', 32, 25),
-    (10, 'Red', 41, 50),
-    (10, 'Black', 42, 45),
-    (10, 'Blue', 43, 40),
-    (10, 'White', 44, 35),
-    (10, 'Green', 45, 30),
-    (11, 'Purple', 39, 20),
-    (11, 'Black', 38, 25),
-    (11, 'Blue', 40, 30),
-    (11, 'White', 41, 35),
-    (11, 'Green', 42, 40),
-    (12, 'Black', 28, 20),
-    (12, 'Blue', 30, 15),
-    (12, 'Red', 31, 10),
-    (12, 'Green', 32, 20),
-    (13, 'Green', 43, 30),
-    (13, 'Black', 44, 35),
-    (13, 'Blue', 45, 40),
-    (13, 'White', 42, 45),
-    (13, 'Red', 41, 50),
-    (14, 'Orange', 38, 20),
-    (14, 'Black', 39, 25),
-    (14, 'Blue', 40, 30),
-    (14, 'White', 41, 35),
-    (14, 'Green', 42, 40),
-    (15, 'Black', 31, 10),
-    (15, 'Blue', 33, 20),
-    (15, 'Red', 34, 25),
-    (15, 'Green', 35, 30),
-    (16, 'Black', 41, 55),
-    (16, 'Blue', 42, 50),
-    (16, 'Red', 43, 45),
-    (16, 'Green', 44, 40),
-    (17, 'Pink', 37, 35),
-    (17, 'Black', 36, 30),
-    (17, 'Blue', 38, 25),
-    (17, 'White', 39, 20),
-    (17, 'Green', 40, 15),
-    (18, 'Black', 33, 20),
-    (18, 'Blue', 35, 15),
-    (18, 'Red', 36, 10),
-    (18, 'Green', 37, 20),
-    (19, 'Red', 40, 30),
-    (19, 'Black', 39, 25),
-    (19, 'Blue', 41, 20),
-    (19, 'White', 42, 15),
-    (19, 'Green', 43, 10),
-    (20, 'Black', 44, 50),
-    (20, 'Blue', 45, 45),
-    (20, 'White', 42, 40),
-    (20, 'Red', 41, 35),
-    (20, 'Green', 40, 30),
-    (21, 'Gray', 37, 25),
-    (21, 'Black', 36, 20),
-    (21, 'Blue', 38, 15),
-    (21, 'White', 39, 10),
-    (21, 'Green', 40, 5),
-    (22, 'Black', 43, 30),
-    (22, 'Blue', 44, 25),
-    (22, 'White', 45, 20),
-    (22, 'Red', 42, 15),
-    (22, 'Green', 41, 10),
-    (23, 'Blue', 40, 35),
-    (23, 'Black', 41, 30),
-    (23, 'White', 42, 25),
-    (23, 'Red', 43, 20),
-    (23, 'Green', 44, 15),
-    (24, 'Pink', 37, 20),
-    (24, 'Black', 36, 15),
-    (24, 'Blue', 38, 10),
-    (24, 'White', 39, 5),
-    (24, 'Green', 40, 10),
-    (25, 'Gray', 41, 40),
-    (25, 'Black', 42, 35),
-    (25, 'Blue', 43, 30),
-    (25, 'White', 44, 25),
-    (25, 'Green', 45, 20);
+-- Inserimento dati nella tabella VARIANTE per UOMO
+INSERT INTO VARIANTE (ID_Prodotto, Colore, Taglia, Quantita)
+SELECT 
+    p.ID_Prodotto,
+    c.Colore,
+    t.Taglia,
+    30 as Quantita
+FROM PRODOTTO p
+CROSS JOIN (
+    SELECT 'Blue' as Colore UNION
+    SELECT 'Purple' UNION
+    SELECT 'Red' UNION
+    SELECT 'Green' UNION
+    SELECT 'White' UNION
+    SELECT 'Black'
+) c
+CROSS JOIN (
+    SELECT 41 as Taglia UNION
+    SELECT 42 UNION
+    SELECT 43 UNION
+    SELECT 44 UNION
+    SELECT 45
+) t
+WHERE p.Genere = 'Man';
+
+-- Inserimento dati nella tabella VARIANTE per DONNA
+INSERT INTO VARIANTE (ID_Prodotto, Colore, Taglia, Quantita)
+SELECT 
+    p.ID_Prodotto,
+    c.Colore,
+    t.Taglia,
+    30 as Quantita
+FROM PRODOTTO p
+CROSS JOIN (
+    SELECT 'Blue' as Colore UNION
+    SELECT 'Purple' UNION
+    SELECT 'Red' UNION
+    SELECT 'Green' UNION
+    SELECT 'White' UNION
+    SELECT 'Black'
+) c
+CROSS JOIN (
+    SELECT 36 as Taglia UNION
+    SELECT 37 UNION
+    SELECT 38 UNION
+    SELECT 39 UNION
+    SELECT 40 UNION
+    SELECT 41
+) t
+WHERE p.Genere = 'Woman';
+
+-- Inserimento dati nella tabella VARIANTE per BAMBINO
+INSERT INTO VARIANTE (ID_Prodotto, Colore, Taglia, Quantita)
+SELECT 
+    p.ID_Prodotto,
+    c.Colore,
+    t.Taglia,
+    30 as Quantita
+FROM PRODOTTO p
+CROSS JOIN (
+    SELECT 'Blue' as Colore UNION
+    SELECT 'Purple' UNION
+    SELECT 'Red' UNION
+    SELECT 'Green' UNION
+    SELECT 'White' UNION
+    SELECT 'Black'
+) c
+CROSS JOIN (
+    SELECT 28 as Taglia UNION
+    SELECT 29 UNION
+    SELECT 30 UNION
+    SELECT 31 UNION
+    SELECT 32 UNION
+    SELECT 33 UNION
+    SELECT 34 UNION
+    SELECT 35
+) t
+WHERE p.Genere = 'Kids';

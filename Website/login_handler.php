@@ -30,7 +30,12 @@ try {
         $user = $dbh->loginUser($_POST['email-login'], $_POST["password-login"]);
         if ($user) {
             $_SESSION['user_email'] = $_POST['email-login'];
-            $response = ["success" => true, "message" => "Login successful"];
+            $_SESSION['role'] = $user["Ruolo"];
+            $response = [
+                "success" => true, 
+                "message" => "Login successful",
+                "role" => $user["Ruolo"]
+            ];
         } else {
             throw new Exception("Invalid password");
         }

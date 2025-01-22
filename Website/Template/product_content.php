@@ -52,6 +52,7 @@ $reviews = $templateParams["productData"]["reviews"];
     <h3>Size</h3>
     <?php 
     $availableSizes = array_unique(array_column($variants, 'Taglia'));
+    sort($availableSizes);
     foreach($availableSizes as $size): 
         $available = false;
         foreach($variants as $variant) {
