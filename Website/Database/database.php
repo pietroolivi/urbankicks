@@ -63,6 +63,25 @@ class DatabaseHelper {
         return $result->fetch_all(MYSQLI_ASSOC);
     }*/
 
+    // Get product Variants
+    public function getProductVariants($productId) {
+        $query = "SELECT * FROM VARIANTE WHERE ID_Prodotto = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    // Get all products
+    public function getProducts() {
+        $query = "SELECT p.* 
+                  FROM PRODOTTO p 
+                  ORDER BY p.Data_Aggiunta DESC";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
         $query = "
             SELECT 
@@ -291,6 +310,36 @@ class DatabaseHelper {
     
         } catch(Exception $e) {
             error_log("Error in getProductData: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    // Update product stock
+    public function updateProduct($productId, $description, $price, $variants, $images = null) {
+        try {
+            $this->db->begin_transaction();
+
+            // Update product description and price
+            $query = "UPDATE PRODOTTO SET Descrizione = ?, Prezzo = ? WHERE ID_Prodotto = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("sdi", $description, $price, $productId);
+            $stmt->execute();
+
+            // Update variants
+            foreach($variants as $size => $colors) {
+                foreach($colors as $color => $quantity) {
+                    $query = "UPDATE VARIANTE SET Quantita = ? 
+                            WHERE ID_Prodotto = ? AND Taglia = ? AND Colore = ?";
+                    $stmt = $this->db->prepare($query);
+                    $stmt->bind_param("iids", $quantity, $productId, $size, $color);
+                    $stmt->execute();
+                }
+            }
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
             throw $e;
         }
     }
