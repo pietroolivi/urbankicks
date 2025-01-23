@@ -132,7 +132,7 @@ function updateButtonState() {
 }
 
 //function to disable sizes
-async function updateDisabledSizes(productId, color) {
+async function updateDisabledSizes(productId, color) { //quando è cliccato un colore
     try {
         const response = await fetch('product_handler.php', {
             method: 'POST',
@@ -145,16 +145,22 @@ async function updateDisabledSizes(productId, color) {
                 color: color
             })
         });
-
+        console.log("BchoosenTimesColor: "+choosenTimesColor+" BchoosenTimeSize: "+choosenTimesSize);
         const data = await response.json();
 
         if (data.success) {
             const disabledSizes = data.disabledSizes;
             //increaseChoosen();
-            sizeOptions.forEach(input => {
+            console.log(disabledSizes);
+           /* sizeOptions.forEach(input => {
                 input.disabled = disabledSizes.includes(input.value);
-            });
-            if(choosenTimesColor==1 && choosenTimesColor==1){
+            });*/
+           /* if(choosenTimesColor>=1 && choosenTimesSize>=1){
+                choosenTimesColor=0;
+                choosenTimesSize=0;
+            }
+            choosenTimesColor++;*/
+     /*       if(choosenTimesColor==1 && choo){
                 Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
                 choosenTimesSize=0;
             }
@@ -162,7 +168,42 @@ async function updateDisabledSizes(productId, color) {
             if(choosenTimesSize>0 && choosenTimesColor>0){
                 colorOptions.forEach(input => input.disabled=false);
 
+            }*/
+         /*  if(choosenTimesColor>=1 && choosenTimesSize==0){
+            sizeOptions.forEach(input => {
+                input.disabled = disabledSizes.includes(input.value);
+            });
+           }*/
+           //else if(choosenTimesColor>=1 && choosenTimesSize==1){
+          //
+          //   Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+           // Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+           choosenTimesColor++;
+            if(choosenTimesColor>=1 && choosenTimesSize==0){
+                sizeOptions.forEach(input => {
+                    input.disabled = disabledSizes.includes(input.value);
+                });
             }
+            //sono stati scelti molteplici colori e ora è stato scelto il colore
+            if(choosenTimesColor==1 && choosenTimesSize>=1){
+                sizeOptions.forEach(input => {
+                    input.disabled = false;
+                });
+                colorOptions.forEach(input=>{
+                    input.disabled= false;
+                });
+            }
+
+            if (choosenTimesColor>1 && choosenTimesSize>=1){
+                Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+                choosenTimesColor=1;
+                sizeOptions.forEach(input => {
+                    input.disabled = disabledSizes.includes(input.value);
+                });
+                choosenTimesSize=0;
+            }
+
+            console.log("choosenTimesColor: "+choosenTimesColor+" choosenTimeSize: "+choosenTimesSize);
         } else {
             console.error("Errore nel recuperare le taglie:", data.message);
         }
@@ -216,7 +257,7 @@ document.querySelectorAll('[style="--rating:0"]').forEach(starRating);
 submitReviewButton.addEventListener("click",  (event) => {
     event.preventDefault(); // Previene il comportamento predefinito (invio del form)
     addReview(
-        submitReviewButton.getAttribute('data-product-id'),
+        addToCartButton.getAttribute('data-product-id'),
         ratingSelected,
         comment.value
     )}
@@ -237,22 +278,113 @@ async function addReview(productId,ratingSelected,comment){
             })
         });
         const data = await response.json();
-        if(data.success){
-            console.log("review aggiunta con successo");
+
+        if (data.success) {
+            console.log("Review aggiunta con successo");
+            
+            const reviewsContainer = document.getElementById('reviews');
+            const allReviews = reviewsContainer.querySelectorAll('article.review');
+              // 1) Ottengo i dati della nuova recensione dal JSON
+            const newReview = data.newReview;
+            
+            // 3) Per ciascun article, controlla se la <small> contiene "by email"
+            allReviews.forEach(article => {
+                const smallTag = article.querySelector('small');
+                if (smallTag && smallTag.textContent.includes(`by ${newReview.Email}`)) {
+                    // 4) Rimuove l'articolo se corrisponde
+                    article.remove();
+                }
+            });
+            const starReview=document.querySelector(".star-reviews");
+            const numberReview=document.querySelector(".number-reviews");
+            console.log("punteggio medio ora: "+newReview.PunteggioAVG);
+            starReview.style.setProperty('--rating', newReview.PunteggioAVG);
+            numberReview.innerText=newReview.PunteggioAVG.toFixed(1);
+            // 2) Seleziono il template
+            const template = document.getElementById('review-template');
+            
+            // 3) Clono il contenuto del template (true = cloniamo anche i nodi figli)
+            const clone = template.content.cloneNode(true);
+            
+            // 4) Popolo il clone con i dati
+            //    a) rating nello <span>
+            clone.querySelector('span').style.setProperty('--rating', newReview.Punteggio);
+            
+            //    b) descrizione nel <p>
+            clone.querySelector('p').textContent = newReview.Descrizione;
+            
+            //    c) small: "Posted on dd/mm/yyyy by email"
+            clone.querySelector('small').textContent = 
+                `Posted on ${newReview.Data_Recensione} by ${newReview.Email}`;
+            
+            // 5) Aggiungo il clone in coda all'aside
+            reviewsContainer.appendChild(clone);
         }
         if(!data.success){
+            console.log("l'id prodotto è:"+productId);
             console.error(data.message);
             document.getElementById("review-error").innerText=data.message;
+            
         }
     }catch(error){
 
-
     }
 
-
 }
+/*
+async function updateReviews(){
+    try{
+        const responde=await fetch("product_handler.php",{
+            method:'POST',
+            headers:{
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action:'update reviews'
+            })
+        });
+        const data= await response.json();
+        if(data.success){
+                              // data.reviews conterrà l'array di recensioni
+                              const reviews = data.reviews;
 
+                              // Selettori per container e template
+                              const container = document.getElementById('reviews-container');
+                              const template = document.getElementById('review-template');
+          
+                              // Svuota il contenitore
+                              container.innerHTML = '';
+          
+                              // Cicla su ogni recensione per inserirla nel DOM
+                              reviews.forEach(review => {
+                                  // Clona il contenuto del <template> (true = deep clone)
+                                  const clone = template.content.cloneNode(true);
+          
+                                  // Imposta il rating nello span
+                                  // usando la variabile CSS --rating
+                                  // review.Punteggio deve essere un numero (es. 3, 4.5, ecc.)
+                                  clone.querySelector('.review-rating').style.setProperty('--rating', review.Punteggio);
+          
+                                  // Imposta la descrizione
+                                  clone.querySelector('.review-description').textContent = review.Descrizione;
+          
+                                  // Formatto la data se serve; se hai già la data in d/m/Y puoi usare direttamente la stringa
+                                  // Esempio: "Posted on dd/mm/yyyy by mail"
+                                  const dataRecensione = review.Data_Recensione; 
+                                  const email = review.Email;
+          
+                                  clone.querySelector('.review-details').textContent = 
+                                      `Posted on ${dataRecensione} by ${email}`;
+          
+                                  // Aggiungo al container
+                                  container.appendChild(clone);
+                              });
+    }
+    }catch(error){
 
+    }
+}
+*/
 
 // Function to disable colors
 async function updateDisabledColors(productId, size) {
@@ -268,15 +400,15 @@ async function updateDisabledColors(productId, size) {
                 size: size
             })
         });
-
+        console.log("BchoosenTimesColor: "+choosenTimesColor+" BchoosenTimeSize: "+choosenTimesSize);
         const data = await response.json();
 
        if (data.success) {
             const disabledColors = data.disabledColors;
-            colorOptions.forEach(input => {
+          /*  colorOptions.forEach(input => {
                 input.disabled = disabledColors.includes(input.value)
             });
-            if(choosenTimesColor==1 && choosenTimesColor==1){
+            if(choosenTimesColor==1){
                 Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
                 choosenTimesColor=0;
             }
@@ -284,8 +416,58 @@ async function updateDisabledColors(productId, size) {
             if(choosenTimesColor>0 && choosenTimesSize>0){
                 sizeOptions.forEach(input => input.disabled=false);
 
-            }
+            }*/
+             /*   if(choosenTimesColor>=1 && choosenTimesSize>=1){
+                    choosenTimesColor=0;
+                    choosenTimesSize=0;
+                }
+                choosenTimesSize++;*/
+         /*       if(choosenTimesColor==1 && choo){
+                    Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+                    choosenTimesSize=0;
+                }
+                choosenTimesColor++;
+                if(choosenTimesSize>0 && choosenTimesColor>0){
+                    colorOptions.forEach(input => input.disabled=false);
+    
+                }*/
+           /*    if(choosenTimesSize>=1 && choosenTimesColor==0){
+                colorOptions.forEach(input => {
+                    input.disabled = disabledColors.includes(input.value)
+                });
+               }
+               else if(choosenTimesColor>=1 && choosenTimesSize>=1){
+                Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+                Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+                }*/
+                choosenTimesSize++;
+                if(choosenTimesSize>=1 && choosenTimesColor==0){
+                    colorOptions.forEach(input => {
+                        input.disabled = disabledColors.includes(input.value);
+                    });
+                }
+                //sono stati scelti molteplici colori e ora è stato scelto il colore
+                if(choosenTimesSize==1 && choosenTimesColor>=1){
+                    sizeOptions.forEach(input => {
+                        input.disabled = false;
+                    });
+                    colorOptions.forEach(input=>{
+                        input.disabled= false;
+                    });
+                }
+    
+                if (choosenTimesSize>1 && choosenTimesColor>=1){
+                    Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+                    choosenTimesSize=1;
+                    colorOptions.forEach(input => {
+                        input.disabled = disabledColors.includes(input.value);
+                    });
+                    choosenTimesColor=0;
+                }
+    
 
+
+            console.log("choosenTimesColor: "+choosenTimesColor+" choosenTimeSize: "+choosenTimesSize);
         } else {
             console.error("Errore nel recuperare i colori:", data.message);
         }
@@ -319,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Aggiorna il pulsante in base al nuovo stato
                 wishlistButton.dataset.inWishlist = (!inWishlist).toString();
                 wishlistButton.textContent = (!inWishlist ? 'Remove from' : 'Add to') + ' wishlist';
-                p.textContent='';
+                wishlistError.textContent='';
             } else {
                 if(data.message==="You need to be logged in"){
                     window.location.href = "login.php";
