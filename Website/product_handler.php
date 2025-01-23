@@ -173,7 +173,20 @@ try {
             if (!$success) {
                 throw new Exception("Failed to add review");
             }
-            $response = ["success" => true, "message" => "Review added/modified successfully"];
+            $newReviewData = [
+                'Punteggio'          => $rating,
+                'Descrizione'        => $comment,
+                'Data_Recensione'    => date('d/m/Y'), 
+                'Email'              => $email,
+                'PunteggioAVG'       => $dbh->getProductRating($productId)
+            ];
+        
+            echo json_encode([
+                'success'   => true,
+                'newReview' => $newReviewData
+            ]);
+         //   echo json_encode($response);
+            exit();
             break;
 
         case "notify_availability":
