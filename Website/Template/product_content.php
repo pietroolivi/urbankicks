@@ -16,8 +16,8 @@ $reviews = $templateParams["productData"]["reviews"];
     $avgRating = array_sum(array_column($reviews, 'Punteggio')) / count($reviews);
 ?>
     <p>(<?php echo count($reviews); ?>)</p>
-    <span style="--rating:<?php echo $avgRating; ?>"></span>
-    <p><a href="#reviews"><?php echo number_format($avgRating, 1); ?></a></p>
+    <span class="star-reviews" style="--rating:<?php echo $avgRating; ?>"></span>
+    <p><a class="number-reviews" href="#reviews"><?php echo number_format($avgRating, 1); ?></a></p>
 <?php endif; ?>
 
 <button id="share-page" onclick="linkToClipboard()">SHARE</button>
@@ -118,6 +118,17 @@ $reviews = $templateParams["productData"]["reviews"];
         </article>
     <?php endforeach; ?>
 </aside>
+
+<template id="review-template">
+        <article class="review">
+            <!-- Imposteremo la variabile --rating con JS -->
+            <span class="review-rating" style="--rating:0"></span>
+            <p class="review-description"></p>
+            <small class="review-details"></small>
+        </article>
+ </template>
+
+
 
 <script>
 function linkToClipboard() {
