@@ -7,20 +7,11 @@ if (!isset($_SESSION["user_email"]) || !isset($_SESSION["role"]) || $_SESSION["r
     exit();
 }
 
-// Get orders from database
-$ongoingOrders = [];
-$completedOrders = [];
+// Get orders with completed "Delivered" status
+$completedOrders = $dbh->getOrdersByStatus(true);
 
-// Get ongoing orders (where Arrivo_Effettivo is NULL)
-foreach(['Placed', 'In progress', 'Shipped'] as $status) {
-    $orders = $dbh->getOrdersByStatus($status);
-    if (!empty($orders)) {
-        $ongoingOrders = array_merge($ongoingOrders, $orders);
-    }
-}
-
-// Get completed orders (where Arrivo_Effettivo is NOT NULL for 'Delivered' status)
-$completedOrders = $dbh->getOrdersByStatus('Delivered');
+// Get orders that are not yet delivered
+$ongoingOrders = $dbh->getOrdersByStatus(false);
 
 // Set template parameters
 $templateParams["title"] = "Orders";
