@@ -13,7 +13,7 @@ if (isset($_SESSION["user_email"])) {
 <a href="javascript:history.back()" class="back">
     <img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." />
 </a>
-<h2>My Cart</h2>
+<h2 id="cart-title">My Cart</h2>
 
 <?php if (empty($cartItems)): ?>
     <img src="CSS/Images/Illustrations/empty_cart.svg" alt="Illustration of an empty shopping cart">
@@ -29,20 +29,21 @@ if (isset($_SESSION["user_email"])) {
             <p>Just €<?= number_format(100 - $cartTotal, 2) ?> away from getting FREE STANDARD SHIPPING</p>
         <?php endif; ?>
     </div>
-    <ul>
+    <ul id="products-container" class="lateral-container">
         <?php foreach ($cartItems as $item): ?>
             <li data-product-id="<?= htmlspecialchars($item['ID_Prodotto']) ?>"
                 data-color="<?= htmlspecialchars($item['Colore']) ?>"
                 data-size="<?= htmlspecialchars($item['Taglia']) ?>"
                 data-cart-id="<?= htmlspecialchars($cartInfo['ID_Carrello']) ?>">
-                <article>
+                <article class="product-card">
                     <h3><?= htmlspecialchars($item['Nome']) ?></h3>
                     <div class="product-details">
+                        <a class="product-link">
                         <img src="CSS/Images/Products/<?php echo htmlspecialchars($item["ID_Prodotto"]. "_" . $item["Genere"] . "1"); ?>.webp" 
-                            alt="<?php echo htmlspecialchars($item["Nome"]); ?>">
+                            alt="<?php echo htmlspecialchars($item["Nome"]); ?>"> </a>
                         <div class="item-info">
-                            <label for="size-selector-<?= $item['ID_Prodotto'] ?>">
-                                Please select the size of <?= htmlspecialchars($item['Nome']) ?> you wish to purchase.
+                            <div class="selection-div">
+                            <label for="size-selector-<?= $item['ID_Prodotto'] ?>">Size
                             </label>
                             <select id="size-selector-<?= $item['ID_Prodotto'] ?>" class="size-selector">
                                 <?php 
@@ -55,7 +56,10 @@ if (isset($_SESSION["user_email"])) {
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-
+                                </div>
+                                <div class="selection-div">
+                            <label for="color-selector-<?= $item['ID_Prodotto'] ?>">Color
+                            </label>
                             <select id="color-selector-<?= $item['ID_Prodotto'] ?>" class="color-selector">
                                 <?php 
                                 $colors = $dbh->getProductColors($item['ID_Prodotto']);
@@ -67,18 +71,17 @@ if (isset($_SESSION["user_email"])) {
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            
+                                </div>
+                                <div class="selection-div">
                             <label for="quantity-selector-<?= $item['ID_Prodotto'] ?>">
-                                Please, select the quantity of <?= htmlspecialchars($item['Nome']) ?> 
-                                in color <?= htmlspecialchars($item['Colore']) ?> and size <?= htmlspecialchars($item['Taglia']) ?> 
-                                that you wish to purchase.
+                            Quantity
                             </label>
                             <input id="quantity-selector-<?= $item['ID_Prodotto'] ?>" 
                                 type="number" 
                                 class="quantity-selector"
                                 value="<?= htmlspecialchars($item['Quantita']) ?>" 
                                 min="1" max="<?= $dbh->getProductMaxQuantity($item['ID_Prodotto'], $item['Colore'], $item['Taglia']) ?>"/>
-
+                                </div>
                             <p class="price">
                                 €<?= number_format($item['Prezzo'], 2) ?>
                                 <?php if (isset($item['PrezzoOriginale']) && $item['PrezzoOriginale'] > $item['Prezzo']): ?>
@@ -86,11 +89,13 @@ if (isset($_SESSION["user_email"])) {
                                 <?php endif; ?>
                             </p>
                         </div>
-                        <button class="move-to-wishlist">
-                            Move to wishlist <img src="CSS/Images/Icons/heart_empty.svg" alt="">
+                    </div>
+                    <div class="action-buttons">
+                    <button class="move-to-wishlist">
+                            Move to wishlist <img src="CSS/Images/Icons/heart_empty.svg" alt="" style="display: inline  vertical-align: middle;">
                         </button>
                         <button class="remove-from-cart">
-                            Remove from cart <img src="CSS/Images/Icons/bin.svg" alt="">
+                            Remove from cart <img src="CSS/Images/Icons/bin.svg" alt="" style="display: inline  vertical-align: middle;">
                         </button>
                     </div>
                 </article>

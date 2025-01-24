@@ -28,6 +28,7 @@ const addToCartButton = document.getElementById('addToCartButton');
 let choosenTimesSize=0;
 let choosenTimesColor=0;
 
+if(addToCartButton!=null){
 addToCartButton.addEventListener('click', async () => {
  
     const productId = addToCartButton.getAttribute('data-product-id');
@@ -93,7 +94,7 @@ addToCartButton.addEventListener('click', async () => {
         console.error("Errore nella richiesta:", error);
     }
 });
-
+}
 
 
 
@@ -331,60 +332,6 @@ async function addReview(productId,ratingSelected,comment){
     }
 
 }
-/*
-async function updateReviews(){
-    try{
-        const responde=await fetch("product_handler.php",{
-            method:'POST',
-            headers:{
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                action:'update reviews'
-            })
-        });
-        const data= await response.json();
-        if(data.success){
-                              // data.reviews conterrà l'array di recensioni
-                              const reviews = data.reviews;
-
-                              // Selettori per container e template
-                              const container = document.getElementById('reviews-container');
-                              const template = document.getElementById('review-template');
-          
-                              // Svuota il contenitore
-                              container.innerHTML = '';
-          
-                              // Cicla su ogni recensione per inserirla nel DOM
-                              reviews.forEach(review => {
-                                  // Clona il contenuto del <template> (true = deep clone)
-                                  const clone = template.content.cloneNode(true);
-          
-                                  // Imposta il rating nello span
-                                  // usando la variabile CSS --rating
-                                  // review.Punteggio deve essere un numero (es. 3, 4.5, ecc.)
-                                  clone.querySelector('.review-rating').style.setProperty('--rating', review.Punteggio);
-          
-                                  // Imposta la descrizione
-                                  clone.querySelector('.review-description').textContent = review.Descrizione;
-          
-                                  // Formatto la data se serve; se hai già la data in d/m/Y puoi usare direttamente la stringa
-                                  // Esempio: "Posted on dd/mm/yyyy by mail"
-                                  const dataRecensione = review.Data_Recensione; 
-                                  const email = review.Email;
-          
-                                  clone.querySelector('.review-details').textContent = 
-                                      `Posted on ${dataRecensione} by ${email}`;
-          
-                                  // Aggiungo al container
-                                  container.appendChild(clone);
-                              });
-    }
-    }catch(error){
-
-    }
-}
-*/
 
 // Function to disable colors
 async function updateDisabledColors(productId, size) {
@@ -405,41 +352,6 @@ async function updateDisabledColors(productId, size) {
 
        if (data.success) {
             const disabledColors = data.disabledColors;
-          /*  colorOptions.forEach(input => {
-                input.disabled = disabledColors.includes(input.value)
-            });
-            if(choosenTimesColor==1){
-                Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
-                choosenTimesColor=0;
-            }
-            choosenTimesSize++;
-            if(choosenTimesColor>0 && choosenTimesSize>0){
-                sizeOptions.forEach(input => input.disabled=false);
-
-            }*/
-             /*   if(choosenTimesColor>=1 && choosenTimesSize>=1){
-                    choosenTimesColor=0;
-                    choosenTimesSize=0;
-                }
-                choosenTimesSize++;*/
-         /*       if(choosenTimesColor==1 && choo){
-                    Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
-                    choosenTimesSize=0;
-                }
-                choosenTimesColor++;
-                if(choosenTimesSize>0 && choosenTimesColor>0){
-                    colorOptions.forEach(input => input.disabled=false);
-    
-                }*/
-           /*    if(choosenTimesSize>=1 && choosenTimesColor==0){
-                colorOptions.forEach(input => {
-                    input.disabled = disabledColors.includes(input.value)
-                });
-               }
-               else if(choosenTimesColor>=1 && choosenTimesSize>=1){
-                Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
-                Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
-                }*/
                 choosenTimesSize++;
                 if(choosenTimesSize>=1 && choosenTimesColor==0){
                     colorOptions.forEach(input => {
@@ -479,46 +391,92 @@ async function updateDisabledColors(productId, size) {
 document.addEventListener('DOMContentLoaded', () => {
     const wishlistButton = document.getElementById('wishlistButton');
     const wishlistError=document.getElementById('wishlist-cart-error');
-    wishlistButton.addEventListener('click', async () => {
-        const inWishlist =wishlistButton.getAttribute('data-in-wishlist') === 'true'; // Stato attuale
-        const productId = wishlistButton.getAttribute('data-product-id');
+    if(wishlistButton!=null){
+        wishlistButton.addEventListener('click', async () => {
+            const inWishlist =wishlistButton.getAttribute('data-in-wishlist') === 'true'; // Stato attuale
+            const productId = wishlistButton.getAttribute('data-product-id');
 
-        try {
-            const action = inWishlist ? "remove_from_wishlist" : "add_to_wishlist";
+            try {
+                const action = inWishlist ? "remove_from_wishlist" : "add_to_wishlist";
 
-            const response = await fetch('product_handler.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    action: action,
-                    product_id: productId
-                })
-            });
+                const response = await fetch('product_handler.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: action,
+                        product_id: productId
+                    })
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (data.success) {
-                // Aggiorna il pulsante in base al nuovo stato
-                wishlistButton.dataset.inWishlist = (!inWishlist).toString();
-                wishlistButton.textContent = (!inWishlist ? 'Remove from' : 'Add to') + ' wishlist';
-                wishlistError.textContent='';
-            } else {
-                if(data.message==="You need to be logged in"){
-                    window.location.href = "login.php";
-                }
+                if (data.success) {
+                    // Aggiorna il pulsante in base al nuovo stato
+                    wishlistButton.dataset.inWishlist = (!inWishlist).toString();
+                    wishlistButton.textContent = (!inWishlist ? 'Remove from' : 'Add to') + ' wishlist';
+                    wishlistError.textContent='';
+                } else {
+                    if(data.message==="You need to be logged in"){
+                        window.location.href = "login.php";
+                    }
              //   alert(data.message || 'An error occurred while updating the wishlist.');
-                console.error(data.message);
-                wishlistError.textContent=data.message;
-            }
+                    console.error(data.message);
+                    wishlistError.textContent=data.message;
+                }
           /* const data = await response.text();
            console.log(data);*/
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        }
-    });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    }
+    const wishlistButtonUnavailable = document.getElementById("wishlist-unavailable");
+    if(wishlistButtonUnavailable!=null){
+        wishlistButtonUnavailable.addEventListener('click', async () => {
+            const inWishlist =wishlistButtonUnavailable.getAttribute('data-in-wishlist') === 'true'; // Stato attuale
+            const productId = wishlistButtonUnavailable.getAttribute('data-product-id');
+            try {
+                const action = inWishlist ? "remove_from_wishlist" : "add_to_wishlist";
+                const response = await fetch('product_handler.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: action,
+                        product_id: productId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    wishlistButtonUnavailable.dataset.inWishlist = (!inWishlist).toString();
+                    wishlistButtonUnavailable.textContent = (!inWishlist ? 'Stop tracking' : 'Add to wishlist to track it');
+                }
+                else{
+                    if(data.message==="You need to be logged in"){
+                        window.location.href = "login.php";
+                    }
+             //   alert(data.message || 'An error occurred while updating the wishlist.');
+                }
+            }catch(error){
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    }
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    const noSizesAvailable = document.querySelector('.no-sizes-available');
+    const noColorsAvailable = document.querySelector('.no-colors-available');
 
+    if (noSizesAvailable || noColorsAvailable || noSizesAvailable) {
+        const main= document.querySelector('main');
+        document.createElement()
+        
+    }
+
+});
 
 updateButtonState();
