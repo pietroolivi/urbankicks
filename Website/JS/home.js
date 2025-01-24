@@ -217,7 +217,7 @@ class ProductManager {
         const template = document.getElementById('product-template');
         const productCard = template.content.cloneNode(true);
         const card = productCard.querySelector('.product-card');
-        
+     
         card.dataset.productId = product.id;
         const link = card.querySelector('.product-link');
         link.href = `product.php?id=${product.id}`;
@@ -246,10 +246,12 @@ class ProductManager {
         }
         
         const wishlistCheckbox = card.querySelector('.wishlist-checkbox');
+        const imgheart= productCard.querySelector('img.wishlist-checkbox');
         if (this.wishlistItems.has(product.id.toString())) {
             console.log("disabilita check");
             wishlistCheckbox.checked = true;
-            wishlistCheckbox.nextElementSibling.textContent = 'Remove from Wishlist';
+            imgheart.src="CSS/Images/Icons/heart_filled.svg";
+         //   wishlistCheckbox.nextElementSibling.textContent = 'Remove from Wishlist';
         }
         
         return card;
@@ -279,7 +281,7 @@ class ProductManager {
         const productId = productCard.dataset.productId;
         const isAdd = checkbox.checked;
         const wishlistText = checkbox.nextElementSibling;
-
+        const imgHeart = productCard.querySelector('img.wishlist-checkbox');
         try {
            /* const formData = new FormData();
             formData.append('action', 'toggleWishlist');
@@ -303,7 +305,17 @@ class ProductManager {
 
             if (data.success) {
                 // Update UI
-                wishlistText.textContent = isAdd ? 'Remove from Wishlist' : 'Add to Wishlist';
+               if( checkbox.checked){
+                        imgHeart.src="CSS/Images/Icons/heart_filled.svg";
+                    
+                    wishlistText.textContent=' Remove from Wishlist';
+
+               }
+               else{
+                    imgHeart.src="CSS/Images/Icons/heart_empty.svg";
+                
+                    wishlistText.textContent='Add to Wishlist';
+               } 
             } else {
                 // Revert checkbox state on error
                 checkbox.checked = !isAdd;

@@ -1,6 +1,19 @@
 class CartHandler {
     constructor() {
         this.setupEventListeners();
+        this.initQuantityControls();
+    }
+
+    initQuantityControls() {
+        document.querySelectorAll('.quantity-control').forEach(control => {
+            const increment = control.querySelector('.increment');
+            const decrement = control.querySelector('.decrement');
+            const display = control.querySelector('.quantity-display');
+            const input = control.nextElementSibling; // Hidden input
+
+            increment.addEventListener('click', () => this.handleQuantityButton(1, display, input));
+            decrement.addEventListener('click', () => this.handleQuantityButton(-1, display, input));
+        });
     }
 
     setupEventListeners() {
@@ -146,9 +159,33 @@ class CartHandler {
         }
     }
 
+
+    async handleQuantityButton(change, display, input) {
+        const currentValue = parseInt(input.value);
+        const newValue = currentValue + change;
+        
+        // Don't allow less than 1
+        if (newValue < 1) return;
+
+        const item = input.closest('li');
+        
+        // Update display and hidden input
+        display.textContent = newValue;
+        input.value = newValue;
+
+        // Update cart
+        await this.updateCartItem(item, {
+            quantity: newValue
+        });
+    }
+
+
+    // Modify existing handleQuantityChange to work with hidden input
     async handleQuantityChange(input) {
         const item = input.closest('li');
-
+        const display = item.querySelector('.quantity-display');
+        
+        display.textContent = input.value;
         await this.updateCartItem(item, {
             quantity: parseInt(input.value)
         });

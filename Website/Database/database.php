@@ -1215,13 +1215,13 @@ class DatabaseHelper {
         if ($checkStmt->get_result()->num_rows > 0) {
             // Update existing review
             $query = "UPDATE RECENSIONE 
-                    SET Punteggio = ?, Testo = ?, Data_Recensione = NOW() 
+                    SET Punteggio = ?, Descrizione = ?, Data_Recensione = NOW() 
                     WHERE Email = ? AND ID_Prodotto = ?";
             $stmt = $this->db->prepare($query);
             $stmt->bind_param("isss", $rating, $comment, $email, $productId);
         } else {
             // Add new review
-            $query = "INSERT INTO RECENSIONE (Email, ID_Prodotto, Punteggio, Testo, Data_Recensione) 
+            $query = "INSERT INTO RECENSIONE (Email, ID_Prodotto, Punteggio, Descrizione, Data_Recensione) 
                     VALUES (?, ?, ?, ?, NOW())";
             $stmt = $this->db->prepare($query);
             $stmt->bind_param("ssis", $email, $productId, $rating, $comment);
@@ -1260,16 +1260,22 @@ class DatabaseHelper {
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $productId);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result()->fetch_assoc();
+        return (float) $result['avg_rating'];
     }
 
     // Check if user can review (has purchased the product)
     public function canUserReview($email, $productId) {
-        $query = "SELECT 1 
+    /*    $query = "SELECT 1 
                 FROM ORDINE o 
-                JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine 
-                WHERE o.Email = ? AND po.ID_Prodotto = ? 
-                AND o.Tipo = 'delivered'";
+                JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
+                JOIN TRACKING_SPEDIZIONE ts ON po.ID_Ordine = ts.ID_Ordine
+                WHERE o.Email = ? AND po.ID_Prodotto = ? AND ts.Stato = 'delivered';"*/
+                $query = "SELECT 1 
+                FROM ORDINE o 
+                JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
+               /* JOIN TRACKING_SPEDIZIONE ts ON po.ID_Ordine = ts.ID_Ordine*/
+                WHERE o.Email = ? AND po.ID_Prodotto = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ss", $email, $productId);
         $stmt->execute();

@@ -28,6 +28,7 @@ const addToCartButton = document.getElementById('addToCartButton');
 let choosenTimesSize=0;
 let choosenTimesColor=0;
 
+if(addToCartButton!=null){
 addToCartButton.addEventListener('click', async () => {
  
     const productId = addToCartButton.getAttribute('data-product-id');
@@ -93,7 +94,7 @@ addToCartButton.addEventListener('click', async () => {
         console.error("Errore nella richiesta:", error);
     }
 });
-
+}
 
 
 
@@ -132,7 +133,7 @@ function updateButtonState() {
 }
 
 //function to disable sizes
-async function updateDisabledSizes(productId, color) {
+async function updateDisabledSizes(productId, color) { //quando è cliccato un colore
     try {
         const response = await fetch('product_handler.php', {
             method: 'POST',
@@ -145,16 +146,22 @@ async function updateDisabledSizes(productId, color) {
                 color: color
             })
         });
-
+        console.log("BchoosenTimesColor: "+choosenTimesColor+" BchoosenTimeSize: "+choosenTimesSize);
         const data = await response.json();
 
         if (data.success) {
             const disabledSizes = data.disabledSizes;
             //increaseChoosen();
-            sizeOptions.forEach(input => {
+            console.log(disabledSizes);
+           /* sizeOptions.forEach(input => {
                 input.disabled = disabledSizes.includes(input.value);
-            });
-            if(choosenTimesColor==1 && choosenTimesColor==1){
+            });*/
+           /* if(choosenTimesColor>=1 && choosenTimesSize>=1){
+                choosenTimesColor=0;
+                choosenTimesSize=0;
+            }
+            choosenTimesColor++;*/
+     /*       if(choosenTimesColor==1 && choo){
                 Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
                 choosenTimesSize=0;
             }
@@ -162,7 +169,42 @@ async function updateDisabledSizes(productId, color) {
             if(choosenTimesSize>0 && choosenTimesColor>0){
                 colorOptions.forEach(input => input.disabled=false);
 
+            }*/
+         /*  if(choosenTimesColor>=1 && choosenTimesSize==0){
+            sizeOptions.forEach(input => {
+                input.disabled = disabledSizes.includes(input.value);
+            });
+           }*/
+           //else if(choosenTimesColor>=1 && choosenTimesSize==1){
+          //
+          //   Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+           // Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+           choosenTimesColor++;
+            if(choosenTimesColor>=1 && choosenTimesSize==0){
+                sizeOptions.forEach(input => {
+                    input.disabled = disabledSizes.includes(input.value);
+                });
             }
+            //sono stati scelti molteplici colori e ora è stato scelto il colore
+            if(choosenTimesColor==1 && choosenTimesSize>=1){
+                sizeOptions.forEach(input => {
+                    input.disabled = false;
+                });
+                colorOptions.forEach(input=>{
+                    input.disabled= false;
+                });
+            }
+
+            if (choosenTimesColor>1 && choosenTimesSize>=1){
+                Array.from(sizeOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+                choosenTimesColor=1;
+                sizeOptions.forEach(input => {
+                    input.disabled = disabledSizes.includes(input.value);
+                });
+                choosenTimesSize=0;
+            }
+
+            console.log("choosenTimesColor: "+choosenTimesColor+" choosenTimeSize: "+choosenTimesSize);
         } else {
             console.error("Errore nel recuperare le taglie:", data.message);
         }
@@ -216,7 +258,7 @@ document.querySelectorAll('[style="--rating:0"]').forEach(starRating);
 submitReviewButton.addEventListener("click",  (event) => {
     event.preventDefault(); // Previene il comportamento predefinito (invio del form)
     addReview(
-        submitReviewButton.getAttribute('data-product-id'),
+        addToCartButton.getAttribute('data-product-id'),
         ratingSelected,
         comment.value
     )}
@@ -237,22 +279,59 @@ async function addReview(productId,ratingSelected,comment){
             })
         });
         const data = await response.json();
-        if(data.success){
-            console.log("review aggiunta con successo");
+
+        if (data.success) {
+            console.log("Review aggiunta con successo");
+            
+            const reviewsContainer = document.getElementById('reviews');
+            const allReviews = reviewsContainer.querySelectorAll('article.review');
+              // 1) Ottengo i dati della nuova recensione dal JSON
+            const newReview = data.newReview;
+            
+            // 3) Per ciascun article, controlla se la <small> contiene "by email"
+            allReviews.forEach(article => {
+                const smallTag = article.querySelector('small');
+                if (smallTag && smallTag.textContent.includes(`by ${newReview.Email}`)) {
+                    // 4) Rimuove l'articolo se corrisponde
+                    article.remove();
+                }
+            });
+            const starReview=document.querySelector(".star-reviews");
+            const numberReview=document.querySelector(".number-reviews");
+            console.log("punteggio medio ora: "+newReview.PunteggioAVG);
+            starReview.style.setProperty('--rating', newReview.PunteggioAVG);
+            numberReview.innerText=newReview.PunteggioAVG.toFixed(1);
+            // 2) Seleziono il template
+            const template = document.getElementById('review-template');
+            
+            // 3) Clono il contenuto del template (true = cloniamo anche i nodi figli)
+            const clone = template.content.cloneNode(true);
+            
+            // 4) Popolo il clone con i dati
+            //    a) rating nello <span>
+            clone.querySelector('span').style.setProperty('--rating', newReview.Punteggio);
+            
+            //    b) descrizione nel <p>
+            clone.querySelector('p').textContent = newReview.Descrizione;
+            
+            //    c) small: "Posted on dd/mm/yyyy by email"
+            clone.querySelector('small').textContent = 
+                `Posted on ${newReview.Data_Recensione} by ${newReview.Email}`;
+            
+            // 5) Aggiungo il clone in coda all'aside
+            reviewsContainer.appendChild(clone);
         }
         if(!data.success){
+            console.log("l'id prodotto è:"+productId);
             console.error(data.message);
             document.getElementById("review-error").innerText=data.message;
+            
         }
     }catch(error){
 
-
     }
 
-
 }
-
-
 
 // Function to disable colors
 async function updateDisabledColors(productId, size) {
@@ -268,24 +347,39 @@ async function updateDisabledColors(productId, size) {
                 size: size
             })
         });
-
+        console.log("BchoosenTimesColor: "+choosenTimesColor+" BchoosenTimeSize: "+choosenTimesSize);
         const data = await response.json();
 
        if (data.success) {
             const disabledColors = data.disabledColors;
-            colorOptions.forEach(input => {
-                input.disabled = disabledColors.includes(input.value)
-            });
-            if(choosenTimesColor==1 && choosenTimesColor==1){
-                Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
-                choosenTimesColor=0;
-            }
-            choosenTimesSize++;
-            if(choosenTimesColor>0 && choosenTimesSize>0){
-                sizeOptions.forEach(input => input.disabled=false);
+                choosenTimesSize++;
+                if(choosenTimesSize>=1 && choosenTimesColor==0){
+                    colorOptions.forEach(input => {
+                        input.disabled = disabledColors.includes(input.value);
+                    });
+                }
+                //sono stati scelti molteplici colori e ora è stato scelto il colore
+                if(choosenTimesSize==1 && choosenTimesColor>=1){
+                    sizeOptions.forEach(input => {
+                        input.disabled = false;
+                    });
+                    colorOptions.forEach(input=>{
+                        input.disabled= false;
+                    });
+                }
+    
+                if (choosenTimesSize>1 && choosenTimesColor>=1){
+                    Array.from(colorOptions).filter(input => input.checked).forEach(inputcheck=>inputcheck.checked=false);
+                    choosenTimesSize=1;
+                    colorOptions.forEach(input => {
+                        input.disabled = disabledColors.includes(input.value);
+                    });
+                    choosenTimesColor=0;
+                }
+    
 
-            }
 
+            console.log("choosenTimesColor: "+choosenTimesColor+" choosenTimeSize: "+choosenTimesSize);
         } else {
             console.error("Errore nel recuperare i colori:", data.message);
         }
@@ -297,46 +391,92 @@ async function updateDisabledColors(productId, size) {
 document.addEventListener('DOMContentLoaded', () => {
     const wishlistButton = document.getElementById('wishlistButton');
     const wishlistError=document.getElementById('wishlist-cart-error');
-    wishlistButton.addEventListener('click', async () => {
-        const inWishlist =wishlistButton.getAttribute('data-in-wishlist') === 'true'; // Stato attuale
-        const productId = wishlistButton.getAttribute('data-product-id');
+    if(wishlistButton!=null){
+        wishlistButton.addEventListener('click', async () => {
+            const inWishlist =wishlistButton.getAttribute('data-in-wishlist') === 'true'; // Stato attuale
+            const productId = wishlistButton.getAttribute('data-product-id');
 
-        try {
-            const action = inWishlist ? "remove_from_wishlist" : "add_to_wishlist";
+            try {
+                const action = inWishlist ? "remove_from_wishlist" : "add_to_wishlist";
 
-            const response = await fetch('product_handler.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    action: action,
-                    product_id: productId
-                })
-            });
+                const response = await fetch('product_handler.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: action,
+                        product_id: productId
+                    })
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (data.success) {
-                // Aggiorna il pulsante in base al nuovo stato
-                wishlistButton.dataset.inWishlist = (!inWishlist).toString();
-                wishlistButton.textContent = (!inWishlist ? 'Remove from' : 'Add to') + ' wishlist';
-                p.textContent='';
-            } else {
-                if(data.message==="You need to be logged in"){
-                    window.location.href = "login.php";
-                }
+                if (data.success) {
+                    // Aggiorna il pulsante in base al nuovo stato
+                    wishlistButton.dataset.inWishlist = (!inWishlist).toString();
+                    wishlistButton.textContent = (!inWishlist ? 'Remove from' : 'Add to') + ' wishlist';
+                    wishlistError.textContent='';
+                } else {
+                    if(data.message==="You need to be logged in"){
+                        window.location.href = "login.php";
+                    }
              //   alert(data.message || 'An error occurred while updating the wishlist.');
-                console.error(data.message);
-                wishlistError.textContent=data.message;
-            }
+                    console.error(data.message);
+                    wishlistError.textContent=data.message;
+                }
           /* const data = await response.text();
            console.log(data);*/
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        }
-    });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    }
+    const wishlistButtonUnavailable = document.getElementById("wishlist-unavailable");
+    if(wishlistButtonUnavailable!=null){
+        wishlistButtonUnavailable.addEventListener('click', async () => {
+            const inWishlist =wishlistButtonUnavailable.getAttribute('data-in-wishlist') === 'true'; // Stato attuale
+            const productId = wishlistButtonUnavailable.getAttribute('data-product-id');
+            try {
+                const action = inWishlist ? "remove_from_wishlist" : "add_to_wishlist";
+                const response = await fetch('product_handler.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: action,
+                        product_id: productId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    wishlistButtonUnavailable.dataset.inWishlist = (!inWishlist).toString();
+                    wishlistButtonUnavailable.textContent = (!inWishlist ? 'Stop tracking' : 'Add to wishlist to track it');
+                }
+                else{
+                    if(data.message==="You need to be logged in"){
+                        window.location.href = "login.php";
+                    }
+             //   alert(data.message || 'An error occurred while updating the wishlist.');
+                }
+            }catch(error){
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    }
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    const noSizesAvailable = document.querySelector('.no-sizes-available');
+    const noColorsAvailable = document.querySelector('.no-colors-available');
 
+    if (noSizesAvailable || noColorsAvailable || noSizesAvailable) {
+        const main= document.querySelector('main');
+        document.createElement()
+        
+    }
+
+});
 
 updateButtonState();
