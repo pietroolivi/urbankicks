@@ -63,6 +63,25 @@ class DatabaseHelper {
         return $result->fetch_all(MYSQLI_ASSOC);
     }*/
 
+    // Get product Variants
+    public function getProductVariants($productId) {
+        $query = "SELECT * FROM VARIANTE WHERE ID_Prodotto = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+    
+    // Get all products
+    public function getProducts() {
+        $query = "SELECT p.* 
+                  FROM PRODOTTO p 
+                  ORDER BY p.Data_Aggiunta DESC";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
         $query = "
             SELECT 
@@ -291,6 +310,36 @@ class DatabaseHelper {
     
         } catch(Exception $e) {
             error_log("Error in getProductData: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    // Update product stock
+    public function updateProduct($productId, $description, $price, $variants, $images = null) {
+        try {
+            $this->db->begin_transaction();
+
+            // Update product description and price
+            $query = "UPDATE PRODOTTO SET Descrizione = ?, Prezzo = ? WHERE ID_Prodotto = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("sdi", $description, $price, $productId);
+            $stmt->execute();
+
+            // Update variants
+            foreach($variants as $size => $colors) {
+                foreach($colors as $color => $quantity) {
+                    $query = "UPDATE VARIANTE SET Quantita = ? 
+                            WHERE ID_Prodotto = ? AND Taglia = ? AND Colore = ?";
+                    $stmt = $this->db->prepare($query);
+                    $stmt->bind_param("iids", $quantity, $productId, $size, $color);
+                    $stmt->execute();
+                }
+            }
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
             throw $e;
         }
     }
@@ -634,7 +683,7 @@ class DatabaseHelper {
 
     // Mark notifications as read
     public function markNotificationsAsRead($email, $notificationIds = null) {
-        $query = "UPDATE NOTIFICA SET Tipo = 'Letta' WHERE Email = ?";
+        $query = "UPDATE NOTIFICA SET Tipo = 'Read' WHERE Email = ?";
         $params = [$email];
         $types = "s";
 
@@ -1452,16 +1501,15 @@ class DatabaseHelper {
         return $row['product_name'] ?? 'No sales yet';
     }
 
-    public function getOrdersByStatus($status = null) {
-        $query = "SELECT 
+    // Get all orders by status
+    public function getOrdersByStatus($isDelivered = false) {
+        $query = "SELECT DISTINCT
             o.ID_Ordine,
             o.Data_Ordine,
             o.Costo_Totale,
             o.Metodo_Pagamento,
             o.NomeDestinatario,
             o.CognomeDestinatario,
-            ts.Stato as Status,
-            ts.Arrivo_Effettivo,
             p.ID_Prodotto,
             p.Nome,
             p.Genere,
@@ -1469,30 +1517,63 @@ class DatabaseHelper {
             po.Prezzo_Acquisto,
             po.Colore,
             po.Taglia,
-            po.Quantita
+            po.Quantita,
+            (
+                SELECT ts2.Stato 
+                FROM Tracking_Spedizione ts2 
+                WHERE ts2.ID_Ordine = o.ID_Ordine 
+                AND ts2.Arrivo_Effettivo IS NOT NULL 
+                ORDER BY ts2.Timestamp_Aggiornamento DESC 
+                LIMIT 1
+            ) as CurrentStatus,
+            EXISTS (
+                SELECT 1 
+                FROM Tracking_Spedizione ts3 
+                WHERE ts3.ID_Ordine = o.ID_Ordine 
+                AND ts3.Stato = 'Delivered' 
+                AND ts3.Arrivo_Effettivo IS NOT NULL
+            ) as IsDelivered
         FROM ORDINE o
         JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
         JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
         JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine
-        WHERE ts.Stato = COALESCE(?, ts.Stato)
-        AND (SELECT Arrivo_Effettivo 
-            FROM Tracking_Spedizione ts2 
-            WHERE ts2.ID_Ordine = o.ID_Ordine 
-            AND ts2.Stato = ?) IS NOT NULL
+        WHERE EXISTS (
+            SELECT 1 
+            FROM Tracking_Spedizione ts4 
+            WHERE ts4.ID_Ordine = o.ID_Ordine 
+            AND ts4.Arrivo_Effettivo IS NOT NULL
+        )
+        AND (? = 1 AND EXISTS (
+                SELECT 1 
+                FROM Tracking_Spedizione ts5 
+                WHERE ts5.ID_Ordine = o.ID_Ordine 
+                AND ts5.Stato = 'Delivered' 
+                AND ts5.Arrivo_Effettivo IS NOT NULL
+            ) 
+            OR 
+            ? = 0 AND NOT EXISTS (
+                SELECT 1 
+                FROM Tracking_Spedizione ts6 
+                WHERE ts6.ID_Ordine = o.ID_Ordine 
+                AND ts6.Stato = 'Delivered' 
+                AND ts6.Arrivo_Effettivo IS NOT NULL
+            )
+        )
         ORDER BY o.Data_Ordine DESC";
-
+    
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ss", $status, $status);
+        $delivered = $isDelivered ? 1 : 0;
+        $stmt->bind_param("ii", $delivered, $delivered);
         $stmt->execute();
         $result = $stmt->get_result();
-
+    
         $orders = [];
         while ($row = $result->fetch_assoc()) {
             if (!isset($orders[$row['ID_Ordine']])) {
                 $orders[$row['ID_Ordine']] = [
                     'ID_Ordine' => $row['ID_Ordine'],
                     'Data_Ordine' => $row['Data_Ordine'],
-                    'Status' => $row['Status'],
+                    'Status' => $row['CurrentStatus'],
                     'Costo_Totale' => $row['Costo_Totale'],
                     'Metodo_Pagamento' => $row['Metodo_Pagamento'],
                     'NomeDestinatario' => $row['NomeDestinatario'],
@@ -1500,7 +1581,7 @@ class DatabaseHelper {
                     'products' => []
                 ];
             }
-
+    
             $orders[$row['ID_Ordine']]['products'][] = [
                 'ID_Prodotto' => $row['ID_Prodotto'],
                 'Nome' => $row['Nome'],
@@ -1508,11 +1589,11 @@ class DatabaseHelper {
                 'Prezzo_Attuale' => $row['Prezzo'],
                 'Prezzo_Acquisto' => $row['Prezzo_Acquisto'],
                 'Colore' => $row['Colore'],
-                'Taglia' => $row['Taglia'], 
+                'Taglia' => $row['Taglia'],
                 'Quantita' => $row['Quantita']
             ];
         }
-
+    
         return array_values($orders);
     }
 }

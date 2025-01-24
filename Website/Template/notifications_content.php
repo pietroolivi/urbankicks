@@ -29,7 +29,7 @@ foreach ($groupedNotifications as $date => $dayNotifications): ?>
                         $url = "product.php?id=" . $id;
                         break;
                     case 'Order Status':
-                        $url = "order.php?id=" . $id;
+                        $url = "tracking.php?order=" . $id;
                         break;
                     case 'Cart Reminder':
                         $url = "cart.php";

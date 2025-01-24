@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const notificationItem = notificationLink.closest('.notification-item');
             
-            if (notificationItem.getAttribute('data-tipo') === 'Non Letta') {
+            if (notificationItem.getAttribute('data-tipo') === 'Unread') {
                 await markNotificationAsRead(notificationItem);
             }
             
@@ -34,7 +34,7 @@ async function markNotificationAsRead(notificationElement) {
         
         const data = await response.json();
         if (data.success) {
-            notificationElement.setAttribute('data-tipo', 'Letta');
+            notificationElement.setAttribute('data-tipo', 'Read');
             const unreadDot = notificationElement.querySelector('.unread-dot');
             if (unreadDot) unreadDot.remove();
         }
@@ -44,7 +44,7 @@ async function markNotificationAsRead(notificationElement) {
 }
 
 function markAllNotificationsAsRead() {
-    const unreadItems = document.querySelectorAll('li[data-tipo="Non Letta"]');
+    const unreadItems = document.querySelectorAll('li[data-tipo="Unread"]');
     const notificationIds = Array.from(unreadItems).map(item => 
         item.dataset.notificationId
     );
@@ -62,7 +62,7 @@ function markAllNotificationsAsRead() {
     .then(data => {
         if (data.success) {
             unreadItems.forEach(item => {
-                item.setAttribute('data-tipo', 'Letta');
+                item.setAttribute('data-tipo', 'Read');
                 const unreadDot = item.querySelector('.unread-dot');
                 if (unreadDot) unreadDot.remove();
             });

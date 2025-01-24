@@ -1,0 +1,221 @@
+
+<header>
+    <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
+    <h2>Edit Product</h2>
+    <h3>#<?php echo $templateParams["product"]["product"]["ID_Prodotto"]; ?></h3>
+</header>
+
+<form class="fields-product-admin" method="POST" action="update_product.php" enctype="multipart/form-data">
+    <input type="hidden" name="product_id" value="<?php echo $templateParams["product"]["product"]["ID_Prodotto"]; ?>">
+    
+    <!--BRAND-->
+    <label for="brand-product-admin">Brand</label>
+    <select name="brand-product-admin" id="brand-product-admin" disabled>
+        <option disabled value> -- Choose an option -- </option>
+        <?php 
+        $brands = ["Adidas", "New Balance", "Sergio Tacchini", "Crocs", "Fila", "Converse", "Asics", 
+                  "Hoka", "Lacoste", "On", "Puma", "Reebok", "Salomon", "Ugg", "Saucony", "Vans", 
+                  "Havaianas", "Kappa", "Under Armour", "Diadora"];
+        foreach($brands as $brand): 
+            $selected = ($brand === $templateParams["product"]["product"]["Marca"]) ? "selected" : "";
+        ?>
+            <option value="<?php echo strtolower($brand); ?>" <?php echo $selected; ?>><?php echo $brand; ?></option>
+        <?php endforeach; ?>
+    </select>
+
+    <!--MODEL-->
+    <label for="model-product-admin">Model</label>
+    <input type="text" id="model-product-admin" name="model" maxlength="14" 
+           value="<?php echo $templateParams["product"]["product"]["Nome"]; ?>" readonly>
+
+    <!--GENRE-->
+    <fieldset>
+        <legend>Genre</legend>
+        <?php
+        $genres = ["Man", "Woman", "Kids"];
+        foreach($genres as $genre):
+            $checked = (strtolower($genre) === strtolower($templateParams["product"]["product"]["Genere"])) ? "checked" : "";
+        ?>
+            <label for="<?php echo strtolower($genre); ?>-product-admin"><?php echo $genre; ?></label>
+            <input id="<?php echo strtolower($genre); ?>-product-admin" class="genre-product-admin" 
+                   type="checkbox" value="<?php echo strtolower($genre); ?>" <?php echo $checked; ?> disabled/>
+        <?php endforeach; ?>
+    </fieldset>
+
+    <!--CATEGORY-->
+    <fieldset>
+        <legend>Category</legend>
+        <?php
+        $categories = ["Sneakers", "Sandals", "Sliders"];
+        foreach($categories as $category):
+            $checked = (strtolower($category) === strtolower($templateParams["product"]["product"]["Tipo"])) ? "checked" : "";
+        ?>
+            <label for="<?php echo strtolower($category); ?>-product-admin"><?php echo $category; ?></label>
+            <input id="<?php echo strtolower($category); ?>-product-admin" 
+                   type="radio" name="category-product-admin" 
+                   value="<?php echo strtolower($category); ?>" <?php echo $checked; ?> disabled>
+        <?php endforeach; ?>
+    </fieldset>
+
+    <!--IMAGES-->
+    <label for="images-product-admin-edit">Images</label>
+    <input type="file" id="images-product-admin-edit" name="images[]" accept=".webp" multiple>
+    <p id="error-images-product-admin">Please, upload exactly 4 pictures.</p>
+    <div class="images-product-to-edit">
+        <?php
+        $productId = $templateParams["product"]["product"]["ID_Prodotto"];
+        $gender = strtolower($templateParams["product"]["product"]["Genere"]);
+        for($i = 1; $i <= 4; $i++):
+        ?>
+            <img src="CSS/Images/Products/<?php echo $productId . '_' . $gender . $i; ?>.webp" alt="">
+        <?php endfor; ?>
+    </div>
+    <script>
+        /* ********************************************************************* */
+        /* We make sure that the admin uploads exactly 4 images for the product. */
+        /* ********************************************************************* */
+        var uploader = document.getElementById('images-product-admin-edit');
+        var error = document.getElementById('error-images-product-admin');
+        uploader.addEventListener("change", function(){
+            if(uploader.files.length != 4){
+                error.style.display='block';
+                document.querySelector(".fields-product-admin > button[type='submit']").disabled = true;
+            } else {
+                document.querySelector(".fields-product-admin > button[type='submit']").disabled = false;
+                error.style.display='none';
+            }
+            // We update the preview of presently uploaded images.
+            document.getElementsByClassName("images-product-to-edit")[0].innerHTML = "";
+            for (image of uploader.files) {
+                console.log(image);
+                document.getElementsByClassName("images-product-to-edit")[0].innerHTML += `
+                    <img src="${URL.createObjectURL(image)}" alt="">
+                `
+            }
+        })
+    </script>
+
+    <!--DESCRIPTION-->
+    <label for="description-product-admin">Description</label>
+    <textarea name="description" id="description-product-admin" cols="30" rows="10" required><?php 
+        echo $templateParams["product"]["product"]["Descrizione"]; 
+    ?></textarea>
+
+    <!--PRICE-->
+    <label for="price-product-admin">Price</label>
+    <span>€<input id="price-product-admin" name="price" type="number" 
+         value="<?php echo $templateParams["product"]["product"]["Prezzo"]; ?>" 
+         min="0.01" max="999.99" step="0.01" onblur="standardisePrice()" required></span>
+
+    <!--NUMBER SIZE COLOR-->
+    <table id="quantity-size-color">
+        <caption>Product availability for each size and colour.</caption>
+        <tr>
+            <td></td>
+            <?php
+            // Get unique colors from existing variants
+            $existingColors = array_unique(array_column($templateParams["variants"], "Colore"));
+            sort($existingColors);
+            foreach($existingColors as $color):
+            ?>
+                <th id="col-<?php echo $color; ?>" scope="col">
+                    <img src="CSS/Images/Icons/<?php echo $color; ?>.svg" alt="<?php echo ucfirst($color); ?>.">
+                </th>
+            <?php endforeach; ?>
+        </tr>
+        <?php
+        // Get unique sizes from existing variants
+        $existingSizes = array_unique(array_column($templateParams["variants"], "Taglia"));
+        sort($existingSizes);
+        foreach($existingSizes as $size):
+            $sizeId = str_replace('.', '-half', $size);
+        ?>
+            <tr>
+                <th id="row-<?php echo $sizeId; ?>" scope="row"><?php echo $size; ?></th>
+                <?php foreach($existingColors as $color): 
+                    // Find matching variant
+                    $quantity = 0;
+                    foreach($templateParams["variants"] as $variant) {
+                        if($variant["Taglia"] == $size && $variant["Colore"] == $color) {
+                            $quantity = $variant["Quantita"];
+                            break;
+                        }
+                    }
+                ?>
+                    <td headers="row-<?php echo $sizeId; ?> col-<?php echo $color; ?>">
+                        <label for="row-<?php echo $sizeId; ?>-col-<?php echo $color; ?>">
+                            Quantity in size <?php echo $size; ?> and colour <?php echo $color; ?>.
+                        </label>
+                        <input id="row-<?php echo $sizeId; ?>-col-<?php echo $color; ?>" 
+                            name="quantity[<?php echo $size; ?>][<?php echo $color; ?>]" 
+                            type="number" onkeyup="standardiseQuantity()" 
+                            value="<?php echo $quantity; ?>"/>
+                    </td>
+                <?php endforeach; ?>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+
+    <button type="reset" onclick="restoreOriginalImages()">Reset</button>
+    <button type="submit">Update</button>
+</form>
+
+<script>
+    function standardisePrice() {
+        inputTag = event.currentTarget;
+        if (parseFloat(inputTag.value) == 0) {
+            inputTag.value = 0.01;
+            return;
+        }     
+        while (inputTag.value[0] == 0 && inputTag.value.indexOf(".") != 1) {
+            inputTag.value = inputTag.value.substring(1);
+        }
+        if (inputTag.value.indexOf('.') != -1 && (inputTag.value.length - inputTag.value.substring(inputTag.value.indexOf('.')).length) > 3) {
+            decimalPart = inputTag.value.substring(0, inputTag.value.indexOf('.'));
+            inputTag.value = decimalPart.substring(0, 3) + inputTag.value.substring(inputTag.value.indexOf('.')); 
+        } else if (inputTag.value.indexOf('.') == -1 && inputTag.value.length > 3) {
+            inputTag.value = inputTag.value.substring(0, 3);
+        }
+        if (inputTag.value.indexOf(".") != -1) {
+            if ((inputTag.value.length - 1) - inputTag.value.indexOf(".") > 2) {
+                inputTag.value = inputTag.value.substring(0, inputTag.value.indexOf(".") + 3);
+            } 
+            if ((inputTag.value.length - 1) - inputTag.value.indexOf(".") == 1) {
+                inputTag.value = inputTag.value + "0";
+            }
+            if ((inputTag.value.length - 1) - inputTag.value.indexOf(".") == 0) {
+                inputTag.value = inputTag.value + "00";
+            }
+        }
+        if (inputTag.value.indexOf(".") == -1) {
+            inputTag.value = inputTag.value + ".00";
+        }
+        if (inputTag.value[0] == ".") {
+            inputTag.value = "0" + inputTag.value;
+        }
+    }
+
+    function standardiseQuantity() {
+        inputTag = event.currentTarget;
+        maxlength = 2;
+        if (inputTag.value <= 0) {
+            inputTag.value = 0;
+        }                
+        if (inputTag.value > 99) {
+            inputTag.value = 99;
+        }
+        if (inputTag.value[0] == 0 && inputTag.value.length > 1) {
+            inputTag.value = inputTag.value.slice(1, maxlength);
+        }
+    }
+
+    function restoreOriginalImages() {
+        document.getElementsByClassName("images-product-to-edit")[0].innerHTML = `
+        <?php
+        for($i = 1; $i <= 4; $i++) {
+            echo '<img src="CSS/Images/Products/' . $productId . '_' . $gender . $i . '.webp" alt="">';
+        }
+        ?>`;
+        document.getElementById('error-images-product-admin').style.display='none';
+    }
+</script>
