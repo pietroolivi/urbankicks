@@ -28,7 +28,7 @@
             $stockStatus = "high_stocks";
             if($totalStock == 0) {
                 $stockStatus = "out_of_stock";
-            } elseif($totalStock < 10) {
+            } elseif($totalStock < 20) {
                 $stockStatus = "low_stocks"; 
             }
         ?>

@@ -48,3 +48,13 @@ function removeFromWishlist(productId, heartIcon) {
         console.error('Error:', error);
     });
 }
+
+window.onload = function() {
+    const errorMsg = document.getElementById('error-message');
+    if (errorMsg && errorMsg.value) {
+        setTimeout(() => {
+            alert(errorMsg.value);
+            errorMsg.remove();
+        }, 100);
+    }
+};

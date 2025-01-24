@@ -1,3 +1,9 @@
+<?php
+if(isset($_SESSION['error'])) {
+    echo "<input type='hidden' id='error-message' value='" . htmlspecialchars($_SESSION['error']) . "'>";
+    unset($_SESSION['error']);
+}
+?>
 <a href="javascript:history.back()" class="back">
     <img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." />
 </a>

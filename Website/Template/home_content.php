@@ -1,4 +1,9 @@
 <?php
+if(isset($_SESSION['error'])) {
+    echo "<input type='hidden' id='error-message' value='" . htmlspecialchars($_SESSION['error']) . "'>";
+    unset($_SESSION['error']);
+}
+
 // Get category from URL parameter, default to 'popular'
 $category = isset($_GET['category']) ? $_GET['category'] : 'popular';
 

@@ -1,8 +1,4 @@
 <?php
-if(!isset($templateParams["productData"])) {
-    header("Location: home.php");
-    exit();
-}
 $product = $templateParams["productData"]["product"];
 $variants = $templateParams["productData"]["variants"];
 $reviews = $templateParams["productData"]["reviews"];

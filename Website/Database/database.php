@@ -100,7 +100,8 @@ class DatabaseHelper {
                 FROM prodotto_storico 
                 ORDER BY Data_Modifica DESC
             ) ps ON p.ID_Prodotto = ps.ID_Prodotto
-            WHERE 1=1";
+            WHERE 1=1
+            AND p.Sta_Tipo != 'Not Available'";
         
         $params = [];
         $types = "";
@@ -315,27 +316,43 @@ class DatabaseHelper {
     }
 
     // Admin: Update product stock
-    public function updateProduct($productId, $description, $price, $variants, $images = null) {
+    public function updateProduct($productId, $description, $price, $variants) {
         try {
             $this->db->begin_transaction();
-
+    
+            // Get current product price
+            $query = "SELECT Prezzo FROM PRODOTTO WHERE ID_Prodotto = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("i", $productId);
+            $stmt->execute();
+            $currentPrice = $stmt->get_result()->fetch_assoc()['Prezzo'];
+    
+            // If price changed, add entry to PRODOTTO_STORICO
+            if($currentPrice != $price) {
+                $historicQuery = "INSERT INTO PRODOTTO_STORICO (ID_Prodotto, Prezzo, Data_Modifica) 
+                                VALUES (?, ?, NOW())";
+                $historicStmt = $this->db->prepare($historicQuery);
+                $historicStmt->bind_param("id", $productId, $currentPrice);
+                $historicStmt->execute();
+            }
+    
             // Update product description and price
             $query = "UPDATE PRODOTTO SET Descrizione = ?, Prezzo = ? WHERE ID_Prodotto = ?";
             $stmt = $this->db->prepare($query);
             $stmt->bind_param("sdi", $description, $price, $productId);
             $stmt->execute();
-
+    
             // Update variants
             foreach($variants as $size => $colors) {
                 foreach($colors as $color => $quantity) {
                     $query = "UPDATE VARIANTE SET Quantita = ? 
-                            WHERE ID_Prodotto = ? AND Taglia = ? AND Colore = ?";
+                             WHERE ID_Prodotto = ? AND Taglia = ? AND Colore = ?";
                     $stmt = $this->db->prepare($query);
                     $stmt->bind_param("iids", $quantity, $productId, $size, $color);
                     $stmt->execute();
                 }
             }
-
+    
             $this->db->commit();
             return true;
         } catch (Exception $e) {
@@ -1436,6 +1453,9 @@ class DatabaseHelper {
             // Clear cart
             $this->db->query("DELETE FROM comprendere WHERE ID_Carrello = " . $cart['ID_Carrello']);
             $this->db->query("UPDATE CARRELLO SET Valore_Totale = 0 WHERE ID_Carrello = " . $cart['ID_Carrello']);
+
+            // Create Order Notification
+            $this->createOrderNotification($orderId, 'placed');
             
             $this->db->commit();
             return $orderId;

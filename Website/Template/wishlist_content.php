@@ -1,3 +1,10 @@
+<?php
+if(isset($_SESSION['error'])) {
+    echo "<input type='hidden' id='error-message' value='" . htmlspecialchars($_SESSION['error']) . "'>";
+    unset($_SESSION['error']);
+}
+?>
+
 <h2>My Wishlist</h2>
 <?php if(!empty($templateParams["wishlistItems"])): ?>
     <nav>
