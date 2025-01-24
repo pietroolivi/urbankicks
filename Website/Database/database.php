@@ -314,7 +314,7 @@ class DatabaseHelper {
         }
     }
 
-    // Update product stock
+    // Admin: Update product stock
     public function updateProduct($productId, $description, $price, $variants, $images = null) {
         try {
             $this->db->begin_transaction();
@@ -340,6 +340,33 @@ class DatabaseHelper {
             return true;
         } catch (Exception $e) {
             $this->db->rollback();
+            throw $e;
+        }
+    }
+
+    // Admin: Delete product
+    public function deleteProduct($productId) {
+        try {
+            $this->db->begin_transaction();
+    
+            // Delete all variants
+            $query = "UPDATE VARIANTE SET Quantita = 0 WHERE ID_Prodotto = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("i", $productId);
+            $stmt->execute();
+    
+            // Update product status to Not Available
+            $query = "UPDATE PRODOTTO SET Sta_Tipo = 'Not Available' WHERE ID_Prodotto = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("i", $productId);
+            $stmt->execute();
+    
+            $this->db->commit();
+            return true;
+    
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log("Error in deleteProduct: " . $e->getMessage());
             throw $e;
         }
     }
