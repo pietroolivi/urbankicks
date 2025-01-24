@@ -624,21 +624,12 @@ h2 {
   text-decoration: underline;
 }
 
-
-
-
-
-/* ************************** SVILUPPO SOSPESO A FAVORE DELLA PARTE DI LOGIN ******************************* */
-
-
-
-
-main > .filters-and-sorters {
+main > .filters-and-sorters-switches {
   width: 100%;
   text-align: center;
 }
 
-main > .filters-and-sorters > .category-switch {
+main > .filters-and-sorters-switches > .category-switch {
   width: 50%;
   text-align: center;
   background-color: #D9D9D9;
@@ -646,8 +637,7 @@ main > .filters-and-sorters > .category-switch {
   border-radius: 30px;
   overflow: hidden;
   position: relative;
-  padding: 1% 0;
-  margin: 2% 0;
+  padding: 3% 0;
   left: 23%;
   right: 23%;
 }
@@ -656,10 +646,10 @@ legend {
   display: none;
 }
 
-main > .filters-and-sorters > .category-switch > input[type="radio"],
-main > .filters-and-sorters > .category-switch > input[type="checkbox"],
-main > .filters-and-sorters > .sort-menu > input[type="checkbox"],
-main > .filters-and-sorters > .sort-sidebar > .sort-switch > input[type="radio"] {
+main > .filters-and-sorters-switches > .category-switch > input[type="radio"],
+main > .filters-and-sorters-switches > .category-switch > input[type="checkbox"],
+main > .filters-and-sorters-switches > .sort-menu > input[type="checkbox"],
+main > .sort-sidebar > .sort-switch > input[type="radio"] {
   display: none;
   cursor: pointer;
 }
@@ -668,14 +658,22 @@ label{
   cursor: pointer;
 }
 
+label[for="filter-icon"] {
+  display: none;
+}
+
 /*
-main > .filters-and-sorters > .category-switch {
+main > .filters-and-sorters-switches > .category-switch {
   position: relative;
   height: 50px;
   display:flex;
   justify-content: space-around;
 }
 */
+.category-switch {
+  display: flex;
+  align-items: center;
+}
 
 .category-switch > label {
   padding: 1rem;
@@ -723,22 +721,19 @@ main > .filters-and-sorters > .category-switch {
 .sort-menu {
   width: var(--bar-width);
   height: var(--bar-width);
-  transform: scale(1.1);
-  position: absolute; /*
+  transform: scale(1.1);/*
   top: calc(var(--hamburger-margin) * 5);
   right: calc(var(--hamburger-margin) * 3);*/
   cursor: pointer;
-  background: url("./Images/Icons/sort.svg") no-repeat;
-  /* background-size: cover; */
   z-index: 3;
 }
 
 .sort-sidebar {
   transition: translate var(--animation-timing); /* the transition is going to be on the "translate" property" */
-  translate: 0 100%;
+  translate: 0px 300%;
   width: 100%;
   background-color: var(--foreground);
-  color: var(--background);
+  color: black;
   text-align: center;
   position: fixed;
   min-width: 100%;
@@ -751,52 +746,182 @@ main > .filters-and-sorters > .category-switch {
   border: none;
 }
 
-.sort-menu:has(input:checked) + .sort-sidebar {
-  translate: 0;
-}
-
 .sort-sidebar > fieldset > label {
-  color: black;
   display: block;
   width: 100%;
-  padding: 2% 10%;
+  padding: 3% 10%;
 }
 
 .sort-sidebar > fieldset > input:checked + label {
   border: 1px solid black;
-
 }
 
 .filter-menu {
   width: var(--bar-width);
-  height: var(--bar-width);
-  transform: scale(1.1);
-  position: fixed; /*
+  height: var(--bar-width);/*
   top: calc(var(--hamburger-margin) * 5);
   right: calc(var(--hamburger-margin) * 3);*/
   cursor: pointer;
-  background: url("./Images/Icons/filter.svg") no-repeat;
   /* background-size: cover; */
   z-index: 1;
 }
 
 .filter-sidebar {
   transition: translate var(--animation-timing); /* the transition is going to be on the "translate" property" */
-  translate: 0 100%;
+  translate: -100%;
   background-color: var(--foreground);
-  color: var(--background);
-  max-width: 20rem;  /* no matter what size the screen is, it's always only taking up that space */ 
-  min-height: 100vh; /* that's going to fill 100% of the height */
+  color: black;
+  width: 70%;
+  min-height: 100%; /* that's going to fill 100% of the height */
   position: fixed;
   z-index: 3;
 }
 
-.filter-menu:has(input:checked) + .filter-sidebar {
-  translate: 0;
+.filter-sidebar h3 {
+  padding: 8% 5%;
+  font-weight: bold;
+  font-size: 1em;
 }
 
-/* ************************** SVILUPPO SOSPESO A FAVORE DELLA PARTE DI LOGIN ******************************* */
+.filter-sidebar > .brand-option > label {
+  display: block;
+  width: 100%;
+  padding: 5% 10%;
+}
 
+/* ******************************************************************************************** */
+/* Since the ‘border-collapse’ property is not valid outside the <table>, to avoid having two   */
+/* contiguous black edges between one brand and the next, resulting in the unpleasant visual    */ 
+/* effect of a doubled border, we only set the side ones from CSS while we add the third &      */
+/* fourth using JS after making sure that the input inside the subsequent <div> is not checked. */
+/* ******************************************************************************************** */
+.filter-sidebar > .brand-option > input:checked + label {
+  background-color: #f2f2f2;
+  /*border-left: 1px solid black;*/  /*comment because it does not produce a pleasing effect the contrast with the <h3> that has no border-left */
+  border-right: 1px solid black;
+  background-image: url("Images/Icons/check.svg");
+  background-repeat: no-repeat;
+  background-position: center right 5%;
+}
+
+.filter-sidebar > .brand-option > input {
+  display: none;
+}
+
+/* ************************************************************************************************ */
+/* We want to place the icon of each colour side by side and make them all fit on a single          */
+/* line, and bearing in mind that margins only collapse vertically and not horizontally, by setting */
+/* a width of 7% for the outermost container holding a single colour, we assign the largest integer */
+/* such that widthColor * nColors + nMargins * percMargin <= 100 and we obtain percMargin = 4.      */
+/* ************************************************************************************************ */
+.filter-sidebar > .color-option {
+  display: inline-block;
+  width: 7%;
+  margin: 0% 4%;
+}
+
+/* We fill the width of the container, whose class color-option */
+.filter-sidebar > .color-option > label:first-child {
+  display: inline-block;
+  width: 100%;
+}
+
+/* ********************************************************************** */
+/* We fill the width of the container that is the label, so that the      */
+/* size of the colour icons adapts to the size of the screen dynamically. */
+/* ********************************************************************** */
+.filter-sidebar > .color-option > label:first-child > img {
+  width: 100%;
+}
+
+/* ********************************************************************* */
+/* We model visual feedback so that the user understands which colours   */
+/* are currently selected by adding a border to the corresponding icons. */
+/* ********************************************************************* */
+.filter-sidebar > .color-option:not(:last-of-type) > label:first-child > input:checked + img {
+  border: 3px solid black;
+  border-radius: 50%;
+}
+
+.filter-sidebar > .size-options {
+  text-align: center;
+}
+
+.filter-sidebar > .size-options > h3 {
+  text-align: left;
+}
+
+.filter-sidebar > .size-options > .size-option {
+  display: inline-block;
+  text-align: center;
+  border: 1px solid black;
+  width: 15%;
+  padding: 3% 2%;
+  margin: 2%;
+}
+
+.filter-sidebar > .size-options > .size-option:has(input:checked) {
+  background-color: #f2f2f2;
+  border: 2px solid black;
+}
+
+.filter-sidebar > .size-options > .size-option > input {
+  display: none;
+}
+
+.filter-sidebar > .size-options > .size-option > label {
+  display: inline-block;
+  width: 100%;
+}
+
+.filter-sidebar > footer {
+  padding-top: 5%;
+  text-align: center;
+  font-family: inherit;
+}
+
+.filter-sidebar > footer > input {
+  border: 1px solid black;
+  padding: 3% 15%;
+  margin: 0 2%;
+}
+
+.filter-sidebar > footer > input:first-of-type {
+  background-color: white;
+  color: black;
+}
+
+.filter-sidebar > footer > input:last-of-type {
+  background-color: black;
+  color: white;
+}
+
+.filter-sidebar > footer > label {
+  display: none;
+}
+
+/* ************************************************************************************************************** */
+/* If we were to add a black border to the black circular icon we would not notice the difference, and even       */
+/* changing the colour of the border from black to white would not improve the situation as it would blend        */
+/* in with the background: we would therefore need a double border, the inner one white and the outer one black.  */
+/* We do not use the technique employed for the ‘Explore’ button on the start page that required the manipulation */
+/* of the pseudo-element ‘:before’, but we use the ‘border’-‘outline’ combination, setting the border to          */
+/* the same width as that of the other icons because the outline does not increase the size of the element.       */
+/* ************************************************************************************************************** */
+.filter-sidebar > .color-option:last-of-type > label:first-child > input:checked + img {
+  border: 3px solid white;
+  border-radius: 50%;
+  outline: 2px solid black;
+}
+
+.filter-sidebar > .color-option > label:last-child,
+.filter-sidebar > .color-option > label > input {
+  display: none;
+}
+
+#filter-icon {
+  display: none;
+}
 
 /* **************************************************************************************************** */
 /* The otp class is responsible for holding the OTP input fields. We've set its display property        */
@@ -994,8 +1119,6 @@ input:disabled[type='file'],#images-product-admin-edit {
 
   }
 }
-
-
 
 @media only screen and (min-width: 600px) {
 
