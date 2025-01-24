@@ -77,6 +77,18 @@ require_once("bootstrap.php");
                 <p>URBANKICKS</p>
             </aside>
             <script>
+                function disableScrollOnBG() {
+                    document.getElementsByClassName("universal-body")[0].style.overflow = "hidden";                    
+                    document.getElementsByClassName("universal-body")[0].style.height = "100vh";
+                    document.getElementsByClassName("universal-body")[0].style.width = "100%";
+                    document.getElementsByClassName("universal-body")[0].style.position = "fixed";
+                }
+
+                function enableScrollOnBG() {
+                    document.getElementsByClassName("universal-body")[0].style.overflow = "unset";
+                    document.getElementsByClassName("universal-body")[0].style.position = "unset";
+                }
+
                 function shiftHamburgerSidebar() {/*
                     if (event.type == "change") {
                         console.log("-------------------------------------------------");
@@ -99,29 +111,6 @@ require_once("bootstrap.php");
                     }
                 }
 
-                function shiftProfileSidebar() {
-                    if (event.currentTarget.checked) {
-                        document.getElementsByClassName("profile-sidebar")[0].style.translate = 0;
-                        disableScrollOnBG();
-                        document.getElementsByClassName("hamburger-sidebar")[0].style.overflow = "auto";
-                    } else {
-                        document.getElementsByClassName("profile-sidebar")[0].style.translate = "0 -300%";
-                        enableScrollOnBG();
-                    }
-                }
-
-                function disableScrollOnBG() {
-                    document.getElementsByClassName("universal-body")[0].style.overflow = "hidden";                    
-                    document.getElementsByClassName("universal-body")[0].style.height = "100vh";
-                    document.getElementsByClassName("universal-body")[0].style.width = "100%";
-                    document.getElementsByClassName("universal-body")[0].style.position = "fixed";
-                }
-
-                function enableScrollOnBG() {
-                    document.getElementsByClassName("universal-body")[0].style.overflow = "unset";
-                    document.getElementsByClassName("universal-body")[0].style.position = "unset";
-                }
-
                 /* ***************************************************************************************************** */
                 /* When we click on the hamburger-shaped label, we have the opposite problem, that is, we have two       */
                 /* triggers. First, the click is intercepted by the <body> listener which, if the intention was to show  */
@@ -137,15 +126,6 @@ require_once("bootstrap.php");
                     if (document.getElementsByClassName("hamburger-sidebar")[0].style.translate == "0px" && !myElementToCheckIfClicksAreInsideOf.contains(event.target)) {
                         document.getElementById("hamburger-icon").checked = false;
                         shiftHamburgerSidebar();
-                        event.preventDefault();
-                    }
-                });
-
-                document.body.addEventListener('click', function() {
-                    let myElementToCheckIfClicksAreInsideOf = document.getElementsByClassName("profile-sidebar")[0];
-                    if (document.getElementsByClassName("profile-sidebar")[0].style.translate == "0px" && !myElementToCheckIfClicksAreInsideOf.contains(event.target)) {
-                        document.getElementById("profile-icon").checked = false;
-                        shiftProfileSidebar();
                         event.preventDefault();
                     }
                 });
@@ -166,6 +146,27 @@ require_once("bootstrap.php");
                     </ul>
                 </nav>
             </aside>
+            <script>
+                function shiftProfileSidebar() {
+                    if (event.currentTarget.checked) {
+                        document.getElementsByClassName("profile-sidebar")[0].style.translate = 0;
+                        disableScrollOnBG();
+                        document.getElementsByClassName("hamburger-sidebar")[0].style.overflow = "auto";
+                    } else {
+                        document.getElementsByClassName("profile-sidebar")[0].style.translate = "0 -300%";
+                        enableScrollOnBG();
+                    }
+                }
+
+                document.body.addEventListener('click', function() {
+                    let myElementToCheckIfClicksAreInsideOf = document.getElementsByClassName("profile-sidebar")[0];
+                    if (document.getElementsByClassName("profile-sidebar")[0].style.translate == "0px" && !myElementToCheckIfClicksAreInsideOf.contains(event.target)) {
+                        document.getElementById("profile-icon").checked = false;
+                        shiftProfileSidebar();
+                        event.preventDefault();
+                    }
+                });
+            </script>
             <?php require($templateParams["name"]); ?>            
         </main>
         <div id="fill-height"></div>
