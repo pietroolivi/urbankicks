@@ -57,30 +57,34 @@ if (isset($_SESSION["user_email"])) {
                                 <?php endforeach; ?>
                             </select>
                                 </div>
-                                <div class="selection-div">
-                            <label for="color-selector-<?= $item['ID_Prodotto'] ?>">Color
-                            </label>
-                            <select id="color-selector-<?= $item['ID_Prodotto'] ?>" class="color-selector">
-                                <?php 
-                                $colors = $dbh->getProductColors($item['ID_Prodotto']);
-                                foreach ($colors as $colorData): 
-                                ?>
+                            <div class="selection-div">
+                                <label for="color-selector-<?= $item['ID_Prodotto'] ?>">Color
+                                </label>
+                                <select id="color-selector-<?= $item['ID_Prodotto'] ?>" class="color-selector">
+                                    <?php 
+                                    $colors = $dbh->getProductColors($item['ID_Prodotto']);
+                                    foreach ($colors as $colorData): 
+                                    ?>
                                     <option value="<?= htmlspecialchars($colorData['Colore']) ?>"
                                             <?= $colorData['Colore'] == $item['Colore'] ? 'selected="selected"' : '' ?>>
-                                        <?= htmlspecialchars($colorData['Colore']) ?>
+                                            <?= htmlspecialchars($colorData['Colore']) ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                                 </div>
                                 <div class="selection-div">
-                            <label for="quantity-selector-<?= $item['ID_Prodotto'] ?>">
-                            Quantity
-                            </label>
-                            <input id="quantity-selector-<?= $item['ID_Prodotto'] ?>" 
-                                type="number" 
-                                class="quantity-selector"
-                                value="<?= htmlspecialchars($item['Quantita']) ?>" 
-                                min="1" max="<?= $dbh->getProductMaxQuantity($item['ID_Prodotto'], $item['Colore'], $item['Taglia']) ?>"/>
+                                    <!-- <label for="quantity-selector-<?= $item['ID_Prodotto'] ?>">
+                                    Quantity
+                                    </label> -->
+                                    <div class="quantity-control">
+                                        <button type="button" class="quantity-btn increment">+</button>
+                                        <span class="quantity-display"><?= htmlspecialchars($item['Quantita']) ?></span>
+                                        <button type="button" class="quantity-btn decrement">-</button>
+                                    </div>
+                                    <input id="quantity-selector-<?= $item['ID_Prodotto'] ?>" 
+                                        type="hidden" 
+                                        name="quantity" 
+                                        value="<?= htmlspecialchars($item['Quantita']) ?>" />
                                 </div>
                             <p class="price">
                                 €<?= number_format($item['Prezzo'], 2) ?>
@@ -91,7 +95,7 @@ if (isset($_SESSION["user_email"])) {
                         </div>
                     </div>
                     <div class="action-buttons">
-                    <button class="move-to-wishlist">
+                        <button class="move-to-wishlist">
                             Move to wishlist <img src="CSS/Images/Icons/heart_empty.svg" alt="" style="display: inline  vertical-align: middle;">
                         </button>
                         <button class="remove-from-cart">
@@ -103,10 +107,12 @@ if (isset($_SESSION["user_email"])) {
         <?php endforeach; ?>
     </ul>
     <p><?= count($cartItems) ?> ITEMS</p>
+    <div class="last-cart-actions">
     <div class="cart-total-container">
         <span>Total:</span>
         <span class="cart-total">€<?= number_format($cartTotal, 2) ?></span>
     </div>
     <button class="continue-shopping" onclick="window.location.href='home.php'">Continue shopping</button>
     <button class="proceed-checkout" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
-<?php endif; ?>
+    </div>
+    <?php endif; ?>
