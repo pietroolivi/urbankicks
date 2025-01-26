@@ -321,11 +321,13 @@ class DatabaseHelper {
             $this->db->begin_transaction();
     
             // Get current product price
-            $query = "SELECT Prezzo FROM PRODOTTO WHERE ID_Prodotto = ?";
+            $query = "SELECT Prezzo, Sta_Tipo FROM PRODOTTO WHERE ID_Prodotto = ?";
             $stmt = $this->db->prepare($query);
             $stmt->bind_param("i", $productId);
             $stmt->execute();
-            $currentPrice = $stmt->get_result()->fetch_assoc()['Prezzo'];
+            $result = $stmt->get_result()->fetch_assoc();
+            $currentPrice = $result['Prezzo'];
+            $currentStatus = $result['Sta_Tipo'];
     
             // If price changed, add entry to PRODOTTO_STORICO
             if($currentPrice != $price) {
@@ -334,15 +336,23 @@ class DatabaseHelper {
                 $historicStmt = $this->db->prepare($historicQuery);
                 $historicStmt->bind_param("id", $productId, $currentPrice);
                 $historicStmt->execute();
+
+                // Create sale notification if price decreased
+                if($currentPrice > $price) {
+                    $discountAmount = $currentPrice - $price;
+                    $discountPercentage = round(($discountAmount / $currentPrice) * 100);
+                    $this->createSaleNotification($productId, $discountPercentage);
+                }
             }
     
             // Update product description and price
-            $query = "UPDATE PRODOTTO SET Descrizione = ?, Prezzo = ? WHERE ID_Prodotto = ?";
+            $query = "UPDATE PRODOTTO SET Descrizione = ?, Prezzo = ?, Sta_Tipo = 'Available' WHERE ID_Prodotto = ?";
             $stmt = $this->db->prepare($query);
             $stmt->bind_param("sdi", $description, $price, $productId);
             $stmt->execute();
     
             // Update variants
+            $hasStock = false;
             foreach($variants as $size => $colors) {
                 foreach($colors as $color => $quantity) {
                     $query = "UPDATE VARIANTE SET Quantita = ? 
@@ -350,7 +360,16 @@ class DatabaseHelper {
                     $stmt = $this->db->prepare($query);
                     $stmt->bind_param("iids", $quantity, $productId, $size, $color);
                     $stmt->execute();
+
+                    if ($quantity > 0) {
+                        $hasStock = true;
+                    }
                 }
+            }
+
+            // Create stock notification if product was Not Available and now has stock
+            if ($currentStatus === 'Not Available' && $hasStock) {
+                $this->createStockNotification($productId);
             }
     
             $this->db->commit();
@@ -384,6 +403,88 @@ class DatabaseHelper {
         } catch (Exception $e) {
             $this->db->rollback();
             error_log("Error in deleteProduct: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    // Admin: Add new product with variants
+    public function addProductWithVariants($brand, $model, $genres, $category, $description, $price, $variants) {
+        try {
+            $this->db->begin_transaction();
+            $productIds = [];
+    
+            foreach ($genres as $genre) {
+                // Check if product exists
+                $checkQuery = "SELECT ID_Prodotto, Prezzo 
+                             FROM PRODOTTO 
+                             WHERE Nome = ? AND Marca = ? AND Genere = ?";
+                $checkStmt = $this->db->prepare($checkQuery);
+                $checkStmt->bind_param("sss", $model, $brand, ucfirst($genre));
+                $checkStmt->execute();
+                $result = $checkStmt->get_result();
+    
+                if ($result->num_rows > 0) {
+                    // Product exists - update if price different
+                    $row = $result->fetch_assoc();
+                    $productId = $row['ID_Prodotto'];
+                    $currentPrice = $row['Prezzo'];
+    
+                    if ($currentPrice != $price) {
+                        // Update price
+                        $updateQuery = "UPDATE PRODOTTO 
+                                      SET Prezzo = ?, Sta_Tipo = 'Available' 
+                                      WHERE ID_Prodotto = ?";
+                        $updateStmt = $this->db->prepare($updateQuery);
+                        $updateStmt->bind_param("di", $price, $productId);
+                        $updateStmt->execute();
+    
+                        // Log price history
+                        $historyQuery = "INSERT INTO PRODOTTO_STORICO 
+                                       (ID_Prodotto, Prezzo, Data_Modifica) 
+                                       VALUES (?, ?, NOW())";
+                        $historyStmt = $this->db->prepare($historyQuery);
+                        $historyStmt->bind_param("id", $productId, $currentPrice);
+                        $historyStmt->execute();
+                    }
+                    $this->createStockNotification($productId);
+                } else {
+                    // Create new product
+                    $insertQuery = "INSERT INTO PRODOTTO 
+                                  (Nome, Descrizione, Marca, Tipo, Genere, 
+                                   Prezzo, Data_Aggiunta, Sta_Tipo) 
+                                  VALUES (?, ?, ?, ?, ?, ?, NOW(), 'Available')";
+                    $insertStmt = $this->db->prepare($insertQuery);
+                    $insertStmt->bind_param("sssssd", 
+                        $model, $description, $brand, $category, ucfirst($genre), $price
+                    );
+                    $insertStmt->execute();
+                    $productId = $this->db->insert_id;
+                }
+    
+                $productIds[] = $productId;
+    
+                // Add/Update variants
+                $variantQuery = "INSERT INTO VARIANTE (ID_Prodotto, Colore, Taglia, Quantita) 
+                               VALUES (?, ?, ?, ?) 
+                               ON DUPLICATE KEY UPDATE Quantita = VALUES(Quantita)";
+                $variantStmt = $this->db->prepare($variantQuery);
+    
+                foreach ($variants as $variant) {
+                    $variantStmt->bind_param("isdi", 
+                        $productId,
+                        $variant['color'],
+                        $variant['size'], 
+                        $variant['quantity']
+                    );
+                    $variantStmt->execute();
+                }
+            }
+    
+            $this->db->commit();
+            return $productIds;
+    
+        } catch (Exception $e) {
+            $this->db->rollback();
             throw $e;
         }
     }
@@ -436,7 +537,7 @@ class DatabaseHelper {
                 po.Colore as color,
                 po.Taglia as size,
                 po.Quantita as quantity,
-                CONCAT(p.ID_Prodotto, '_', p.Genere, '1') as image
+                CONCAT(p.Nome, '_', '1') as image
             FROM ORDINE o
             LEFT JOIN Tracking_Spedizione ts ON o.ID_Ordine = ts.ID_Ordine
             JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine

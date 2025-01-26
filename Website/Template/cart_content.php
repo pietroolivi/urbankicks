@@ -39,7 +39,7 @@ if (isset($_SESSION["user_email"])) {
                     <h3><?= htmlspecialchars($item['Nome']) ?></h3>
                     <div class="product-details">
                         <a class="product-link">
-                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($item["ID_Prodotto"]. "_" . $item["Genere"] . "1"); ?>.webp" 
+                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($item["Nome"]. "_" . "1"); ?>.webp" 
                             alt="<?php echo htmlspecialchars($item["Nome"]); ?>"> </a>
                         <div class="item-info">
                             <div class="selection-div">

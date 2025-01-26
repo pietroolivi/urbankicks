@@ -18,7 +18,7 @@
                             <div class="order-items">
                                 <?php foreach($order["products"] as $product): ?>
                                     <div class="order-item">
-                                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . "1"); ?>.webp" 
+                                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1"); ?>.webp" 
                                         alt="<?php echo htmlspecialchars($product['Nome']); ?>">
                                         <div class="item-info">
                                             <h4><?php echo $product["Nome"]; ?></h4>

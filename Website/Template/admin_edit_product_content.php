@@ -62,11 +62,11 @@
     <p id="error-images-product-admin">Please, upload exactly 4 pictures.</p>
     <div class="images-product-to-edit">
         <?php
-        $productId = $templateParams["product"]["product"]["ID_Prodotto"];
+        $name = $templateParams["product"]["product"]["Nome"];
         $gender = strtolower($templateParams["product"]["product"]["Genere"]);
         for($i = 1; $i <= 4; $i++):
         ?>
-            <img src="CSS/Images/Products/<?php echo $productId . '_' . $gender . $i; ?>.webp" alt="">
+            <img src="CSS/Images/Products/<?php echo $name . '_' . $i; ?>.webp" alt="">
         <?php endfor; ?>
     </div>
     <script>
@@ -212,7 +212,7 @@
         document.getElementsByClassName("images-product-to-edit")[0].innerHTML = `
         <?php
         for($i = 1; $i <= 4; $i++) {
-            echo '<img src="CSS/Images/Products/' . $productId . '_' . $gender . $i . '.webp" alt="">';
+            echo '<img src="CSS/Images/Products/' . $name . '_' . $i . '.webp" alt="">';
         }
         ?>`;
         document.getElementById('error-images-product-admin').style.display='none';

@@ -3,7 +3,7 @@
     <h2>Published Products</h2>
 </header>
 
-<a href="admin_add_product.html">Add New Product</a>
+<a href="admin_add_product.php">Add New Product</a>
 
 <form>
     <div class="search">
@@ -17,7 +17,7 @@
     <article class="product-admin">
         <?php 
             // First image is used as thumbnail
-            $image = "CSS/Images/Products/" . $product["ID_Prodotto"] . "_" . strtolower($product["Genere"]) . "1.webp";
+            $image = "CSS/Images/Products/" . $product["Nome"] . "_" . "1.webp";
             
             // Stock status determination
             $totalStock = 0;
@@ -35,7 +35,7 @@
         <img src="<?php echo $image; ?>" alt=""/>
         <div class="product-textual-info-admin">
             <h3>#<?php echo $product["ID_Prodotto"]; ?></h3>
-            <p><?php echo $product["Marca"] . " " . $product["Nome"]; ?></p>
+            <p><?php echo $product["Marca"] . " " . $product["Nome"] . " - " . $product["Genere"]; ?></p>
         </div>
         <img src="CSS/Images/Icons/<?php echo $stockStatus; ?>.svg" alt="<?php echo ucfirst(str_replace('_', ' ', $stockStatus)); ?>"/>
         <a href="admin_edit_product.php?id=<?php echo $product["ID_Prodotto"]; ?>">

@@ -12,7 +12,7 @@ if(isset($_SESSION['error'])) {
         <<?php foreach($templateParams["wishlistItems"] as $item):?>
         <li class="product-card" data-product-id="<?php echo $item['ID_Prodotto'];?>">
         <a class="product-link" href="product.php?id=<?php echo htmlspecialchars($item["ID_Prodotto"]);?>">
-            <img src="CSS/Images/Products/<?php echo htmlspecialchars($item["ID_Prodotto"]."_".$item["Genere"]."1");?>.webp" alt="<?php echo htmlspecialchars($item["Nome"]);?>">
+            <img src="CSS/Images/Products/<?php echo htmlspecialchars($item["Nome"]."_"."1");?>.webp" alt="<?php echo htmlspecialchars($item["Nome"]);?>">
             <label class="wishlist-container">
             <input type="checkbox" class="wishlist-checkbox" hidden>
             <img id="heart-icon-<?php echo $item['ID_Prodotto'];?>" 

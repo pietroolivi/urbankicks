@@ -61,11 +61,11 @@
     <input type="file" id="images-product-admin" accept=".webp" disabled>
     <div class="images-product-to-delete">
         <?php
-        $productId = $templateParams["product"]["product"]["ID_Prodotto"];
+        $name = $templateParams["product"]["product"]["Nome"];
         $gender = strtolower($templateParams["product"]["product"]["Genere"]);
         for($i = 1; $i <= 4; $i++):
         ?>
-            <img src="CSS/Images/Products/<?php echo $productId . '_' . $gender . $i; ?>.webp" alt="">
+            <img src="CSS/Images/Products/<?php echo $name . '_' . $i; ?>.webp" alt="">
         <?php endfor; ?>
     </div>
     
