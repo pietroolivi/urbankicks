@@ -16,6 +16,9 @@ $brand = isset($_GET['brand']) ? $_GET['brand'] : "";
 // Get Genre and Type from URL parameters
 $genre = isset($_GET['genre']) ? $_GET['genre'] : "";
 $type = isset($_GET['type']) ? $_GET['type'] : "";
+
+// get colors and sizes from URL parameters AUTHOR: SIMONE
+
 ?>
 
 <!-- Filter Menu -->
@@ -38,7 +41,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         <h3>SIZE</h3>
         <?php for ($i = 36; $i <= 47; $i++) { ?>
             <div class="size-option">
-                <input id="filter-sidebar-size<?php echo $i  ?>" type="checkbox">
+                <input id="filter-sidebar-size<?php echo $i  ?>" type="checkbox" value="<?php echo $i; ?>" name="sizes[]">
                 <label for="filter-sidebar-size<?php echo $i  ?>"><?php echo $i ?></label>
             </div>
         <?php } ?>
@@ -46,7 +49,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
 
     <h3>COLOR</h3>
     <?php
-    $colors = ["blue", "purple", "red", "green", "white", "black"];
+    $colors = ["Blue", "Purple", "Red", "Green", "White", "Black"];
     foreach($colors as $color): ?>
         <div class="color-option">
             <label><input type="checkbox" id="filter-sidebar-<?php echo $color; ?>" name="colors[]" value="<?php echo $color; ?>"><img src="CSS/Images/Icons/<?php echo $color; ?>.svg" alt=""></label>

@@ -1,17 +1,44 @@
 class ProductManager {
+
+    /** You have three main
+     * structures:
+     *  filters (the object that stores all the filters and the values currently filtering for each filter)
+     * 
+     *  allProducts (the array that stores all the products, each product has also a field variants
+     *          that is an array of all the variants of that product, each variant has a field color and size)
+     * 
+     *  filteredProducts (the array with all the current products shown in the page)
+     * 
+     * you have three main functions for the listeners:
+     * 
+     *  setupEventListeners (that add the change listeners in all the checkboxes in the html of the filters 
+     *      YOU NEED TO ADD THE LISTENER TO THE PRICE FILTER)
+     *  handleFilterChange (this is for filters that apply multible checkboxes like designers, colors and sizes)
+     *  applyFilters (this is the main function that applies the filters and populate the filteredProducts array)
+     */
+
+
+
     constructor() {
         const rawProducts = JSON.parse(document.getElementById('products-container').dataset.products);
 
         this.wishlistItems = new Set();
         
-        // Initialize filters from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
+
+        //Here you have all the filters that you can use on the home
+        //colors, sizes and brand are arrays in this structure.
         this.filters = {
             category: urlParams.get('category') || 'popular',
             brand: urlParams.get('brand') ? urlParams.get('brand').split(',') : [],
             genre: urlParams.get('genre') || '',
             type: urlParams.get('type') || '',
-            sort: urlParams.get('sort') || 'price-low-to-high'
+            sort: urlParams.get('sort') || 'price-low-to-high',
+            // Variant data from the filters (colors and sizes)
+            colors: urlParams.get('colors') ? urlParams.get('colors').split(',') : [],
+            sizes: urlParams.get('sizes') ? urlParams.get('sizes').split(',').map(Number) : [],
+            maxPrice: urlParams.get('maxPrice') || 0,
+            minPrice: urlParams.get('minPrice') || 0
         };
 
         this.initializeProducts(rawProducts);
@@ -31,14 +58,10 @@ class ProductManager {
             const data = await response.json();
     
             if (data.success) {
-                // Popola i tuoi this.wishlistItems con gli ID dei prodotti
                 // data.wishlistItems è un array di prodotti (con le colonne di PRODOTTO)
                 const wishlistIds = data.wishlistItems.map(item => item.ID_Prodotto.toString());
                 this.wishlistItems = new Set(wishlistIds);
                 console.log(this.wishlistItems.size);
-                // Eventualmente aggiorna il rendering dei prodotti 
-                // per spuntare i checkbox corrispondenti
-               // this.updateWishlistCheckboxes();
 
             } else {
                 console.warn('Could not load wishlist items:', data.message);
@@ -83,7 +106,7 @@ class ProductManager {
             // Add variant information
             groupedProducts.get(modelKey).variants.push({
                 id: product.ID_Prodotto,
-                size: product.Taglia,
+                size: parseInt(product.Taglia),
                 color: product.Colore,
                 price: parseFloat(product.Prezzo),
                 state: product.Sta_Tipo
@@ -101,23 +124,49 @@ class ProductManager {
             input.checked = input.value === this.filters.category;
             input.addEventListener('change', () => {
                 this.filters.category = input.value;
-                this.applyFilters();
+              //  this.applyFilters();
             });
         });
 
         // Designer filters
         document.querySelectorAll('input[name="designers[]"]').forEach(input => {
             input.checked = this.filters.brand.includes(input.value);
-          //  console.log(input.value+" check nome del brand nel filtro");
-            input.addEventListener('change', () => this.handleFilterChange('designers'));
+            console.log(input.value+" check nome del brand nel filtro");
+            input.addEventListener('change', ()=>this.handleFilterChange('designers'));
+
         });
+
+        document.querySelectorAll('input[name="colors[]"]').forEach(input => {
+            input.checked = this.filters.colors.includes(input.value);
+            console.log(input.value+" check del colore nel filtro");
+            input.addEventListener('change', ()=>this.handleFilterChange('colors'));
+
+        });
+        document.querySelectorAll('input[name="sizes[]"]').forEach(input => {
+            input.checked = this.filters.sizes.includes(input.value);
+            console.log(input.value+" check della taglia nel filtro");
+            input.addEventListener('change', ()=>this.handleFilterChange('sizes'));
+
+        });
+
+//----------------------
+// --------------------
+//                    |
+//                    |
+//                    V
+        // PRICE FILTER LISTENER, you need to add to the filter class!!
+        document.querySelectorAll('input[name="price"]').addEventListener('change',()=>{
+            this.filters.maxPrice=document.getElementById('max-price').value;
+            this.filters.minPrice=document.getElementById('min-price').value;
+        });
+
 
         // Sort options
         document.querySelectorAll('input[name="sort"]').forEach(input => {
             input.checked = input.value === this.filters.sort;
             input.addEventListener('change', () => {
                 this.filters.sort = input.value;
-                this.applyFilters();
+             //   this.applyFilters();
             });
         });
 
@@ -138,6 +187,10 @@ class ProductManager {
                 type: urlParams.get('type') || '',
                 sort: urlParams.get('sort') || 'price-low-to-high'
             };
+        //    this.applyFilters();
+        });
+        const doneButton=document.getElementById("filter-sidebar-done");
+        doneButton.addEventListener('click',()=>{
             this.applyFilters();
         });
     }
@@ -148,15 +201,30 @@ class ProductManager {
                 document.querySelectorAll('input[name="designers[]"]:checked')
             ).map(cb => cb.value);
         }
-        this.applyFilters();
+        if (filterType === 'colors') {
+            this.filters.colors = Array.from(
+                document.querySelectorAll('input[name="colors[]"]:checked')
+            ).map(cb => cb.value);
+        }
+        if (filterType === 'sizes') {
+            this.filters.sizes = Array.from(
+                document.querySelectorAll('input[name="sizes[]"]:checked')
+            ).map(cb => Number(cb.value));
+        }
     }
 
     applyFilters() {
+        console.log("filtri applicati");
         this.filteredProducts = this.allProducts.filter(product => {
-            // Check if any variant matches the filters
-            const hasMatchingVariant = product.variants.some(variant => {
-                // Add variant-specific filters here if needed
-                return true; // Default to true if no variant-specific filters
+            // Check if any variant matches the filters (colors and sizes)
+            //first checks if it's all empty
+            const hasMatchingVariant = !this.filters.colors.length && !this.filters.sizes.length ? true :
+            product.variants.some(variant => {
+                const matchesColor = !this.filters.colors.length || 
+                                   this.filters.colors.includes(variant.color);
+                const matchesSize = !this.filters.sizes.length || 
+                                  this.filters.sizes.includes(variant.size);
+                return matchesColor && matchesSize;
             });
 
             // Brand filter
