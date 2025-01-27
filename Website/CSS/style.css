@@ -1474,6 +1474,10 @@ min-width: 100%;
 }
 
 
+.lateral-container#products-container .product-card:hover {
+  transform: none;
+}
+
 .lateral-container#products-container .product-card {
   display: inline-block;
   /*flex-direction: column;*/
@@ -1817,16 +1821,17 @@ Hide default number input spinner buttons */
 }
 
 /********************************************************************
-     **STYLE CODE FOR PRODUCTS IN TRACKING* 
+     **STYLE CODE FOR TRACKING AND FOR PRODUCTS IN ORDERS* 
      AUTHOR:SIMONE
 **********************************************************************/
 
-.order-info-tracking{
+.order-info-tracking, .order-lifestate{
   margin-left:5%;
   width:100;
+  display: block;
 }
-
-.order-info-tracking h3{
+/*also for orders_content.php*/
+.order-info-tracking h3, .order-lifestate h3{
   font-size: large;
 }
 
@@ -1995,7 +2000,7 @@ text-align: left;
 }
 
 @media (max-width: 2196px) {
-  .order-info-tracking h3{
+  .order-info-tracking h3, .order-lifestate h3{
     font-size:x-large;
   }
   .status-info em {
@@ -2044,7 +2049,7 @@ text-align: left;
 
 
 @media (max-width: 1024px) {
-  .order-info-tracking h3{
+  .order-info-tracking h3, .order-lifestate h3{
     font-size: larger;
   }
 
@@ -2081,7 +2086,7 @@ text-align: left;
 }
 
 @media (max-width: 600px) {
-  .order-info-tracking h3{
+  .order-info-tracking h3, .order-lifestate h3{
     font-size: large;
   }
 
@@ -2114,4 +2119,76 @@ text-align: left;
     font-size: 1.1rem;
     width:200px;
   }
+}
+
+
+/********************************************************************
+     **STYLE CODE FOR PRODUCTS IN TRACKING* 
+     AUTHOR:SIMONE
+**********************************************************************/
+
+.orders-container{
+  width: 100%;
+  height:100%;
+  box-sizing: border-box;
+  margin-left: 10%;
+  margin-top:2%;
+  vertical-align: top;
+}
+.order-card{
+  width: 450px;
+  height:100%;
+  display: block;
+}
+
+.order-card #products-container.lateral-container{ 
+  margin-left: 0%; 
+}
+
+.order-card table {
+  width: 100%;
+  border-collapse: collapse; /* In modo che i bordi siano “uniti” */
+  border: 1px solid #000;    /* Bordi esterni neri */
+  margin-bottom: 16px;       /* Spazio sotto la tabella, se serve */
+}
+
+.order-card table tr,
+.order-card table td {
+  border: 1px solid #000;    /* Bordi interni neri */
+  padding: 8px;              /* Un po’ di spazio all’interno delle celle */
+}
+
+/* Prima riga “header” più scura */
+.order-card table tr.order-header td {
+  background-color: #ccc;    /* Scegli la tonalità di grigio desiderata */
+  font-weight: bold;         /* Testo in grassetto, se vuoi evidenziarlo */
+}
+/*
+.order-card #products-container.lateral-container .product-card{
+  display: block;
+}*/
+
+.order-card table tr.order-header td:nth-of-type(3) a{
+  color: #134F9C;
+}
+
+
+@media (max-width: 2196px) {
+  .order-card{
+    width: 650px;
+  }
+}
+
+
+@media (max-width: 1024px) {
+  .order-card{
+    width: 530px;
+  }
+}
+
+@media (max-width: 600px) {
+  .order-card{
+    width: 420px;
+  }
+
 }

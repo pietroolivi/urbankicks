@@ -90,7 +90,7 @@ if(!isset($templateParams["tracking"])): ?>
                 <?php
                 //we create a map of states for easy access
                 $trackingMap = [];
-                $allStates = ['placed', 'In progress', 'Shipped', 'Delivered'];
+                $allStates = ['Placed', 'In progress', 'Shipped', 'Delivered'];
                 foreach($trackingStates as $st) {
                     $trackingMap[$st['status']] = $st; 
                 }
@@ -100,7 +100,7 @@ if(!isset($templateParams["tracking"])): ?>
                     $state = isset($trackingMap[$statusKey]) ? $trackingMap[$statusKey] : null;
 
 
-                    if($statusKey === 'placed') {
+                    if($statusKey === 'Placed') {
                         $isCompleted = true;
                         $actualDate = $orderInfo['order_date']; 
                     } else {
