@@ -1,11 +1,16 @@
 <?php
-if(!isset($templateParams["productData"])) {
-    header("Location: home.php");
-    exit();
-}
 $product = $templateParams["productData"]["product"];
 $variants = $templateParams["productData"]["variants"];
 $reviews = $templateParams["productData"]["reviews"];
+
+$hasAvailableVariants = false; // Controlla se esiste almeno una variante disponibile
+foreach ($variants as $variant) {
+    if ($variant['Quantita'] > 0) {
+        $hasAvailableVariants = true;
+        break;
+    }
+}
+
 ?>
 
 <h4><a href="#"><?php echo htmlspecialchars($product['Marca']); ?></a></h4>
@@ -16,8 +21,8 @@ $reviews = $templateParams["productData"]["reviews"];
     $avgRating = array_sum(array_column($reviews, 'Punteggio')) / count($reviews);
 ?>
     <p>(<?php echo count($reviews); ?>)</p>
-    <span style="--rating:<?php echo $avgRating; ?>"></span>
-    <p><a href="#reviews"><?php echo number_format($avgRating, 1); ?></a></p>
+    <span class="star-reviews" style="--rating:<?php echo $avgRating; ?>"></span>
+    <p><a class="number-reviews" href="#reviews"><?php echo number_format($avgRating, 1); ?></a></p>
 <?php endif; ?>
 
 <button id="share-page" onclick="linkToClipboard()">SHARE</button>
@@ -27,7 +32,7 @@ $reviews = $templateParams["productData"]["reviews"];
         <ul>
             <?php for($i = 1; $i <= 4; $i++): ?>
                 <li id="slide<?php echo $i; ?>">
-                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . $i); ?>.webp" 
+                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
                             alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>">
                 </li>
             <?php endfor; ?>
@@ -36,7 +41,7 @@ $reviews = $templateParams["productData"]["reviews"];
     <div class="slides">
         <?php for($i = 1; $i <= 4; $i++): ?>
             <a href="#slide<?php echo $i; ?>">
-                <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . $i); ?>.webp" 
+                <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
                         alt="<?php echo htmlspecialchars($product['Nome']); ?> - Thumbnail <?php echo $i; ?>">
             </a>
         <?php endfor; ?>
@@ -48,21 +53,32 @@ $reviews = $templateParams["productData"]["reviews"];
     <p><?php echo htmlspecialchars($product['Descrizione']); ?></p>
 </section>
 
+<?php if (!$hasAvailableVariants): // Mostra il messaggio se non ci sono varianti disponibili ?>
+    <section id="product-unavailable">
+        <h3>Product not currently available</h3>
+        <button id="wishlist-unavailable" data-product-id="<?php echo htmlspecialchars($product['ID_Prodotto']); ?>"
+        data-in-wishlist="<?php echo $templateParams["productData"]["inWishlist"] ? 'true' : 'false'; ?>">Add to wishlist to track it</button>
+    </section>
+<?php endif; ?>
+
+<?php if ($hasAvailableVariants): ?>
 <section id="size">
     <h3>Size</h3>
     <?php 
     $availableSizes = array_unique(array_column($variants, 'Taglia'));
+    $anySizeAvailable = false; // Variabile per tracciare se esiste almeno una taglia disponibile
     sort($availableSizes);
     foreach($availableSizes as $size): 
         $available = false;
         foreach($variants as $variant) {
             if($variant['Taglia'] == $size && $variant['Quantita'] > 0) {
                 $available = true;
+                $anySizeAvailable = true; // Almeno una taglia è disponibile
                 break;
             }
         }
     ?>
-        <label for="size<?php echo $size; ?>" 
+       <label for="size<?php echo $size; ?>" 
                class="<?php echo !$available ? 'unavailable' : ''; ?>">
             <?php echo $size; ?>
         </label>
@@ -72,6 +88,10 @@ $reviews = $templateParams["productData"]["reviews"];
                value="<?php echo $size; ?>"
                <?php echo !$available ? 'disabled' : ''; ?>>
     <?php endforeach; ?>
+    <?php if (!$anySizeAvailable): // Aggiungi un avviso se nessuna taglia è disponibile ?>
+        <p class="no-sizes-available">No sizes available</p>
+    <?php endif; ?>
+    
     <p id="size-error"></p>
 </section>
 
@@ -79,14 +99,31 @@ $reviews = $templateParams["productData"]["reviews"];
     <h3>Color</h3>
     <?php 
     $availableColors = array_unique(array_column($variants, 'Colore'));
-    foreach($availableColors as $color): ?>
-        <label for="<?php echo $color; ?>"><?php echo htmlspecialchars($color); ?></label>
-        <input id="<?php echo $color; ?>" 
+    $anyColorAvailable = false; // Variabile per tracciare se esiste almeno un colore disponibile
+    foreach($availableColors as $color): 
+        $available = false;
+        foreach($variants as $variant) {
+            if($variant['Colore'] == $color && $variant['Quantita'] > 0) {
+                $available = true;
+                $anyColorAvailable = true; // Almeno un colore è disponibile
+                break;
+            }
+        }
+    ?>
+        <label for="color<?php echo $color; ?>" 
+               class="<?php echo !$available ? 'unavailable' : ''; ?>">
+            <?php echo $color; ?>
+        </label>
+        <input id="color<?php echo $color; ?>" 
                type="radio" 
                name="color" 
-               value="<?php echo $color; ?>">
+               value="<?php echo $color; ?>"
+               <?php echo !$available ? 'disabled' : ''; ?>>
     <?php endforeach; ?>
-    <p id="color-error"></p>
+    
+    <?php if (!$anyColorAvailable): // Aggiungi un avviso se nessun colore è disponibile ?>
+        <p class="no-colors-available">No colors available</p>
+    <?php endif; ?>
 </section>
 <p id="wishlist-cart-error"></p>
 <button id="addToCartButton" data-product-id="<?php echo htmlspecialchars($product['ID_Prodotto']); ?>">
@@ -99,7 +136,7 @@ $reviews = $templateParams["productData"]["reviews"];
     <?php 
     echo $templateParams["productData"]["inWishlist"] ? 'Remove from' : 'Add to'; ?> wishlist
 </button>
-
+<?php endif; ?>
 <aside id="reviews">
     <h3>Reviews</h3>
     <p id="review-error"></p>
@@ -119,6 +156,19 @@ $reviews = $templateParams["productData"]["reviews"];
         </article>
     <?php endforeach; ?>
 </aside>
+
+
+
+<template id="review-template">
+        <article class="review">
+            <!-- Imposteremo la variabile --rating con JS -->
+            <span class="review-rating" style="--rating:0"></span>
+            <p class="review-description"></p>
+            <small class="review-details"></small>
+        </article>
+ </template>
+
+
 
 <script>
 function linkToClipboard() {

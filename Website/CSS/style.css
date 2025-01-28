@@ -285,7 +285,8 @@ aside p {
 
 label[for="hamburger-icon"],
 label[for="profile-icon"],
-label[for="sort-icon"] {
+label[for="sort-icon"],
+label[for="filter-icon"] {
   display: none;
 }
 
@@ -1115,13 +1116,14 @@ textarea {
   border: 2px solid black;
 }
 
-.product-details img {
+/*bad visualization in cart*/
+/*.product-details img {
   width: 60%;
-}
-
+}*/
+/*
 .product-details .item-info label {
   display: none;
-}
+}*/
 
 #shipping-form legend {
   display: unset;
@@ -1288,5 +1290,700 @@ input:disabled[type='file'],#images-product-admin-edit {
     font-size: 7em;
   }
 
+  
+}
 
+/***********************************************************
+**STYLE CODE FOR PRODUCTS ELEMENTS IN HOME AND IN WISHLIST**
+**AUTHOR:SIMONE
+/***********************************************************/
+                              
+#products-container{ 
+  text-align: center; /* Centra gli elementi inline-block */
+  vertical-align: top; /* Mantiene l'allineamento verticale */
+}
+
+
+/* Stile generale per il contenitore dei prodotti */
+.product-card {
+  display: inline-block;
+  /*flex-direction: column;*/
+  align-items: center;
+  /*justify-content: flex-start;*/
+  background: #efefef;
+  border-radius: 30px;
+  padding: 16px;
+  margin: 16px;
+  transition: transform 0.2s ease;
+  overflow: hidden;
+  max-width: 400px; /* Limita la larghezza */
+}
+
+
+
+
+.product-card:hover {
+  transform: scale(1.05);
+}
+
+/* Image container */
+.product-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F6F6F6;
+  /*border-radius: 8px;*/
+  border-radius: 30%;
+  padding: 0px 16px;
+  overflow: hidden;
+  width: 100%; 
+  aspect-ratio: 1.3; /* trying to mantain rectangular proportion */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+.wishlist-container {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 15%; /* O max-width: 10%; dipende dal tuo design */
+  height: 15%;
+  object-fit: contain;
+}
+
+.wishlist-container img {
+  width: 100%;
+  height: auto;
+}
+
+
+.product-link img {
+  max-width: 90%;
+  height: auto;
+  object-fit: contain; /*image does not exits from borders*/
+}
+
+/* single product name */
+.product-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 8px 0 4px;
+  text-align: left; 
+  color: #333;
+  width: 100%; 
+}
+
+.product-price {
+  font-size: 0.9rem;
+  color: #e63946;
+  margin: 4px 0;
+  text-align: left; 
+  width: 100%; 
+}
+
+
+.product-price span {
+  text-decoration: line-through;
+  color: gray;
+  font-size: 0.8rem;
+}
+
+img.wishlist-checkbox{
+min-width: 100%;
+
+}
+
+
+.wishlist-text {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.product-name{
+  margin-left: 8px;
+}
+
+.product-price{
+  margin-left: 8px;
+}
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 0 auto;
+  padding: 16px;
+  max-width: 1200px;
+}
+
+/* Media Query 2560*/
+@media (min-width: 2560px) {
+
+  .product-card {
+      padding: 22px 26px;
+      margin: 20px;
+      max-width: 400px;
+  }
+
+  .product-name {
+    margin-left: 26px;
+      font-size: 1.5rem;
+  }
+
+  .product-price {
+    margin-left: 26px;
+      font-size: 1.2rem;
+  }
+
+}
+
+
+/*Media Query 1920*/
+@media (max-width: 1920px) {
+
+  .product-card {
+      padding: 20px 22px;
+      margin: 20px;
+      max-width: 350px;
+  }
+
+  .product-name {
+      margin-left: 22px;
+      font-size: 1.3rem;
+  }
+
+  .product-price {
+    margin-left: 22px;
+      font-size: 1rem;
+  }
+
+}
+/*Media Query 1024*/
+@media (max-width: 1024px) {
+
+  .product-card {
+      padding: 16px 20px;
+      margin: 12px;
+      max-width: 280px;
+  }
+
+  .product-name {
+    margin-left: 20px;
+      font-size: 1.1rem;
+  }
+
+  .product-price {
+    margin-left: 20px;
+      font-size: 0.9rem;
+  }
+
+}
+/*Media Query 600*/
+@media (max-width: 600px) {
+
+  .product-card {
+      padding: 12px 14px;
+      margin: 8px;
+      max-width: 240px;
+  }
+
+  .product-name {
+    margin-left: 18px;
+      font-size: 1rem;
+  }
+
+  .product-price {
+    margin-left: 18px;
+      font-size: 0.9rem;
+  }
+
+}
+
+
+
+/********************************************************************
+     **STYLE CODE FOR PRODUCTS ELEMENTS IN CART** 
+     AUTHOR:SIMONE
+**********************************************************************/
+/*
+ - product-details          (THE CONTAINER FOR THE IMAGE AND THE NAME)
+    - product-link          (THE CONTAINER FOR THE IMAGE)
+    - item-info             (THE CONTAINER FOR PRICE AND SELECTORS OF SIZE, COLOR AND QUANTITY)
+      - selection-div       (THE CONTAINER FOR THE SIZE SELECTOR)
+        -size-selector      (THE SELECTOR FOR THE SIZE)
+      - selection-div       (THE CONTAINER FOR THE COLOR SELECTOR)
+        -color-selector     (THE SELECTOR FOR THE COLOR)
+      - selection-div       (THE CONTAINER FOR THE QUANTITY SELECTOR)
+        -quantity-control   (THE SELECTOR FOR THE QUANTITY CONTROL)
+        -quantity-selector  (THE SELECTOR FOR THE QUANTITY SELECTOR)
+  - action-buttons          (THE CONTAINER FOR THE BUTTONS OF REMOVE AND ADD TO WISHLIST)
+*/
+
+
+#products-container.lateral-container{ 
+  text-align: left; /* centers the elements that are inline-block elements */
+  vertical-align: top; /*Mantains them aligned vertically*/
+  margin-left: 5%; 
+}
+
+
+.lateral-container#products-container .product-card {
+  display: inline-block;
+  /*flex-direction: column;*/
+  align-items: center;
+  /*justify-content: flex-start;*/
+  background: #efefef;
+  border-radius: 30px;
+  padding: 16px;
+  margin: 16px;
+  transition: transform 0.2s ease;
+  overflow: hidden;
+  max-width: 400px; /* Limita la larghezza */
+}
+
+
+/*(THE CONTAINER FOR THE IMAGE AND THE NAME)*/
+#products-container.lateral-container .product-details{
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+  gap: 1em;
+}
+
+/*(THE CONTAINER FOR THE IMAGE)*/
+#products-container.lateral-container .product-link{
+  display: block;  
+
+  background-color: #F6F6F6;
+  border-radius: 30%;
+  padding: 0px 16px;
+  overflow: hidden; 
+  aspect-ratio: 1.3; /* trying to mantain rectangular proportion */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 60%;
+}
+
+/*(THE CONTAINER FOR PRICE AND SELECTORS OF SIZE, COLOR AND QUANTITY)*/
+#products-container.lateral-container .item-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Allinea a sinistra gli elementi */
+  gap: 0.5rem;
+  width: 40%;
+}
+
+/*(THE CONTAINER FOR THE BUTTONS OF REMOVE AND ADD TO WISHLIST)*/
+.action-buttons{
+  max-width: 100%;
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+
+.action-buttons button {
+  flex: 1;
+  font-size: 0.9em;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-width: 30%;
+  padding: 8px 16px;
+  white-space: nowrap;
+  border: none;
+  background-color: transparent;
+}
+
+.action-buttons button img {
+  width: 20px;
+  height: 20px;
+}
+
+/**THE CONTAINERS FOR THE SELECTORS**/
+.selection-div {
+  display: flex;
+  flex-direction: row; /* Mantieni l'etichetta e l'input in riga */
+  align-items: center; /* Allinea verticalmente al centro */
+  justify-content: flex-start; /* Allinea tutto a sinistra */
+  gap: 10px; /* Spazio tra label e select/input */
+  width: auto; /* Lascia che il contenitore si adatti al contenuto */
+}
+
+.selection-div label {
+  flex-shrink: 0; /* Mantiene la dimensione minima del label */
+  min-width: 80px; /* Puoi regolare per garantire uniformità */
+  text-align: left;
+}
+
+.selection-div select,
+.selection-div input {
+  flex: 1; /* Si adatta automaticamente alla larghezza */
+  max-width: 200px; /* Dimensione massima (opzionale) */
+}
+
+
+.color-selector, .size-selector{
+  height:20px;
+  aspect-ratio: 2.5;
+  border-radius: 10px;
+  border-color: transparent;
+  background-color: #D9D9D9;
+  text-align: center;
+}
+/* -webkit-appearance: none removes the native style of the element in the browser.
+Hide default number input spinner buttons */
+.quantity-selector::-webkit-inner-spin-button,
+.quantity-selector::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Rimuovi le frecce dall'input nascosto */
+.quantity-selector {
+  display: none;
+}
+
+/* Stile del container */
+.quantity-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #828282;
+  border-radius: 5px;
+  width: 40px;
+  overflow: hidden;
+  background-color: #D9D9D9;
+  border-radius: 10px;
+}
+
+/* Pulsanti */
+.quantity-btn {
+  border: none;
+  background: transparent;
+  width: 100%;
+  height: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+}
+
+.quantity-btn:active {
+  color: #333;
+}
+
+/* Display del numero */
+.quantity-display {
+  text-align: center;
+  font-size: 14px;
+  width: 100%;
+  padding: 5px;
+  background-color: #D9D9D9;
+  margin: 10px, 0px;
+  border-top: 2px solid #EFEFEF;
+  border-bottom: 2px solid #EFEFEF;
+}
+.quantity-btn:hover {
+  background-color: #f5f5f5;
+}
+
+/* Update the existing selection-div for quantity */
+.selection-div:has(.quantity-selector) {
+  align-items: flex-start;
+}
+.lateral-container#products-container .product-card h3{
+  margin-left:35%
+}
+
+.cart-title{
+  display: block;
+  margin-left: 10%
+}
+
+/* Media Query 2560*/
+@media (min-width: 2560px) {
+
+  .lateral-container#products-container .product-card {
+    padding: 22px 26px;
+    margin: 20px;
+    max-width: 1200px;
+  }
+  #products-container.lateral-container .product-details{
+    gap: 2.5em;
+  }
+  .lateral-container#products-container .product-card h3{
+    margin-left:60%
+  }
+  #products-container.lateral-container .item-info{
+    gap: 1.5rem;
+  } 
+  .size-selector, .color-selector{
+    font-size:larger;
+  }
+
+  .size-selector, .color-selector, .quantity-selector{
+    height:50px;
+    aspect-ratio: 2.5;
+  }
+  .action-buttons button{
+    width: 40%;
+    gap: 3.5em;
+    margin-left: 50px;
+  }
+  .selection-div label, .lateral-container#products-container p{
+    font-size: 160%;
+  }
+  .action-buttons button {
+    flex: 1;
+    font-size: 1.6em;
+  }
+}
+
+@media (max-width: 2196px) {
+  .lateral-container#products-container .product-card {
+    padding: 20px 22px;
+    margin: 20px;
+    max-width: 900px;
+  }
+  .lateral-container#products-container .product-card h3{
+    margin-left:60%
+  }
+  #products-container.lateral-container .product-details{
+    gap: 1.8em;
+  }
+  #products-container.lateral-container .item-info{
+    gap: 1.5rem;
+  } 
+  .size-selector, .color-selector{
+    font-size:large;
+  }
+
+  .size-selector, .color-selector, .quantity-selector{
+    height:40px;
+    aspect-ratio: 2.5;
+  }
+ 
+  .action-buttons button{
+    width:37%;
+    margin-left: 40px;
+  }
+  .selection-div label, .lateral-container#products-container p{
+    font-size: 140%;
+  }
+  .action-buttons button {
+    flex: 1;
+    font-size: 1.4em;
+  }
+}
+/*Media Query 1024*/
+@media (max-width: 1024px) {
+  .lateral-container#products-container .product-card {
+    padding: 16px 20px;
+      margin: 12px;
+      max-width: 650px;
+  }
+  .lateral-container#products-container .product-card h3{
+    margin-left:60%
+  }
+  #products-container.lateral-container .product-details{
+    gap: 1.2em;
+  }
+  #products-container.lateral-container .item-info{
+    gap: 1rem;
+  }
+
+  .size-selector, .color-selector{
+    font-size: medium;
+  }
+  .size-selector{
+    height:30px;
+    aspect-ratio: 2.5;
+  }
+  .color-selector{
+    height:30px;
+    aspect-ratio: 2.5;
+  }
+  .quantity-selector{
+    height:30px;
+    aspect-ratio: 2.5;
+  }
+  .action-buttons button{
+    width:35%;
+    gap: 2.7em;
+    margin-left: 30px;
+  }
+  .selection-div label, .lateral-container#products-container p {
+    font-size: 120%;
+  }
+  .action-buttons button {
+    flex: 1;
+    font-size: 1.2em;
+  }
+}
+
+@media (max-width: 600px) {
+  
+  .lateral-container#products-container .product-card {
+    padding: 12px 14px;
+      margin: 8px;
+      max-width: 400px;
+      
+  }
+  .lateral-container#products-container .product-card h3{
+    margin-left:60%
+  }
+  #products-container.lateral-container .product-details{
+    gap: 1em;
+  }
+  #products-container.lateral-container .item-info{
+    gap: 0.5rem;
+  } 
+
+  .size-selector, .color-selector{
+    font-size: small;
+  }
+  .size-selector, .color-selector, .quantity-selector{
+    height:20px;
+    aspect-ratio: 2.5;
+  }
+
+  .action-buttons button{
+    margin-left: 20px;
+    font-size: smaller;
+  }
+  .action-buttons button{
+    margin-left: 20px;
+    display: inline-block;
+    width:28%;
+    aspect-ratio:2.2; 
+  }
+  .selection-div label, .lateral-container#products-container p {
+    font-size: 100%;
+  }
+  .action-buttons button {
+    flex: 1;
+    font-size: 0.9em;
+  }
+}
+
+/********************************************************************
+     **STYLE CODE FOR PRODUCTS IN TRACKING* 
+     AUTHOR:SIMONE
+**********************************************************************/
+
+.item-details-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-info p{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+#order-status {
+  max-width: 400px; 
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: sans-serif;
+}
+
+.order-tracking ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative; /*relative position*/
+}
+/*container to have the test next to dot and line*/
+.order-tracking li {
+  display: flex; 
+  align-items: flex-start;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+/*the circle */
+.order-tracking li .circle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #bbb;
+  border-radius: 50%;
+  background-color: #fff;
+  margin-right: 1rem;
+  position: relative;
+  z-index: 1; /*this is used to have the circle to stay over the line like in a z-axis */
+}
+
+/*when is completed the circle becomes black*/
+.order-tracking li.completed .circle {
+  background-color: #000; 
+  border-color: #000;
+}
+
+/* the line below the circle*/
+.order-tracking ol::before {
+  content: "";
+  position: absolute;
+  left: 10px; /*this is so the position is half the circle radius*/
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ccc;
+}
+
+
+/* Stile del testo */
+.status-info em {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+.status-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* The Modal (background) - Admin Messages */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content - Admin Messages */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button - Admin Messages */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
 }

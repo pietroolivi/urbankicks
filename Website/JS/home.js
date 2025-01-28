@@ -217,19 +217,19 @@ class ProductManager {
         const template = document.getElementById('product-template');
         const productCard = template.content.cloneNode(true);
         const card = productCard.querySelector('.product-card');
-        
+     
         card.dataset.productId = product.id;
         const link = card.querySelector('.product-link');
         link.href = `product.php?id=${product.id}`;
-        /**<img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . $i); ?>.webp" 
+        /**<img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
                             alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>"> */
         const img = card.querySelector('img');
-        img.src = `CSS/Images/Products/${product.id}_${product.genre}1.webp`;
+        img.src = `CSS/Images/Products/${product.name}_1.webp`;
         //fallback image if image fetch fails.
         img.onerror = function() {
             img.src = `CSS/Images/Products/default_shoe.webp`;
         };
-        console.log(`CSS/Images/Products/${product.id}_${product.genre}1.webp`);
+        console.log(`CSS/Images/Products/${product.name}_1.webp`);
         img.name = `${product.Nome} - View ${1}`;
         card.querySelector('.product-name').textContent = product.name;
         
@@ -246,10 +246,12 @@ class ProductManager {
         }
         
         const wishlistCheckbox = card.querySelector('.wishlist-checkbox');
+        const imgheart= productCard.querySelector('img.wishlist-checkbox');
         if (this.wishlistItems.has(product.id.toString())) {
             console.log("disabilita check");
             wishlistCheckbox.checked = true;
-            wishlistCheckbox.nextElementSibling.textContent = 'Remove from Wishlist';
+            imgheart.src="CSS/Images/Icons/heart_filled.svg";
+         //   wishlistCheckbox.nextElementSibling.textContent = 'Remove from Wishlist';
         }
         
         return card;
@@ -279,7 +281,7 @@ class ProductManager {
         const productId = productCard.dataset.productId;
         const isAdd = checkbox.checked;
         const wishlistText = checkbox.nextElementSibling;
-
+        const imgHeart = productCard.querySelector('img.wishlist-checkbox');
         try {
            /* const formData = new FormData();
             formData.append('action', 'toggleWishlist');
@@ -303,7 +305,17 @@ class ProductManager {
 
             if (data.success) {
                 // Update UI
-                wishlistText.textContent = isAdd ? 'Remove from Wishlist' : 'Add to Wishlist';
+               if( checkbox.checked){
+                        imgHeart.src="CSS/Images/Icons/heart_filled.svg";
+                    
+                    wishlistText.textContent=' Remove from Wishlist';
+
+               }
+               else{
+                    imgHeart.src="CSS/Images/Icons/heart_empty.svg";
+                
+                    wishlistText.textContent='Add to Wishlist';
+               } 
             } else {
                 // Revert checkbox state on error
                 checkbox.checked = !isAdd;
@@ -359,9 +371,16 @@ class ProductManager {
     }
 }
 
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
     new ProductManager();
 });
+
+window.onload = function() {
+    const errorMsg = document.getElementById('error-message');
+    if (errorMsg && errorMsg.value) {
+        setTimeout(() => {
+            alert(errorMsg.value);
+            errorMsg.remove();
+        }, 100);
+    }
+};

@@ -12,6 +12,21 @@ $userEmail = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : null;
 
 // Get product data
 $productData = $dbh->getProductData($_GET['id'], $userEmail);
+if(!isset($productData)) {
+    header("Location: home.php");
+    exit();
+}
+
+// Add status check with back navigation
+if($productData["product"]['Sta_Tipo'] === 'Not Available') {
+    $_SESSION['error'] = "This product is no longer available.";
+    if(isset($_SERVER['HTTP_REFERER'])) {
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+    } else {
+        header('Location: home.php');
+    }
+    exit();
+}
 
 // Define template parameters
 $templateParams["title"] = $productData['product']['Nome'];

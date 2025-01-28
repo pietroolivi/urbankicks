@@ -24,7 +24,7 @@
                     <?php foreach($order["products"] as $product): ?>
                         <li>
                             <article>
-                                <img src="CSS/Images/Products/<?php echo $product["ID_Prodotto"] . '_' . $product["Genere"]; ?>1.webp" alt="<?php echo htmlspecialchars($product["Nome"]); ?>" />
+                                <img src="CSS/Images/Products/<?php echo $product["Nome"] . '_'; ?>1.webp" alt="<?php echo htmlspecialchars($product["Nome"]); ?>" />
                                 <h4><?php echo htmlspecialchars($product["Nome"]); ?></h4>
                                 <p>Size: <?php echo $product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
                                 <p>Color: <?php echo $product["Colore"]; ?></p>
@@ -75,7 +75,7 @@
                     <?php foreach($order["products"] as $product): ?>
                         <li>
                             <article>
-                                <img src="CSS/Images/Products/<?php echo $product["ID_Prodotto"] . '_' . $product["Genere"]; ?>1.webp" alt="<?php echo htmlspecialchars($product["Nome"]); ?>" />
+                                <img src="CSS/Images/Products/<?php echo $product["Nome"] . '_'; ?>1.webp" alt="<?php echo htmlspecialchars($product["Nome"]); ?>" />
                                 <h4><?php echo htmlspecialchars($product["Nome"]); ?></h4>
                                 <p>Size: <?php echo $product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
                                 <p>Color: <?php echo $product["Colore"]; ?></p>

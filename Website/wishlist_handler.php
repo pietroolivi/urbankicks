@@ -14,7 +14,7 @@ if (!isset($_SESSION["user_email"])) {
 
 // Initialize response array
 $response = ["success" => false, "message" => ""];
-
+/*
 try {
     if (isset($_POST["action"]) && $_POST["action"] === "remove") {
         $productId = isset($_POST["productId"]) ? $_POST["productId"] : null;
@@ -29,6 +29,25 @@ try {
 } catch (Exception $e) {
     $response = ["success" => false, "message" => $e->getMessage()];
 }
+    */
+    if ($_POST["action"] === "toggleWishlist") {
+            
+        if (!isset($_SESSION["user_email"])) {
+            $response["message"] = "Please login first";
+            echo json_encode($response);
+            exit();
+        }
+
+        $email = $_SESSION["user_email"];
+        $productId = $_POST["productId"];
+
+        if ($dbh->removeFromWishlist($email, $productId)) {
+                $response["success"] = true;
+                $response["message"] = "Removed from wishlist";
+            } else {
+                throw new Exception("Product not in wishlist");
+            }
+        }
 
 echo json_encode($response);
 exit();

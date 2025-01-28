@@ -1,4 +1,9 @@
 <?php
+if(isset($_SESSION['error'])) {
+    echo "<input type='hidden' id='error-message' value='" . htmlspecialchars($_SESSION['error']) . "'>";
+    unset($_SESSION['error']);
+}
+
 // Get category from URL parameter, default to 'popular'
 $category = isset($_GET['category']) ? $_GET['category'] : 'popular';
 
@@ -457,12 +462,12 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     <div class="product-card">
         <a href="" class="product-link">
             <img src="" alt="">
-        </a>
+            <label class="wishlist-container">
+            <input type="checkbox" class="wishlist-checkbox" hidden>
+            <img src="CSS/Images/Icons/heart_empty.svg" alt="Add to Wishlist" class="wishlist-checkbox">
+            </label></a>
         <h3 class="product-name"></h3>
         <p class="product-price"></p>
-        <label class="wishlist-container">
-            <input type="checkbox" class="wishlist-checkbox">
-            <span class="wishlist-text">Add to Wishlist</span>
-        </label>
+       
     </div>
 </template>
