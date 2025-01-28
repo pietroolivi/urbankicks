@@ -504,14 +504,34 @@ class DatabaseHelper {
 
     // Admin: Get all messages
     public function getAllMessages() {
-        $query = "SELECT m.*, u.Nome, u.Cognome 
-                  FROM MESSAGGIO m 
-                  JOIN UTENTE u ON m.Email = u.Email 
-                  ORDER BY m.Timestamp_Invio DESC";
+        $query = "SELECT m.*, u.Nome, u.Cognome, u.Ruolo 
+                  FROM MESSAGGIO m
+                  JOIN UTENTE u ON m.Email = u.Email
+                  ORDER BY m.Timestamp_Invio ASC";
+        
         $stmt = $this->db->prepare($query);
         $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+        // Group messages by thread
+        $threads = [];
+        foreach ($result as $message) {
+            $subject = $message['Oggetto'];
+            if (strpos($subject, 'Re: ') === 0) {
+                $originalSubject = substr($subject, 4);
+                if (!isset($threads[$originalSubject])) {
+                    $threads[$originalSubject] = ['original' => null, 'replies' => []];
+                }
+                $threads[$originalSubject]['replies'][] = $message;
+            } else {
+                if (!isset($threads[$subject])) {
+                    $threads[$subject] = ['original' => null, 'replies' => []];
+                }
+                $threads[$subject]['original'] = $message;
+            }
+        }
+        
+        return $threads;
     }
 
     /*******************

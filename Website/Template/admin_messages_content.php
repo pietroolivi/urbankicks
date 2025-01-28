@@ -8,33 +8,77 @@
 <a href="admin_new_message.php" class="button">New Message</a>
 
 <section class="messages-to-admin">
-    <h3>Received Messages</h3>
+    <h3>Messages</h3>
     <?php if(empty($templateParams["messages"])): ?>
         <p>No messages found.</p>
     <?php else: ?>
-        <?php foreach($templateParams["messages"] as $message): 
-            $messagePreview = strlen($message['Corpo']) > 30 ? 
-                substr($message['Corpo'], 0, 30) . '...' : 
-                $message['Corpo'];
+        <?php foreach($templateParams["messages"] as $thread): 
+            if ($thread['original']): 
+                $message = $thread['original'];
+                $messagePreview = strlen($message['Corpo']) > 30 ? 
+                    substr($message['Corpo'], 0, 30) . '...' : 
+                    $message['Corpo'];
         ?>
-            <article class="message-to-admin" onclick="expandMessage(
-                'CSS/Images/Icons/user_review.svg',
-                '<?php echo htmlspecialchars($message['Nome'] . ' ' . $message['Cognome']); ?>', 
-                '<?php echo htmlspecialchars($message['Email']); ?>', 
-                '<?php echo htmlspecialchars($message['Oggetto']); ?>', 
-                '<?php echo htmlspecialchars($message['Corpo']); ?>', 
-                '<?php echo $message['Timestamp_Invio']; ?>'
-                )">
-                <img src="CSS/Images/Icons/user_review.svg" alt="Profile photo of the user who sent the message." />
-                <div class="textual-part-message">
-                    <h4><?php echo htmlspecialchars($message['Nome'] . ' ' . $message['Cognome']); ?></h4>
-                    <p><?php echo htmlspecialchars($message['Email']); ?></p>
-                    <p><?php echo htmlspecialchars($messagePreview); ?></p>
+            <article class="message-thread">
+                <!-- Original Message -->
+                <div class="message-to-admin" onclick="expandMessage(
+                    'CSS/Images/Icons/user_review.svg',
+                    '<?php echo htmlspecialchars($message['Nome'] . ' ' . $message['Cognome']); ?>', 
+                    '<?php echo htmlspecialchars($message['Email']); ?>', 
+                    '<?php echo htmlspecialchars($message['Oggetto']); ?>', 
+                    '<?php echo htmlspecialchars($message['Corpo']); ?>', 
+                    '<?php echo $message['Timestamp_Invio']; ?>'
+                    )">
+                    <img src="CSS/Images/Icons/user_review.svg" alt="User profile photo" />
+                    <div class="textual-part-message">
+                        <h4><?php echo htmlspecialchars($message['Nome'] . ' ' . $message['Cognome']); ?></h4>
+                        <p><?php echo htmlspecialchars($message['Email']); ?></p>
+                        <p><?php echo htmlspecialchars($messagePreview); ?></p>
+                        <small class="timestamp"><?php echo date('Y-m-d H:i', strtotime($message['Timestamp_Invio'])); ?></small>
+                    </div>
                 </div>
+
+                <!-- Replies -->
+                <?php foreach($thread['replies'] as $reply): 
+                    $replyPreview = strlen($reply['Corpo']) > 30 ? 
+                        substr($reply['Corpo'], 0, 30) . '...' : 
+                        $reply['Corpo'];
+                ?>
+                    <div class="message-to-admin message-reply" onclick="expandMessage(
+                        'CSS/Images/Icons/admin.svg',
+                        '<?php echo htmlspecialchars($reply['Nome'] . ' ' . $reply['Cognome']); ?>', 
+                        '<?php echo htmlspecialchars($reply['Email']); ?>', 
+                        '<?php echo htmlspecialchars($reply['Oggetto']); ?>', 
+                        '<?php echo htmlspecialchars($reply['Corpo']); ?>', 
+                        '<?php echo $reply['Timestamp_Invio']; ?>'
+                        )">
+                        <img src="CSS/Images/Icons/admin.svg" alt="Admin profile photo" />
+                        <div class="textual-part-message">
+                            <h4><?php echo htmlspecialchars($reply['Nome'] . ' ' . $reply['Cognome']); ?></h4>
+                            <p><?php echo htmlspecialchars($replyPreview); ?></p>
+                            <small class="timestamp"><?php echo date('Y-m-d H:i', strtotime($reply['Timestamp_Invio'])); ?></small>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </article>
-        <?php endforeach; ?>
+        <?php endif; endforeach; ?>
     <?php endif; ?>
 </section>
+
+<style>
+.message-reply {
+    margin-left: 40px;
+    border-left: 3px solid #007bff;
+    padding-left: 10px;
+}
+.timestamp {
+    color: #666;
+    font-size: 0.8em;
+}
+.message-thread {
+    margin-bottom: 20px;
+}
+</style>
 
 <!-- The Modal -->
 <div id="myModal" class="modal">
