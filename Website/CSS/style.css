@@ -125,7 +125,6 @@ body > footer {
   background-color: black;
   font-family: 'Beatrice Headline Trial', sans-serif;
   text-align: center;
-  overflow: hidden;
   font-size: 90%;
   padding: 2% 0;
 }
@@ -510,7 +509,7 @@ label[for="sort-icon"] {
 .profile-sidebar > nav > ul > li > a:visited {
   color: black;
   display: block;
-  padding: 2% 10%;
+  padding: 3% 10%;
 }
 
 /* ************************************************************************************** */
@@ -772,9 +771,9 @@ main > .filters-and-sorters-switches > .category-switch {
   background-color: var(--foreground);
   color: black;
   width: 70%;
-  min-height: 100%; /* that's going to fill 100% of the height */
   position: fixed;
   z-index: 3;
+  overflow-y: scroll;
 }
 
 .filter-sidebar h3 {
@@ -783,10 +782,16 @@ main > .filters-and-sorters-switches > .category-switch {
   font-size: 1em;
 }
 
-.filter-sidebar > .brand-option > label {
+.filter-sidebar > section > .brand-options > .brand-option > label {
   display: block;
   width: 100%;
   padding: 5% 10%;
+}
+
+.filter-sidebar > section > .brand-options {
+  height: 150px;
+  overflow-y: scroll;
+  border: 3px solid rgba(127, 127, 127, .2);
 }
 
 /* ******************************************************************************************** */
@@ -795,7 +800,7 @@ main > .filters-and-sorters-switches > .category-switch {
 /* effect of a doubled border, we only set the side ones from CSS while we add the third &      */
 /* fourth using JS after making sure that the input inside the subsequent <div> is not checked. */
 /* ******************************************************************************************** */
-.filter-sidebar > .brand-option > input:checked + label {
+.filter-sidebar > section > .brand-options > .brand-option > input:checked + label {
   background-color: #f2f2f2;
   /*border-left: 1px solid black;*/  /*comment because it does not produce a pleasing effect the contrast with the <h3> that has no border-left */
   border-right: 1px solid black;
@@ -804,7 +809,9 @@ main > .filters-and-sorters-switches > .category-switch {
   background-position: center right 5%;
 }
 
-.filter-sidebar > .brand-option > input {
+.filter-sidebar > section > .brand-options > .brand-option > input,
+.filter-sidebar > section > .color-options > .color-option > label,
+.filter-sidebar > section > .color-options > .color-option > label > input {
   display: none;
 }
 
@@ -814,14 +821,14 @@ main > .filters-and-sorters-switches > .category-switch {
 /* a width of 7% for the outermost container holding a single colour, we assign the largest integer */
 /* such that widthColor * nColors + nMargins * percMargin <= 100 and we obtain percMargin = 4.      */
 /* ************************************************************************************************ */
-.filter-sidebar > .color-option {
+.filter-sidebar > section > .color-options > .color-option {
   display: inline-block;
   width: 7%;
   margin: 0% 4%;
 }
 
 /* We fill the width of the container, whose class color-option */
-.filter-sidebar > .color-option > label:first-child {
+.filter-sidebar > section > .color-options > .color-option > label:first-child {
   display: inline-block;
   width: 100%;
 }
@@ -830,7 +837,7 @@ main > .filters-and-sorters-switches > .category-switch {
 /* We fill the width of the container that is the label, so that the      */
 /* size of the colour icons adapts to the size of the screen dynamically. */
 /* ********************************************************************** */
-.filter-sidebar > .color-option > label:first-child > img {
+.filter-sidebar > section > .color-options > .color-option > label:first-child > img {
   width: 100%;
 }
 
@@ -838,20 +845,21 @@ main > .filters-and-sorters-switches > .category-switch {
 /* We model visual feedback so that the user understands which colours   */
 /* are currently selected by adding a border to the corresponding icons. */
 /* ********************************************************************* */
-.filter-sidebar > .color-option:not(:last-of-type) > label:first-child > input:checked + img {
+.filter-sidebar > section > .color-options > .color-option:not(:last-of-type) > label:first-child > input:checked + img {
   border: 3px solid black;
   border-radius: 50%;
 }
 
-.filter-sidebar > .size-options {
+.filter-sidebar > section > .size-options {
   text-align: center;
+  padding: 0% 3%;
 }
 
-.filter-sidebar > .size-options > h3 {
+.filter-sidebar > section > h3 {
   text-align: left;
 }
 
-.filter-sidebar > .size-options > .size-option {
+.filter-sidebar > section > .size-options > .size-option {
   display: inline-block;
   text-align: center;
   border: 1px solid black;
@@ -860,27 +868,46 @@ main > .filters-and-sorters-switches > .category-switch {
   margin: 2%;
 }
 
-.filter-sidebar > .size-options > .size-option:has(input:checked) {
+.filter-sidebar > section > .size-options > .size-option:has(input:checked) {
   background-color: #f2f2f2;
-  border: 2px solid black;
+  outline: 2px solid black;
 }
 
-.filter-sidebar > .size-options > .size-option > input {
+.filter-sidebar > section > .size-options > .size-option > input {
   display: none;
 }
 
-.filter-sidebar > .size-options > .size-option > label {
+.filter-sidebar > section > .size-options > .size-option > label {
   display: inline-block;
   width: 100%;
 }
 
+.filter-sidebar > section > div > p {
+  font-family: 'Beatrice Headline Trial', sans-serif;
+  font-size: 1em;
+  display: inline;
+}
+
+.filter-sidebar > section > div > input[type="range"] {
+  display: block;
+}
+
+.filter-sidebar > section > .price-option {
+  padding: 5% 10%;
+}
+
+.filter-sidebar > section > div > label {
+  display: none;
+}
+
 .filter-sidebar > footer {
-  padding-top: 5%;
+  padding-top: 10%;
+  padding-bottom: 8%;
   text-align: center;
-  font-family: inherit;
 }
 
 .filter-sidebar > footer > input {
+  font-family: 'Beatrice Headline Trial', sans-serif;
   border: 1px solid black;
   padding: 3% 15%;
   margin: 0 2%;
@@ -908,19 +935,45 @@ main > .filters-and-sorters-switches > .category-switch {
 /* of the pseudo-element ‘:before’, but we use the ‘border’-‘outline’ combination, setting the border to          */
 /* the same width as that of the other icons because the outline does not increase the size of the element.       */
 /* ************************************************************************************************************** */
-.filter-sidebar > .color-option:last-of-type > label:first-child > input:checked + img {
+.filter-sidebar > section > .color-options > .color-option:last-of-type > label:first-child > input:checked + img {
   border: 3px solid white;
   border-radius: 50%;
   outline: 2px solid black;
 }
 
-.filter-sidebar > .color-option > label:last-child,
-.filter-sidebar > .color-option > label > input {
+.filter-sidebar > .color-options > .color-option > label:last-child,
+.filter-sidebar > .color-options > .color-option > label > input {
   display: none;
 }
 
 #filter-icon {
   display: none;
+}
+
+.removable-dynamic-filters {
+  padding: 2% 0;
+}
+
+.removable-dynamic-filters > .home-filter {
+  border: 1px solid black;
+  background-color: #D9D9D9;
+  display: inline-flex;
+  margin: 5% 3%;
+  padding-left: 1%;
+  padding-right: 5%;
+  width: max-content;
+}
+
+.removable-dynamic-filters > .home-filter > button {
+  display: inline;
+  background: none;
+  border: none;
+}
+
+.removable-dynamic-filters > .home-filter > p {
+  padding-left: 20%;
+  padding-right: 5%;
+  display: inline;
 }
 
 /* **************************************************************************************************** */
