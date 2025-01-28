@@ -155,10 +155,10 @@ class ProductManager {
 //                    |
 //                    V
         // PRICE FILTER LISTENER, you need to add to the filter class!!
-        document.querySelectorAll('input[name="price"]').addEventListener('change',()=>{
+      /*  document.querySelectorAll('input[name="price"]').addEventListener('change',()=>{
             this.filters.maxPrice=document.getElementById('max-price').value;
             this.filters.minPrice=document.getElementById('min-price').value;
-        });
+        });*/
 
 
         // Sort options
@@ -272,6 +272,7 @@ class ProductManager {
         console.log(this.allProducts);
         if (this.filteredProducts.length === 0) {
             container.innerHTML = '<p>No products found matching your criteria.</p>';
+            console.log("nessun prodotto super ai filtri");
             return;
         }
 
