@@ -1,7 +1,7 @@
 class ProductManager {
 
     /** You have three main
-     * structures:
+     *  structures:
      *  filters (the object that stores all the filters and the values currently filtering for each filter)
      * 
      *  allProducts (the array that stores all the products, each product has also a field variants
@@ -9,42 +9,188 @@ class ProductManager {
      * 
      *  filteredProducts (the array with all the current products shown in the page)
      * 
-     * you have three main functions for the listeners:
+     *  you have three main functions for the listeners:
      * 
      *  setupEventListeners (that add the change listeners in all the checkboxes in the html of the filters 
      *      YOU NEED TO ADD THE LISTENER TO THE PRICE FILTER)
      *  handleFilterChange (this is for filters that apply multible checkboxes like designers, colors and sizes)
      *  applyFilters (this is the main function that applies the filters and populate the filteredProducts array)
      */
-
-
-
     constructor() {
         const rawProducts = JSON.parse(document.getElementById('products-container').dataset.products);
-
         this.wishlistItems = new Set();
-        
         const urlParams = new URLSearchParams(window.location.search);
-
-        //Here you have all the filters that you can use on the home
-        //colors, sizes and brand are arrays in this structure.
+        /* We initialize the dictionary containing the currently applied filters with the values we find in the URL, if present. */
         this.filters = {
-            category: urlParams.get('category') || 'popular',
-            brand: urlParams.get('brand') ? urlParams.get('brand').split(',') : [],
-            genre: urlParams.get('genre') || '',
-            type: urlParams.get('type') || '',
-            sort: urlParams.get('sort') || 'price-low-to-high',
-            // Variant data from the filters (colors and sizes)
-            colors: urlParams.get('colors') ? urlParams.get('colors').split(',') : [],
-            sizes: urlParams.get('sizes') ? urlParams.get('sizes').split(',').map(Number) : [],
-            maxPrice: urlParams.get('maxPrice') || 0,
-            minPrice: urlParams.get('minPrice') || 0
+            brand: urlParams.get('brand')        ? urlParams.get('brand').split(',')  : [],
+            colors: urlParams.get('colors')      ? urlParams.get('colors').split(',') : [],
+            sizes: urlParams.get('sizes')        ? urlParams.get('sizes').split(',')  : [],
+            category: urlParams.get('category')  || 'popular',
+            genre: urlParams.get('genre')        || '',
+            minPrice: urlParams.get('min-price') || '0',
+            maxPrice: urlParams.get('max-price') || '1000',
+            type: urlParams.get('type')          || '',
+            sort: urlParams.get('sort')          || 'price-low-to-high'
         };
-
         this.initializeProducts(rawProducts);
         this.loadWishlistItems();
-
     }
+
+    setupEventListeners() {
+        /* Category filter */
+        document.querySelectorAll('input[name="category"]').forEach(input => {
+            input.addEventListener('change', () => {
+                this.filters.category = input.value;
+            });
+        });
+
+        /* Designer filter */
+        document.querySelectorAll('input[name="designers[]"]').forEach(input => {
+            input.addEventListener('change', () => this.handleFilterChange('designers'));
+        });
+
+        /* Color filter */
+        document.querySelectorAll('input[name="colors[]"]').forEach(input => {
+            input.addEventListener('change', () => this.handleFilterChange('colors'));
+        });
+
+        /* Size filter */
+        document.querySelectorAll('input[name="sizes[]"]').forEach(input => {
+            input.addEventListener('change', () => this.handleFilterChange('sizes'));
+        });
+
+        /* Min-price filter */
+        document.getElementById('filter-sidebar-min-price').addEventListener('change', () => {
+            this.filters.minPrice = event.target.value;
+        });
+
+        /* Max-price filter */
+        document.getElementById('filter-sidebar-max-price').addEventListener('change', () => {
+            this.filters.maxPrice = event.target.value;
+        });
+
+        /* Sort filter */
+        document.querySelectorAll('input[name="sort"]').forEach(input => {
+            input.addEventListener('change', () => {
+                this.filters.sort = input.value;
+                this.applyFilters();
+            });
+        });
+
+        /* Wishlist toggle */
+        document.addEventListener('change', (event) => {
+            if (event.target.classList.contains('wishlist-checkbox')) {
+                this.handleWishlistToggle(event.target);
+            }
+        });
+
+        /* Listens for URL changes */
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            this.filters = {
+                brand: urlParams.get('brand')        ? urlParams.get('brand').split(',')  : [],
+                colors: urlParams.get('colors')      ? urlParams.get('colors').split(',') : [],
+                sizes: urlParams.get('sizes')        ? urlParams.get('sizes').split(',')  : [],
+                category: urlParams.get('category')  || 'popular',
+                genre: urlParams.get('genre')        || '',
+                minPrice: urlParams.get('min-price') || '0',
+                maxPrice: urlParams.get('max-price') || '1000',
+                type: urlParams.get('type')          || '',
+                sort: urlParams.get('sort')          || 'price-low-to-high'
+            };
+            this.applyFilters();
+        });
+    }
+
+    handleFilterChange(filterType) {
+        if (filterType === 'designers') {
+            this.filters.brand = Array.from(
+                document.querySelectorAll('input[name="designers[]"]:checked')
+            ).map(cb => cb.value);
+        }
+        if (filterType === 'colors') {
+            this.filters.colors = Array.from(
+                document.querySelectorAll('input[name="colors[]"]:checked')
+            ).map(cb => cb.value);
+        }
+        if (filterType === 'sizes') {
+            this.filters.sizes = Array.from(
+                document.querySelectorAll('input[name="sizes[]"]:checked')
+            ).map(cb => Number(cb.value));
+        }
+    }
+
+    applyFilters() {
+        this.filteredProducts = this.allProducts.filter(product => {
+            /* Checks if any variant matches the filters (colors and sizes) */
+            const hasMatchingVariant = !this.filters.colors.length && !this.filters.sizes.length ? true :
+            product.variants.some(variant => {
+                const matchesColor = !this.filters.colors.length || 
+                                   this.filters.colors.includes(variant.color);
+                const matchesSize = !this.filters.sizes.length || 
+                                  this.filters.sizes.includes(variant.size);
+                return matchesColor && matchesSize;
+            });
+            /* Brand filter */
+            const brandMatch = this.filters.brand.length === 0 || this.filters.brand.includes(product.brand);
+            /* Genre filter */
+            const genreMatch = !this.filters.genre || (product.genre && product.genre.toLowerCase() === this.filters.genre.toLowerCase());
+            /* Type filter */
+            const typeMatch = !this.filters.type || (product.type && product.type.toLowerCase() === this.filters.type.toLowerCase());
+            /* Category filter */
+            let categoryMatch = true;
+            switch(this.filters.category) {
+                case 'discounted':
+                    //categoryMatch = product.variants.some(v => v.discount > 0);
+                    categoryMatch = product.isDiscounted;
+                    break;
+                case 'novelties':
+                    const oneMonthAgo = new Date();
+                    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+                    categoryMatch = new Date(product.created_at) > oneMonthAgo;
+                    break;
+            }
+            /* Min price filter */
+            const minPriceMatch = Number(this.filters.minPrice) <= Number(product.price);
+            /* Max price filter */
+            const maxPriceMatch = Number(this.filters.maxPrice) >= Number(product.price);
+            /* Color filter
+            const colorMatch = this.filters.brand.includes(product.brand); */
+
+            return brandMatch && genreMatch && typeMatch && categoryMatch && hasMatchingVariant;
+        });
+        this.sortProducts();
+        this.renderProducts();
+        this.updateURL();
+        this.updateBreadcrumb();
+    }
+
+    updateURL() {
+        const params = new URLSearchParams();
+        Object.entries(this.filters).forEach(([key, value]) => {
+            if (value && value.length !== 0) {
+                params.set(key, Array.isArray(value) ? value.join(',') : value);
+            }
+        });
+        window.history.pushState({}, '', `?${params.toString()}`);
+        console.log("updateURL params: "+params.toString());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     async loadWishlistItems() {
         try {
@@ -75,14 +221,13 @@ class ProductManager {
 
     initializeProducts(rawProducts) {
         // Group products by model
-        const groupedProducts = new Map();
-    /*    rawProducts.forEach(p=>{
+        const groupedProducts = new Map();/*    
+        rawProducts.forEach(p=>{
             if(p.inWishlist==true)
             console.log("prodotto in wishlist:"+p.ID_Prodotto);
         });*/
         rawProducts.forEach(product => {
-            const modelKey = product.Nome.toLowerCase();
-            
+            const modelKey = product.Nome.toLowerCase();            
             if (!groupedProducts.has(modelKey)) {
                 // Create new product entry
                 groupedProducts.set(modelKey, {
@@ -102,167 +247,18 @@ class ProductManager {
                     baseProduct: product
                 });
             }
-            
             // Add variant information
             groupedProducts.get(modelKey).variants.push({
-                id: product.ID_Prodotto,
-                size: parseInt(product.Taglia),
+                id:    product.ID_Prodotto,
+                size:  product.Taglia,
                 color: product.Colore,
-                price: parseFloat(product.Prezzo),
+                price: product.Prezzo,
                 state: product.Sta_Tipo
             });
         });
-
         // Convert Map to array and store
         this.allProducts = Array.from(groupedProducts.values());
         this.filteredProducts = [...this.allProducts];
-    }
-
-    setupEventListeners() {
-        // Category filters
-        document.querySelectorAll('input[name="category"]').forEach(input => {
-            input.checked = input.value === this.filters.category;
-            input.addEventListener('change', () => {
-                this.filters.category = input.value;
-              //  this.applyFilters();
-            });
-        });
-
-        // Designer filters
-        document.querySelectorAll('input[name="designers[]"]').forEach(input => {
-            input.checked = this.filters.brand.includes(input.value);
-            console.log(input.value+" check nome del brand nel filtro");
-            input.addEventListener('change', ()=>this.handleFilterChange('designers'));
-
-        });
-
-        document.querySelectorAll('input[name="colors[]"]').forEach(input => {
-            input.checked = this.filters.colors.includes(input.value);
-            console.log(input.value+" check del colore nel filtro");
-            input.addEventListener('change', ()=>this.handleFilterChange('colors'));
-
-        });
-        document.querySelectorAll('input[name="sizes[]"]').forEach(input => {
-            input.checked = this.filters.sizes.includes(input.value);
-            console.log(input.value+" check della taglia nel filtro");
-            input.addEventListener('change', ()=>this.handleFilterChange('sizes'));
-
-        });
-
-//----------------------
-// --------------------
-//                    |
-//                    |
-//                    V
-        // PRICE FILTER LISTENER, you need to add to the filter class!!
-      /*  document.querySelectorAll('input[name="price"]').addEventListener('change',()=>{
-            this.filters.maxPrice=document.getElementById('max-price').value;
-            this.filters.minPrice=document.getElementById('min-price').value;
-        });*/
-
-
-        // Sort options
-        document.querySelectorAll('input[name="sort"]').forEach(input => {
-            input.checked = input.value === this.filters.sort;
-            input.addEventListener('change', () => {
-                this.filters.sort = input.value;
-             //   this.applyFilters();
-            });
-        });
-
-        // Wishlist toggle
-        document.addEventListener('change', (event) => {
-            if (event.target.classList.contains('wishlist-checkbox')) {
-                this.handleWishlistToggle(event.target);
-            }
-        });
-
-        // Listen for URL changes
-        window.addEventListener('popstate', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            this.filters = {
-                category: urlParams.get('category') || 'popular',
-                brand: urlParams.get('brand') ? urlParams.get('brand').split(',') : [],
-                genre: urlParams.get('genre') || '',
-                type: urlParams.get('type') || '',
-                sort: urlParams.get('sort') || 'price-low-to-high'
-            };
-        //    this.applyFilters();
-        });
-        const doneButton=document.getElementById("filter-sidebar-done");
-        doneButton.addEventListener('click',()=>{
-            this.applyFilters();
-        });
-    }
-
-    handleFilterChange(filterType) {
-        if (filterType === 'designers') {
-            this.filters.brand = Array.from(
-                document.querySelectorAll('input[name="designers[]"]:checked')
-            ).map(cb => cb.value);
-        }
-        if (filterType === 'colors') {
-            this.filters.colors = Array.from(
-                document.querySelectorAll('input[name="colors[]"]:checked')
-            ).map(cb => cb.value);
-        }
-        if (filterType === 'sizes') {
-            this.filters.sizes = Array.from(
-                document.querySelectorAll('input[name="sizes[]"]:checked')
-            ).map(cb => Number(cb.value));
-        }
-    }
-
-    applyFilters() {
-        console.log("filtri applicati");
-        this.filteredProducts = this.allProducts.filter(product => {
-            // Check if any variant matches the filters (colors and sizes)
-            //first checks if it's all empty
-            const hasMatchingVariant = !this.filters.colors.length && !this.filters.sizes.length ? true :
-            product.variants.some(variant => {
-                const matchesColor = !this.filters.colors.length || 
-                                   this.filters.colors.includes(variant.color);
-                const matchesSize = !this.filters.sizes.length || 
-                                  this.filters.sizes.includes(variant.size);
-                return matchesColor && matchesSize;
-            });
-
-            // Brand filter
-            const brandMatch = this.filters.brand.length === 0 || 
-                             this.filters.brand.includes(product.brand);
-
-            // Genre filter
-            const genreMatch = !this.filters.genre || 
-                             (product.genre && 
-                              product.genre.toLowerCase() === this.filters.genre.toLowerCase());
-
-            // Type filter
-            const typeMatch = !this.filters.type || 
-                            (product.type && 
-                             product.type.toLowerCase() === this.filters.type.toLowerCase());
-
-            // Category filter
-            let categoryMatch = true;
-            switch(this.filters.category) {
-                case 'discounted':
-                    //categoryMatch = product.variants.some(v => v.discount > 0);
-                    categoryMatch=product.isDiscounted;
-                    
-                    break;
-                case 'novelties':
-                    const oneMonthAgo = new Date();
-                    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-                    categoryMatch = new Date(product.created_at) > oneMonthAgo;
-                    break;
-            }
-
-            return brandMatch && genreMatch && typeMatch && categoryMatch && hasMatchingVariant;
-        });
-
-        this.sortProducts();
-        this.renderProducts();
-        this.updateURL();
-        this.updateBreadcrumb();
     }
 
     renderProducts() {
@@ -275,7 +271,6 @@ class ProductManager {
             console.log("nessun prodotto super ai filtri");
             return;
         }
-
         this.filteredProducts.forEach(product => {
             const productElement = this.createProductElement(product);
             container.appendChild(productElement);
@@ -290,8 +285,8 @@ class ProductManager {
         card.dataset.productId = product.id;
         const link = card.querySelector('.product-link');
         link.href = `product.php?id=${product.id}`;
-        /**<img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
-                            alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>"> */
+        /*<img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
+        alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>"> */
         const img = card.querySelector('img');
         img.src = `CSS/Images/Products/${product.name}_1.webp`;
         //fallback image if image fetch fails.
@@ -302,7 +297,7 @@ class ProductManager {
         img.name = `${product.Nome} - View ${1}`;
         card.querySelector('.product-name').textContent = product.name;
         
-        // Show price range if variants have different prices
+        // Shows price range if variants have different prices
         const prices = product.variants.map(v => v.price);
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
@@ -313,16 +308,14 @@ class ProductManager {
         } else {
             priceElement.textContent = `€${minPrice.toFixed(2)} - €${maxPrice.toFixed(2)}`;
         }
-        
         const wishlistCheckbox = card.querySelector('.wishlist-checkbox');
         const imgheart= productCard.querySelector('img.wishlist-checkbox');
         if (this.wishlistItems.has(product.id.toString())) {
             console.log("disabilita check");
             wishlistCheckbox.checked = true;
             imgheart.src="CSS/Images/Icons/heart_filled.svg";
-         //   wishlistCheckbox.nextElementSibling.textContent = 'Remove from Wishlist';
+         // wishlistCheckbox.nextElementSibling.textContent = 'Remove from Wishlist';
         }
-        
         return card;
     }
 
@@ -341,22 +334,17 @@ class ProductManager {
         });
     }
 
-    
-
-
-
     async handleWishlistToggle(checkbox) {
         const productCard = checkbox.closest('.product-card');
         const productId = productCard.dataset.productId;
         const isAdd = checkbox.checked;
         const wishlistText = checkbox.nextElementSibling;
         const imgHeart = productCard.querySelector('img.wishlist-checkbox');
-        try {
-           /* const formData = new FormData();
+        try {/*
+            const formData = new FormData();
             formData.append('action', 'toggleWishlist');
             formData.append('productId', productId);
             formData.append('isAdd', isAdd);*/
-
             const response = await fetch('home_handler.php', {
                 method: 'POST',
                 headers: {
@@ -367,30 +355,24 @@ class ProductManager {
                     productId: productId,
                     isAdd: isAdd 
                 })
-            });
-          /*  const data= await response.text();
+            });/*
+            const data= await response.text();
             console.log(data);*/
             const data = await response.json();
-
             if (data.success) {
                 // Update UI
-               if( checkbox.checked){
-                        imgHeart.src="CSS/Images/Icons/heart_filled.svg";
-                    
+                if(checkbox.checked) {
+                    imgHeart.src="CSS/Images/Icons/heart_filled.svg";
                     wishlistText.textContent=' Remove from Wishlist';
-
-               }
-               else{
+                } else {
                     imgHeart.src="CSS/Images/Icons/heart_empty.svg";
-                
                     wishlistText.textContent='Add to Wishlist';
-               } 
+                } 
             } else {
-                // Revert checkbox state on error
+                /* Revert checkbox state on error */
                 checkbox.checked = !isAdd;
                 wishlistText.textContent = !isAdd ? 'Remove from Wishlist' : 'Add to Wishlist';
-                
-                // Show error message
+                /* Show error message */
                 if (data.message === 'Please login first') {
                     window.location.href = 'login.php';
                 } else {
@@ -399,21 +381,11 @@ class ProductManager {
             }
         } catch (error) {
             console.error('Error:', error);
-            // Revert checkbox state on error
+            /* Revert checkbox state on error */
             checkbox.checked = !isAdd;
             wishlistText.textContent = !isAdd ? 'Remove from Wishlist' : 'Add to Wishlist';
             alert('An error occurred. Please try again.');
         }
-    }
-
-    updateURL() {
-        const params = new URLSearchParams();
-        Object.entries(this.filters).forEach(([key, value]) => {
-            if (value && value.length !== 0) {
-                params.set(key, Array.isArray(value) ? value.join(',') : value);
-            }
-        });
-        window.history.pushState({}, '', `?${params.toString()}`);
     }
 
     capitalizeFirstLetter(string) {
@@ -440,9 +412,7 @@ class ProductManager {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new ProductManager();
-});
+
 
 window.onload = function() {
     const errorMsg = document.getElementById('error-message');

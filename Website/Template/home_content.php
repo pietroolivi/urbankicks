@@ -9,10 +9,10 @@ $category = isset($_GET['category']) ? $_GET['category'] : 'popular';
 
 // Get sort parameter from URL, default to 'price-low-to-high'
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'price-low-to-high';
-
+/*
 // Get designers from URL parameters
 $brand = isset($_GET['brand']) ? $_GET['brand'] : "";
-
+*/
 // Get Genre and Type from URL parameters
 $genre = isset($_GET['genre']) ? $_GET['genre'] : "";
 $type = isset($_GET['type']) ? $_GET['type'] : "";
@@ -54,7 +54,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         <ul class="size-options">
             <?php for ($i = 36; $i <= 47; $i++) { ?>
             <li class="size-option">
-                <input id="filter-sidebar-size<?php echo $i  ?>" type="checkbox" name="sizes[]" >
+                <input id="filter-sidebar-size<?php echo $i  ?>" type="checkbox" name="sizes[]" value="<?php echo $i ?>">
                 <label for="filter-sidebar-size<?php echo $i  ?>"><?php echo $i ?></label>
             </li>
             <?php } ?>
@@ -84,12 +84,13 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
 </aside>
 
 <script>
+    //const prodManager = new ProductManager();
     window.addEventListener('resize', updateFiltersSidebarHeight);
     document.getElementsByClassName("filter-sidebar")[0].style.translate = "-100%";
     window.addEventListener('load', initializeInputTags);
     window.addEventListener('load', updateFiltersSidebarHeight);
     window.addEventListener('load', updateHomePageFilters);
-    
+
     function updateHomePageFilters() {
         let params = new URLSearchParams(window.location.search);
         /* ******************************************************************************************************************* */
@@ -111,12 +112,27 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                     } else if (key == "max-price") {
                         value = "&#8804;€" + value;
                     }
+                    if (key == "color") {
+                        /* We want to keep the 1st letter of the color values in the      */
+                        /* URL lowercase, but change it to uppercase in the home filters. */
+                        values = value.split(",");
+                        values = values.map(color => color[0].toUpperCase() + color.slice(1));
+                        value  = values.join(",");
+                    }
                     if (!document.querySelector(".removable-dynamic-filters").innerHTML.includes(idFilterHome)) {
                         document.querySelector(".removable-dynamic-filters").innerHTML += `
                             <div id="${idFilterHome}" class="home-filter">
                                 <button onclick="removeHomePageFilter()">X</button><p>${value.split(",")[i]}</p>
                             </div>
                         `;
+                    }
+                    if (key == "color") {
+                        /* We want the id of the <div> related to each color to be lowercase when the initial letter  */
+                        /* of the color is formed, while we want it to be uppercase inside the <p>, so we revert      */
+                        /* the string back to all lowercase for proper id creation at the beginning of the next loop. */
+                        values = value.split(",");
+                        values = values.map(color => color[0].toLowerCase() + color.slice(1));
+                        value  = values.join(",");
                     }
                 }
             }
@@ -219,7 +235,8 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         } else {
             document.getElementsByClassName("filter-sidebar")[0].style.translate = "-100%";
             enableScrollOnBG();
-            location.reload();
+            updateURL();
+            //location.reload();
         }
     }
 
@@ -348,6 +365,63 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         /* We curate the style of the selections deduced from the URL, since if we did not do this now the next         */
         /* call to the updateSelectedBorders() function would occur at the first state change of one of the checkboxes. */
         updateSelectedBorders();
+    }
+
+    function updateURL() {
+        // vogliamo aggiornare l'URL quando vengono inseriti input, quindi
+        // 1) Associare f come addEventListener ad ogni input, passando come arg param & value
+        // oppure
+        // 2) Leggere tutti gli input della sidebar qui in una volta periodicamente, e.g. ad ogni click di Done / area esterna
+        // proviamo la seconda  <=====
+        let brandInputs    = document.querySelectorAll(".filter-sidebar .brand-options .brand-option input");
+        let minPriceInput  = document.querySelector('.filter-sidebar .price-option input[name="filter-sidebar-min-price"]');
+        let maxPriceInput  = document.querySelector('.filter-sidebar .price-option input[name="filter-sidebar-max-price"]');
+        let sizeInputs     = document.querySelectorAll('.size-options .size-option input');
+        let colorInputs    = document.querySelectorAll('.color-options .color-option input');
+        let currentSorting = document.querySelector(".sort-sidebar .sort-switch input:checked").value;
+        const newParams = new URLSearchParams();
+        /* Brands. */
+        let brandQueryString = "";
+        for (let brandInput of brandInputs) {
+            if (brandInput.checked) {
+                brandQueryString += brandInput.value + ",";
+            }
+        }
+        if (brandQueryString != "") { /* To avoid adding to the URL the parameter with an empty string on the RHS */
+            brandQueryString = brandQueryString.slice(0, -1); /* We remove the additional comma ',' at the end of the string. */
+            newParams.set("brand", brandQueryString);
+        }
+        /* Sizes. */
+        let sizeQueryString = "";
+        for (let sizeInput of sizeInputs) {
+            if (sizeInput.checked) {
+                sizeQueryString += sizeInput.value + ",";    
+            }
+        }
+        if (sizeQueryString != "") {
+            sizeQueryString = sizeQueryString.slice(0, -1);
+            newParams.set("size", sizeQueryString);
+        }
+        /* Colors. */
+        let colorQueryString = "";
+        for (let colorInput of colorInputs) {
+            if (colorInput.checked) {
+                colorQueryString += colorInput.value + ",";
+            }
+        }
+        if (colorQueryString != "") {
+            colorQueryString = colorQueryString.slice(0, -1);
+            newParams.set("color", colorQueryString);
+        }
+        /* Min price. */
+        newParams.set("min-price", minPriceInput.value);
+        /* Max price. */
+        newParams.set("max-price", maxPriceInput.value);
+        /* Product sorting. */
+        newParams.set("sort", currentSorting);
+        /* Category */
+        /* Genre */
+        window.location.search = newParams.toString();
     }
 </script>
 
