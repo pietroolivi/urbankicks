@@ -254,7 +254,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     /* Lets now implement the function associated with the pressure of the ‘Reset’ button in the <footer> of the sidebar    */
     /* related to filters. To clear the selections made we will first have to remove from the current URL the substrings    */
     /* containing the name of the parameter for which the user provided input and the values associated with it. After      */
-    /* that we simply call the previously implemented function initializeInputTags() which will update the status of the   */
+    /* that we simply call the previously implemented function initializeInputTags() which will update the status of the    */
     /* <input> tags according to what is specified in the current query-string and, as nothing is specified, it will reset  */
     /* them to their default values. Finally, the latter function will in turn call updateSelectedBorders() which will      */
     /* take care of updating the sidebar graphics by removing the visual feedback of the selected elements where necessary. */
@@ -366,13 +366,17 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         /* call to the updateSelectedBorders() function would occur at the first state change of one of the checkboxes. */
         updateSelectedBorders();
     }
-
+    
+    /* *************************************************************************************************************************** */
+    /* Our primary source of information for understanding selected filters and sorting will be the URL just as we already do      */
+    /* (separately) for sorting type or genre and type of products. This is because the input tags lose their memory following a   */
+    /* simple refresh so we need a more stable resource. We will call this function, which appends the selected filters to the     */
+    /* query string (thus taking them to a safe place) whenever the user changes the filters, and this can happen on 2 occasions:  */
+    /* (1) By modifying the filter sidebar, so we should trigger the call on pressing “Done”, “Reset” or in general on closing the */
+    /* sidebar, which can also happen by clicking outside the sidebar.                                                             */
+    /* (2) Removing individual filters from the home page with the <button> X, so in this case we should be listening for clicks.  */
+    /* *************************************************************************************************************************** */
     function updateURL() {
-        // vogliamo aggiornare l'URL quando vengono inseriti input, quindi
-        // 1) Associare f come addEventListener ad ogni input, passando come arg param & value
-        // oppure
-        // 2) Leggere tutti gli input della sidebar qui in una volta periodicamente, e.g. ad ogni click di Done / area esterna
-        // proviamo la seconda  <=====
         let brandInputs    = document.querySelectorAll(".filter-sidebar .brand-options .brand-option input");
         let minPriceInput  = document.querySelector('.filter-sidebar .price-option input[name="filter-sidebar-min-price"]');
         let maxPriceInput  = document.querySelector('.filter-sidebar .price-option input[name="filter-sidebar-max-price"]');
