@@ -165,33 +165,6 @@ class ProductManager {
         this.updateBreadcrumb();
     }
 
-    updateURL() {
-        const params = new URLSearchParams();
-        Object.entries(this.filters).forEach(([key, value]) => {
-            if (value && value.length !== 0) {
-                params.set(key, Array.isArray(value) ? value.join(',') : value);
-            }
-        });
-        window.history.pushState({}, '', `?${params.toString()}`);
-        console.log("updateURL params: "+params.toString());
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     async loadWishlistItems() {
         try {
             const response = await fetch('home_handler.php', {

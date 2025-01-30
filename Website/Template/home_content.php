@@ -4,15 +4,9 @@ if(isset($_SESSION['error'])) {
     unset($_SESSION['error']);
 }
 
-// Get category from URL parameter, default to 'popular'
-$category = isset($_GET['category']) ? $_GET['category'] : 'popular';
-
-// Get sort parameter from URL, default to 'price-low-to-high'
+// Gets the sort parameter from the URL if present, otherwise the default value is 'price-low-to-high'
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'price-low-to-high';
-/*
-// Get designers from URL parameters
-$brand = isset($_GET['brand']) ? $_GET['brand'] : "";
-*/
+
 // Get Genre and Type from URL parameters
 $genre = isset($_GET['genre']) ? $_GET['genre'] : "";
 $type = isset($_GET['type']) ? $_GET['type'] : "";
@@ -84,6 +78,35 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
 </aside>
 
 <script>
+    let rawProducts = '';
+    // Both allProducts and filteredProducts to mantain both states of products
+    let allProducts = '';
+    let filteredProducts = '';
+    let wishlistItems = '';
+    let urlParams = '';
+    let filters='';
+    /**All settings of global variables inside listener for complete document loading. */
+    document.addEventListener('DOMContentLoaded', async() => {
+        rawProducts=JSON.parse(document.getElementById('products-container').dataset.products);
+        urlParams = new URLSearchParams(window.location.search);
+        initializeProducts(rawProducts);
+        loadWishlistItems();
+        /* Filters structure */
+        filters = {
+            brand:    urlParams.get('brand')     ? urlParams.get('brand').split(',') : [],
+            color:    urlParams.get('color')     ? urlParams.get('color').split(',') : [],
+            size:     urlParams.get('size')      ? urlParams.get('size').split(',')  : [],
+            category: urlParams.get('category')  || 'popular',
+            genre:    urlParams.get('genre')     || '',
+            minPrice: urlParams.get('min-price') || '0',
+            maxPrice: urlParams.get('max-price') || '1000',
+            type:     urlParams.get('type')      || '',
+            sort:     urlParams.get('sort')      || 'price-low-to-high'
+        };
+    });
+
+
+
     //const prodManager = new ProductManager();
     window.addEventListener('resize', updateFiltersSidebarHeight);
     document.getElementsByClassName("filter-sidebar")[0].style.translate = "-100%";
@@ -91,6 +114,71 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     window.addEventListener('load', updateFiltersSidebarHeight);
     window.addEventListener('load', updateHomePageFilters);
 
+    function initializeProducts(rawProducts) {
+        // Group products by model
+        const groupedProducts = new Map();/*    
+        rawProducts.forEach(p=>{
+            if(p.inWishlist==true)
+            console.log("prodotto in wishlist:"+p.ID_Prodotto);
+        });*/
+        rawProducts.forEach(product => {
+            const modelKey = product.Nome.toLowerCase();            
+            if (!groupedProducts.has(modelKey)) {
+                // Create new product entry
+                groupedProducts.set(modelKey, {
+                    id:           product.ID_Prodotto,
+                    name:         product.Nome,
+                    brand:        product.Marca,
+                    price:        parseFloat(product.Prezzo),
+                    type:         product.Tipo,
+                    genre:        product.Genere,
+                    description:  product.Descrizione,
+                    state:        product.Sta_Tipo,
+                    //added for discounted logic v
+                    isDiscounted: product.isDiscounted === 1,
+                    //discounted logic           ^
+                    created_at:   product.Data_Aggiunta,
+                    variants:     [],
+                    baseProduct:  product
+                });
+            }
+            // Add variant information
+            groupedProducts.get(modelKey).variants.push({
+                id:    product.ID_Prodotto,
+                size:  product.Taglia,
+                color: product.Colore,
+                price: product.Prezzo,
+                state: product.Sta_Tipo
+            });
+        });
+        // Convert Map to array and store
+        allProducts = Array.from(groupedProducts.values());
+        filteredProducts = [...allProducts];
+    }
+
+    async function loadWishlistItems() {
+        try {
+            const response = await fetch('home_handler.php', {
+                method:  'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body:    new URLSearchParams({action: 'getWishlistItems'})
+            });
+            const data = await response.json();
+            if (data.success) {
+                // data.wishlistItems è un array di prodotti (con le colonne di PRODOTTO)
+                const wishlistIds = data.wishlistItems.map(item => item.ID_Prodotto.toString());
+                wishlistItems = new Set(wishlistIds);
+                console.log(this.wishlistItems.size);
+            } else {
+                console.warn('Could not load wishlist items:', data.message);
+            }
+        } catch (error) {
+            console.error('Error loading wishlist items:', error);
+        }  
+        //this.setupEventListeners();
+        applyFilters();
+    }
+    
     function updateHomePageFilters() {
         let params = new URLSearchParams(window.location.search);
         /* ******************************************************************************************************************* */
@@ -236,6 +324,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
             document.getElementsByClassName("filter-sidebar")[0].style.translate = "-100%";
             enableScrollOnBG();
             updateURL();
+            applyFilters();
             //location.reload();
         }
     }
@@ -367,6 +456,133 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         updateSelectedBorders();
     }
     
+    function applyFilters() {
+        filteredProducts = allProducts.filter(product => {
+              /* Checks if any variant matches the filters (colors and sizes) */
+            const hasMatchingVariant = !filters.color.length && !filters.size.length ? true :
+            product.variants.some(variant => {
+                const matchesColor = !filters.color.length || filters.color.includes(variant.color);
+                const matchesSize = filters.size.length    || filters.size.includes(variant.size);
+                return matchesColor && matchesSize;
+            });
+            /* Brand filter */
+            const brandMatch = filters.brand.length === 0 || filters.brand.includes(product.brand);
+            /* Genre filter */
+            const genreMatch = !filters.genre || (product.genre && product.genre.toLowerCase() === filters.genre.toLowerCase());
+            /* Type filter */
+            const typeMatch = !filters.type || (product.type && product.type.toLowerCase() === filters.type.toLowerCase());
+            /* Category filter */
+            let categoryMatch = true;
+            switch(filters.category) {
+                case 'discounted':
+                    //categoryMatch = product.variants.some(v => v.discount > 0);
+                    categoryMatch = product.isDiscounted;
+                    break;
+                case 'novelties':
+                    const oneMonthAgo = new Date();
+                    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+                    categoryMatch = new Date(product.created_at) > oneMonthAgo;
+                    break;
+            }
+            /* Min price filter */
+            const minPriceMatch = Number(filters.minPrice) <= Number(product.price);
+            /* Max price filter */
+            const maxPriceMatch = Number(filters.maxPrice) >= Number(product.price);
+            return brandMatch && genreMatch && typeMatch && categoryMatch && hasMatchingVariant;
+        });
+        sortProducts();
+        renderProducts();
+        updateBreadcrumb();
+    }
+
+    function sortProducts() {
+        filteredProducts.sort((a, b) => {
+            switch(filters.sort) {
+                case 'price-low-to-high':
+                    return a.price - b.price;
+                case 'price-high-to-low':
+                    return b.price - a.price;
+                case 'alphabetical':
+                    return a.name.localeCompare(b.name);
+                default:
+                    return 0;
+            }
+        });
+    }
+
+    function renderProducts() {
+        const container = document.getElementById('products-container');
+        container.innerHTML = '';
+        //debug to see if there's a filed name mismatch
+        console.log(allProducts);
+        if (filteredProducts.length === 0) {
+            container.innerHTML = '<p>No products found matching your criteria.</p>';
+            console.log("nessun prodotto super ai filtri");
+            return;
+        }
+        filteredProducts.forEach(product => {
+            const productElement = createProductElement(product);
+            container.appendChild(productElement);
+        });
+    }
+
+    function createProductElement(product) {
+        const template = document.getElementById('product-template');
+        const productCard = template.content.cloneNode(true);
+        const card = productCard.querySelector('.product-card');
+        card.dataset.productId = product.id;
+        const link = card.querySelector('.product-link');
+        link.href = `product.php?id=${product.id}`;
+        /*<img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
+        alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>"> */
+        const img = card.querySelector('img');
+        img.src = `CSS/Images/Products/${product.name}_1.webp`;
+        //fallback image if image fetch fails.
+        img.onerror = function() {
+            img.src = `CSS/Images/Products/default_shoe.webp`;
+        };
+        console.log(`CSS/Images/Products/${product.name}_1.webp`);
+        img.name = `${product.Nome} - View ${1}`;
+        card.querySelector('.product-name').textContent = product.name;
+        // Shows price range if variants have different prices
+        const prices = product.variants.map(v => v.price);
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        const priceElement = card.querySelector('.product-price');
+        if (minPrice === maxPrice) {
+            priceElement.textContent = `€${minPrice.toFixed(2)}`;
+        } else {
+            priceElement.textContent = `€${minPrice.toFixed(2)} - €${maxPrice.toFixed(2)}`;
+        }
+        const wishlistCheckbox = card.querySelector('.wishlist-checkbox');
+        const imgheart= productCard.querySelector('img.wishlist-checkbox');
+        if (wishlistItems.has(product.id.toString())) {
+            console.log("disabilita check");
+            wishlistCheckbox.checked = true;
+            imgheart.src="CSS/Images/Icons/heart_filled.svg";
+         // wishlistCheckbox.nextElementSibling.textContent = 'Remove from Wishlist';
+        }
+        return card;
+    }
+
+    function updateBreadcrumb() {
+        const breadcrumbNav = document.querySelector('.breadcrumb');
+        if (!breadcrumbNav) return;
+
+        if (!filters.genre && !filters.type) {
+            breadcrumbNav.style.display = 'none';
+            return;
+        }
+
+        breadcrumbNav.style.display = 'block';
+        const ol = breadcrumbNav.querySelector('ol');
+        ol.innerHTML = `
+            <li><a href="home.php">Home</a></li>
+            ${filters.genre ? `<li><a href="home.php?genre=${encodeURIComponent(filters.genre)}">${capitalizeFirstLetter(filters.genre)}</a></li>` : ''}
+            ${filters.type ? `<li><span aria-current="page">${capitalizeFirstLetter(filters.type)}</span></li>` : ''}
+        `;
+    }
+
     /* *************************************************************************************************************************** */
     /* Our primary source of information for understanding selected filters and sorting will be the URL just as we already do      */
     /* (separately) for sorting type or genre and type of products. This is because the input tags lose their memory following a   */
@@ -377,6 +593,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     /* (2) Removing individual filters from the home page with the <button> X, so in this case we should be listening for clicks.  */
     /* *************************************************************************************************************************** */
     function updateURL() {
+        let categoryInputs = document.querySelectorAll('fieldset input[name="category"]');
         let brandInputs    = document.querySelectorAll(".filter-sidebar .brand-options .brand-option input");
         let minPriceInput  = document.querySelector('.filter-sidebar .price-option input[name="filter-sidebar-min-price"]');
         let maxPriceInput  = document.querySelector('.filter-sidebar .price-option input[name="filter-sidebar-max-price"]');
@@ -384,6 +601,12 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         let colorInputs    = document.querySelectorAll('.color-options .color-option input');
         let currentSorting = document.querySelector(".sort-sidebar .sort-switch input:checked").value;
         const newParams = new URLSearchParams();
+        /*Categories*/
+        for (let category of categoryInputs) {
+            if (category.checked) {
+                newParams.set("category", category.value);
+            }
+        }
         /* Brands. */
         let brandQueryString = "";
         for (let brandInput of brandInputs) {
@@ -502,11 +725,12 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     <!-- Category Selection -->
     <fieldset class="category-switch">
         <legend>Please select the category of articles to be displayed:</legend>
-        <input type="radio" id="popular" name="category" value="popular" checked>
+        <!-- We call the function when we intercept a change in the radio button related to categories, which does not necessarily occur in conjunction with the closing of the filter sidebar. -->
+        <input onchange="updateURL()" type="radio" id="popular" name="category" value="popular" checked>
         <label for="popular">Popular</label>
-        <input type="radio" id="discounted" name="category" value="discounted">
+        <input onchange="updateURL()" type="radio" id="discounted" name="category" value="discounted">
         <label for="discounted">Discounted</label>
-        <input type="radio" id="novelties" name="category" value="novelties">
+        <input onchange="updateURL()" type="radio" id="novelties" name="category" value="novelties">
         <label for="novelties">Novelties</label>
     </fieldset>
 
