@@ -77,6 +77,93 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     </footer>
 </aside>
 
+<!-- Sort Menu -->
+<aside class="sort-sidebar">
+    <fieldset class="sort-switch" onchange="shiftSortSidebar('fieldset')">
+        <legend>Please select the order in which to display the items:</legend>
+        <input type="radio" id="price-low-to-high" name="sort" value="price-low-to-high" <?php echo $sort === 'price-low-to-high' ? 'checked' : ''; ?>>
+        <label for="price-low-to-high">PRICE LOW TO HIGH</label>
+        <input type="radio" id="price-high-to-low" name="sort" value="price-high-to-low" <?php echo $sort === 'price-high-to-low' ? 'checked' : ''; ?>>
+        <label for="price-high-to-low">PRICE HIGH TO LOW</label>
+        <input type="radio" id="alphabetical" name="sort" value="alphabetical" <?php echo $sort === 'alphabetical' ? 'checked' : ''; ?>>
+        <label for="alphabetical">ALPHABETICAL</label>
+        <input type="radio" id="reviews-low-to-high" name="sort" value="reviews-low-to-high" <?php echo $sort === 'reviews-low-to-high' ? 'checked' : ''; ?>>
+        <label for="reviews-low-to-high">REVIEWS LOW TO HIGH</label>
+        <input type="radio" id="reviews-high-to-low" name="sort" value="reviews-high-to-low" <?php echo $sort === 'reviews-high-to-low' ? 'checked' : ''; ?>>
+        <label for="reviews-high-to-low">REVIEWS HIGH TO LOW</label>
+    </fieldset>
+</aside>
+
+<h2>
+    <?php 
+    if ($genre || $type) {
+        echo(trim(ucfirst($genre) . ' ' . ucfirst($type)));
+    } else if ($genre) {
+        echo(ucfirst($genre));
+    } else {
+        echo("All Products");
+    }
+    ?>
+</h2>
+
+<div class="filters-and-sorters-switches">
+    <!-- Filter Icon -->
+    <label for="filter-icon">Open/close menu with available product filters.</label>
+    <label class="filter-menu"><img src="CSS/Images/Icons/filter.svg" alt=""><input id="filter-icon" type="checkbox" onchange="shiftFilterSidebar()"></label>
+
+    <!-- Category Selection -->
+    <fieldset class="category-switch">
+        <legend>Please select the category of articles to be displayed:</legend>
+        <!-- We call the function when we intercept a change in the radio button related to categories, which does not necessarily occur in conjunction with the closing of the filter sidebar. -->
+        <input onchange="updateURL()" type="radio" id="popular" name="category" value="popular" checked>
+        <label for="popular">Popular</label>
+        <input onchange="updateURL()" type="radio" id="discounted" name="category" value="discounted">
+        <label for="discounted">Discounted</label>
+        <input onchange="updateURL()" type="radio" id="novelties" name="category" value="novelties">
+        <label for="novelties">Novelties</label>
+    </fieldset>
+
+    <!-- Sort Icon -->
+    <label for="sort-icon">Open/close menu with available product sorting criteria.</label>
+    <label class="sort-menu"><img src="CSS/Images/Icons/sort.svg" alt=""><input id="sort-icon" type="checkbox" onchange="shiftSortSidebar('icon')"></label>
+</div>
+
+<?php if ($genre || $type): ?>
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="Breadcrumb" class="breadcrumb">
+        <ol>
+            <li><a href="home.php">Home</a></li>
+            <?php if ($genre): ?>
+                <li><a href="home.php?genre=<?php echo urlencode($genre); ?>"><?php echo ucfirst($genre); ?></a></li>
+            <?php endif; ?>
+            <?php if ($type): ?>
+                <li><span aria-current="page"><?php echo ucfirst($type); ?></span></li>
+            <?php endif; ?>
+        </ol>
+    </nav>
+<?php endif; ?>
+
+<div class="removable-dynamic-filters"></div>
+
+<div id="products-container" class="products-grid" 
+     data-products='<?php echo htmlspecialchars(json_encode($templateParams["products"]), ENT_QUOTES, 'UTF-8'); ?>'>
+</div>
+
+<template id="product-template">
+    <div class="product-card">
+        <a href="" class="product-link">
+            <img src="" alt="">
+            <label class="wishlist-container">
+            <input type="checkbox" class="wishlist-checkbox" hidden>
+            <img src="CSS/Images/Icons/heart_empty.svg" alt="Add to Wishlist" class="wishlist-checkbox">
+            </label></a>
+        <h3 class="product-name"></h3>
+        <p class="product-price"></p>
+       
+    </div>
+</template>
+
+
 <script>
     let rawProducts = '';
     // Both allProducts and filteredProducts to mantain both states of products
@@ -103,6 +190,15 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
             type:     urlParams.get('type')      || '',
             sort:     urlParams.get('sort')      || 'price-low-to-high'
         };
+        document.getElementsByClassName("sort-sidebar")[0].style.translate = "0px 300%";
+        document.body.addEventListener('click', function() {
+            let myElementToCheckIfClicksAreInsideOf = document.getElementsByClassName("sort-sidebar")[0];
+            if (document.getElementsByClassName("sort-sidebar")[0].style.translate == "0px" && !myElementToCheckIfClicksAreInsideOf.contains(event.target)) {
+                document.getElementById("sort-icon").checked = false;
+                shiftSortSidebar('body');
+                event.preventDefault();
+            }
+        });
     });
 
 
@@ -168,7 +264,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                 // data.wishlistItems è un array di prodotti (con le colonne di PRODOTTO)
                 const wishlistIds = data.wishlistItems.map(item => item.ID_Prodotto.toString());
                 wishlistItems = new Set(wishlistIds);
-                console.log(this.wishlistItems.size);
+                console.log(wishlistItems.size);
             } else {
                 console.warn('Could not load wishlist items:', data.message);
             }
@@ -572,6 +668,11 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         }
         return card;
     }
+    function capitalizeFirstLetter(string) {
+        if (!string) return '';
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+
 
     function updateBreadcrumb() {
         const breadcrumbNav = document.querySelector('.breadcrumb');
@@ -608,7 +709,15 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         let sizeInputs     = document.querySelectorAll('.size-options .size-option input');
         let colorInputs    = document.querySelectorAll('.color-options .color-option input');
         let currentSorting = document.querySelector(".sort-sidebar .sort-switch input:checked").value;
+        
         const newParams = new URLSearchParams();
+
+        /* Genre */
+        newParams.set("genre",filters.genre);
+
+        /*Type */
+        newParams.set("type",filters.type);
+
         /*Categories*/
         for (let category of categoryInputs) {
             if (category.checked) {
@@ -655,29 +764,8 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         /* Product sorting. */
         newParams.set("sort", currentSorting);
         /* Category */
-        /* Genre */
         window.location.search = newParams.toString();
     }
-</script>
-
-<!-- Sort Menu -->
-<aside class="sort-sidebar">
-    <fieldset class="sort-switch" onchange="shiftSortSidebar('fieldset')">
-        <legend>Please select the order in which to display the items:</legend>
-        <input type="radio" id="price-low-to-high" name="sort" value="price-low-to-high" <?php echo $sort === 'price-low-to-high' ? 'checked' : ''; ?>>
-        <label for="price-low-to-high">PRICE LOW TO HIGH</label>
-        <input type="radio" id="price-high-to-low" name="sort" value="price-high-to-low" <?php echo $sort === 'price-high-to-low' ? 'checked' : ''; ?>>
-        <label for="price-high-to-low">PRICE HIGH TO LOW</label>
-        <input type="radio" id="alphabetical" name="sort" value="alphabetical" <?php echo $sort === 'alphabetical' ? 'checked' : ''; ?>>
-        <label for="alphabetical">ALPHABETICAL</label>
-        <input type="radio" id="reviews-low-to-high" name="sort" value="reviews-low-to-high" <?php echo $sort === 'reviews-low-to-high' ? 'checked' : ''; ?>>
-        <label for="reviews-low-to-high">REVIEWS LOW TO HIGH</label>
-        <input type="radio" id="reviews-high-to-low" name="sort" value="reviews-high-to-low" <?php echo $sort === 'reviews-high-to-low' ? 'checked' : ''; ?>>
-        <label for="reviews-high-to-low">REVIEWS HIGH TO LOW</label>
-    </fieldset>
-</aside>
-<script>
-    document.getElementsByClassName("sort-sidebar")[0].style.translate = "0px 300%";
 
     function shiftSortSidebar(whoCalled) {/*
         if (whoCalled == 'icon') {
@@ -700,84 +788,11 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         } else {
             document.getElementsByClassName("sort-sidebar")[0].style.translate = "0px 300%";
             enableScrollOnBG();
+            updateURL();
+            applyFilters();
+         //   applyFilters();
         }
     }
 
-    document.body.addEventListener('click', function() {
-        let myElementToCheckIfClicksAreInsideOf = document.getElementsByClassName("sort-sidebar")[0];
-        if (document.getElementsByClassName("sort-sidebar")[0].style.translate == "0px" && !myElementToCheckIfClicksAreInsideOf.contains(event.target)) {
-            document.getElementById("sort-icon").checked = false;
-            shiftSortSidebar('body');
-            event.preventDefault();
-        }
-    });
 </script>
 
-<h2>
-    <?php 
-    if ($genre || $type) {
-        echo(trim(ucfirst($genre) . ' ' . ucfirst($type)));
-    } else if ($genre) {
-        echo(ucfirst($genre));
-    } else {
-        echo("All Products");
-    }
-    ?>
-</h2>
-
-<div class="filters-and-sorters-switches">
-    <!-- Filter Icon -->
-    <label for="filter-icon">Open/close menu with available product filters.</label>
-    <label class="filter-menu"><img src="CSS/Images/Icons/filter.svg" alt=""><input id="filter-icon" type="checkbox" onchange="shiftFilterSidebar()"></label>
-
-    <!-- Category Selection -->
-    <fieldset class="category-switch">
-        <legend>Please select the category of articles to be displayed:</legend>
-        <!-- We call the function when we intercept a change in the radio button related to categories, which does not necessarily occur in conjunction with the closing of the filter sidebar. -->
-        <input onchange="updateURL()" type="radio" id="popular" name="category" value="popular" checked>
-        <label for="popular">Popular</label>
-        <input onchange="updateURL()" type="radio" id="discounted" name="category" value="discounted">
-        <label for="discounted">Discounted</label>
-        <input onchange="updateURL()" type="radio" id="novelties" name="category" value="novelties">
-        <label for="novelties">Novelties</label>
-    </fieldset>
-
-    <!-- Sort Icon -->
-    <label for="sort-icon">Open/close menu with available product sorting criteria.</label>
-    <label class="sort-menu"><img src="CSS/Images/Icons/sort.svg" alt=""><input id="sort-icon" type="checkbox" onchange="shiftSortSidebar('icon')"></label>
-</div>
-
-<?php if ($genre || $type): ?>
-    <!-- Breadcrumb Navigation -->
-    <nav aria-label="Breadcrumb" class="breadcrumb">
-        <ol>
-            <li><a href="home.php">Home</a></li>
-            <?php if ($genre): ?>
-                <li><a href="home.php?genre=<?php echo urlencode($genre); ?>"><?php echo ucfirst($genre); ?></a></li>
-            <?php endif; ?>
-            <?php if ($type): ?>
-                <li><span aria-current="page"><?php echo ucfirst($type); ?></span></li>
-            <?php endif; ?>
-        </ol>
-    </nav>
-<?php endif; ?>
-
-<div class="removable-dynamic-filters"></div>
-
-<div id="products-container" class="products-grid" 
-     data-products='<?php echo htmlspecialchars(json_encode($templateParams["products"]), ENT_QUOTES, 'UTF-8'); ?>'>
-</div>
-
-<template id="product-template">
-    <div class="product-card">
-        <a href="" class="product-link">
-            <img src="" alt="">
-            <label class="wishlist-container">
-            <input type="checkbox" class="wishlist-checkbox" hidden>
-            <img src="CSS/Images/Icons/heart_empty.svg" alt="Add to Wishlist" class="wishlist-checkbox">
-            </label></a>
-        <h3 class="product-name"></h3>
-        <p class="product-price"></p>
-       
-    </div>
-</template>
