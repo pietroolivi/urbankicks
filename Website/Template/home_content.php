@@ -82,7 +82,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     // Both allProducts and filteredProducts to mantain both states of products
     let allProducts = '';
     let filteredProducts = '';
-    let wishlistItems = '';
+    let wishlistItems = new Set();
     let urlParams = '';
     let filters='';
     /**All settings of global variables inside listener for complete document loading. */
@@ -450,6 +450,13 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         if(queryStringMaxPrice != null) {
             maxPriceTag.value = queryStringMaxPrice;
         }
+
+        let categoryInputs = document.querySelectorAll('input[name="category"]');
+        let queryStringCategory = new URLSearchParams(window.location.search).get('category') || 'popular';
+        categoryInputs.forEach(input => {
+            input.checked = (input.value === queryStringCategory);
+        });
+
         correctPriceBounds();
         /* We curate the style of the selections deduced from the URL, since if we did not do this now the next         */
         /* call to the updateSelectedBorders() function would occur at the first state change of one of the checkboxes. */
@@ -462,7 +469,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
             const hasMatchingVariant = !filters.color.length && !filters.size.length ? true :
             product.variants.some(variant => {
                 const matchesColor = !filters.color.length || filters.color.includes(variant.color);
-                const matchesSize = filters.size.length    || filters.size.includes(variant.size);
+                const matchesSize = !filters.size.length    || filters.size.includes(variant.size);
                 return matchesColor && matchesSize;
             });
             /* Brand filter */
@@ -488,7 +495,8 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
             const minPriceMatch = Number(filters.minPrice) <= Number(product.price);
             /* Max price filter */
             const maxPriceMatch = Number(filters.maxPrice) >= Number(product.price);
-            return brandMatch && genreMatch && typeMatch && categoryMatch && hasMatchingVariant;
+            return brandMatch && genreMatch && typeMatch && categoryMatch 
+                        && hasMatchingVariant && minPriceMatch && maxPriceMatch;
         });
         sortProducts();
         renderProducts();
@@ -633,7 +641,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         let colorQueryString = "";
         for (let colorInput of colorInputs) {
             if (colorInput.checked) {
-                colorQueryString += colorInput.value + ",";
+                colorQueryString += colorInput.value.charAt(0).toUpperCase() + String(colorInput.value).slice(1) + ",";
             }
         }
         if (colorQueryString != "") {
