@@ -1288,25 +1288,43 @@ class DatabaseHelper {
     
     // Get all orders for a user
     public function getOrders($email) {
-        $query = "SELECT o.ID_Ordine,
-                         o.Data_Ordine,
-                         o.Costo_Totale,
-                         o.Metodo_Pagamento,
-                         o.Regalo,
-                         o.Tipo_Spedizione as Tipo,
-                         o.ID_Sconto,
-                         p.ID_Prodotto,
-                         p.Nome,
-                         p.Genere,
-                         po.Prezzo_Acquisto,
-                         po.Quantita,
-                         po.Taglia,
-                         po.Colore
-                  FROM ORDINE o
-                  JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
-                  JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
-                  WHERE o.Email = ?
-                  ORDER BY o.Data_Ordine DESC, p.ID_Prodotto ASC";
+        // Utilizziamo una subquery in SELECT per verificare la consegna
+        // (restituirà 1 se esiste almeno un tracking "Delivered" con data non NULL, altrimenti 0)
+        $query = "SELECT 
+                    o.ID_Ordine,
+                    o.Data_Ordine,
+                    o.Costo_Totale,
+                    o.Metodo_Pagamento,
+                    o.Regalo,
+                    o.Tipo_Spedizione AS Tipo,
+                    o.ID_Sconto,
+                    
+                    p.ID_Prodotto,
+                    p.Nome,
+                    p.Genere,
+    
+                    po.Prezzo_Acquisto,
+                    po.Quantita,
+                    po.Taglia,
+                    po.Colore,
+    
+                    -- Subquery che determina se l'ordine è Delivered
+                    (
+                      SELECT COUNT(*) 
+                      FROM Tracking_Spedizione ts
+                      WHERE ts.ID_Ordine = o.ID_Ordine 
+                        AND ts.Stato = 'Delivered'
+                        AND ts.Arrivo_Effettivo IS NOT NULL
+                    ) > 0 AS delivered_flag
+    
+                FROM ORDINE o
+                JOIN PRODOTTO_ORDINE po 
+                      ON o.ID_Ordine = po.ID_Ordine
+                JOIN PRODOTTO p 
+                      ON po.ID_Prodotto = p.ID_Prodotto
+                WHERE o.Email = ?
+                -- Esempio: ordina per Data_Ordine (decrescente) e poi per ID_Prodotto
+                ORDER BY o.Data_Ordine DESC, p.ID_Prodotto ASC";
     
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $email);
@@ -1314,28 +1332,35 @@ class DatabaseHelper {
         $result = $stmt->get_result();
     
         $orders = [];
+    
         while ($row = $result->fetch_assoc()) {
-            if (!isset($orders[$row['ID_Ordine']])) {
-                $orders[$row['ID_Ordine']] = [
-                    'ID_Ordine' => $row['ID_Ordine'],
-                    'Data_Ordine' => $row['Data_Ordine'],
-                    'Costo_Totale' => $row['Costo_Totale'],
-                    'Metodo_Pagamento' => $row['Metodo_Pagamento'],
-                    'Regalo' => $row['Regalo'],
-                    'Tipo' => $row['Tipo'],
-                    'ID_Sconto' => $row['ID_Sconto'],
-                    'products' => []
+            $orderId = $row['ID_Ordine'];
+    
+            // Se l'ordine non è ancora in $orders, inizializzalo
+            if (!isset($orders[$orderId])) {
+                $orders[$orderId] = [
+                    'ID_Ordine'       => $row['ID_Ordine'],
+                    'Data_Ordine'     => $row['Data_Ordine'],
+                    'Costo_Totale'    => $row['Costo_Totale'],
+                    'Metodo_Pagamento'=> $row['Metodo_Pagamento'],
+                    'Regalo'          => $row['Regalo'],
+                    'Tipo'            => $row['Tipo'],
+                    'ID_Sconto'       => $row['ID_Sconto'],
+                    // Salviamo il valore booleano una sola volta per ogni ordine:
+                    'tracking_delivered' => (bool) $row['delivered_flag'],
+                    'products'        => []
                 ];
             }
     
-            $orders[$row['ID_Ordine']]['products'][] = [
+            // Aggiungi le informazioni del prodotto
+            $orders[$orderId]['products'][] = [
                 'ID_Prodotto' => $row['ID_Prodotto'],
-                'Nome' => $row['Nome'],
-                'Genere' => $row['Genere'],
-                'Prezzo' => $row['Prezzo_Acquisto'],
-                'Quantita' => $row['Quantita'],
-                'Taglia' => $row['Taglia'],
-                'Colore' => $row['Colore']
+                'Nome'        => $row['Nome'],
+                'Genere'      => $row['Genere'],
+                'Prezzo'      => $row['Prezzo_Acquisto'],
+                'Quantita'    => $row['Quantita'],
+                'Taglia'      => $row['Taglia'],
+                'Colore'      => $row['Colore']
             ];
         }
     
