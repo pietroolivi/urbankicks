@@ -199,6 +199,11 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                 event.preventDefault();
             }
         });
+        document.addEventListener('change', (event) => {
+            if (event.target.classList.contains('wishlist-checkbox')) {
+                handleWishlistToggle(event.target);
+            }
+        });
     });
 
 
@@ -250,6 +255,60 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         // Convert Map to array and store
         allProducts = Array.from(groupedProducts.values());
         filteredProducts = [...allProducts];
+    }
+
+    async function handleWishlistToggle(checkbox) {
+        const productCard = checkbox.closest('.product-card');
+        const productId = productCard.dataset.productId;
+        const isAdd = checkbox.checked;
+        const wishlistText = checkbox.nextElementSibling;
+        const imgHeart = productCard.querySelector('img.wishlist-checkbox');
+        try {/*
+            const formData = new FormData();
+            formData.append('action', 'toggleWishlist');
+            formData.append('productId', productId);
+            formData.append('isAdd', isAdd);*/
+            const response = await fetch('home_handler.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body:new URLSearchParams({
+                    action: 'toggleWishlist',
+                    productId: productId,
+                    isAdd: isAdd 
+                })
+            });/*
+            const data= await response.text();
+            console.log(data);*/
+            const data = await response.json();
+            if (data.success) {
+                // Update UI
+                if(checkbox.checked) {
+                    imgHeart.src="CSS/Images/Icons/heart_filled.svg";
+                    wishlistText.textContent=' Remove from Wishlist';
+                } else {
+                    imgHeart.src="CSS/Images/Icons/heart_empty.svg";
+                    wishlistText.textContent='Add to Wishlist';
+                } 
+            } else {
+                /* Revert checkbox state on error */
+                checkbox.checked = !isAdd;
+                wishlistText.textContent = !isAdd ? 'Remove from Wishlist' : 'Add to Wishlist';
+                /* Show error message */
+                if (data.message === 'Please login first') {
+                    window.location.href = 'login.php';
+                } else {
+                    alert(data.message);
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            /* Revert checkbox state on error */
+            checkbox.checked = !isAdd;
+            wishlistText.textContent = !isAdd ? 'Remove from Wishlist' : 'Add to Wishlist';
+            alert('An error occurred. Please try again.');
+        }
     }
 
     async function loadWishlistItems() {
