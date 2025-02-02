@@ -72,7 +72,7 @@ addToCartButton.addEventListener('click', async () => {
        console.log(rawText);*/
         if (data.success) {
            // alert(data.message || "Product added to cart successfully!");
-           wishlistButton.textContent="";
+         //  wishlistButton.textContent="";
         } else {
             if(data.message==="You need to be logged in"){
                 window.location.href = "login.php";
