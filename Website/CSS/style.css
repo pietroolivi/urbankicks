@@ -1466,6 +1466,63 @@ min-width: 100%;
   - action-buttons          (THE CONTAINER FOR THE BUTTONS OF REMOVE AND ADD TO WISHLIST)
 */
 
+.warning-free-shipping img, .warning-free-shipping p{
+  margin-top:10px;
+  display: inline-block;
+
+}
+.warning-free-shipping {
+  margin-left:5%;
+}
+/*
+#products-container + p,
+.cart-total-container{
+  margin-left:5%;
+  display: inline-block;
+}
+*/
+.cart-total-container{
+  display: inline-block;
+  text-align: center;
+}
+.cart-total-container p{
+  display: inline-block;
+  margin-right:55%
+}
+
+.cart-total-container span{
+  display: inline-block;
+}
+
+.cart-total-container, .last-cart-actions{
+  width:400px;
+}
+.last-cart-actions{
+  text-align: center;
+}
+
+.continue-shopping, .proceed-checkout{
+  width:100%;
+  display: block;
+  margin-bottom: 5px;
+}
+.cont-proc-buttons{
+  box-sizing: border-box;
+  padding-left:30%;
+  padding-right:35%;
+  text-align: center;
+  margin-left: 5%;
+  display: block;
+  width:100%;
+  margin-bottom: 10px;
+
+}
+.cont-proc-buttons button{
+  text-align: center;
+}
+.cart-total-container span:nth-of-type(2){
+  margin-left:10px;
+}
 
 #products-container.lateral-container{ 
   text-align: left; /* centers the elements that are inline-block elements */
@@ -1656,7 +1713,13 @@ Hide default number input spinner buttons */
 
 /* Media Query 2560*/
 @media (min-width: 2560px) {
+  .cart-total-container span, .cart-total-container p{
+    font-size: larger;
+  }
 
+  .cart-total-container, .last-cart-actions{
+    width:1200px;
+  }
   .lateral-container#products-container .product-card {
     padding: 22px 26px;
     margin: 20px;
@@ -1671,7 +1734,7 @@ Hide default number input spinner buttons */
   #products-container.lateral-container .item-info{
     gap: 1.5rem;
   } 
-  .size-selector, .color-selector{
+  .size-selector, .color-selector, .warning-free-shipping p{
     font-size:larger;
   }
 
@@ -1694,6 +1757,12 @@ Hide default number input spinner buttons */
 }
 
 @media (max-width: 2196px) {
+  .cart-total-container span, .cart-total-container p{
+    font-size: large;
+  }
+  .cart-total-container, .last-cart-actions{
+    width:900px;
+  }
   .lateral-container#products-container .product-card {
     padding: 20px 22px;
     margin: 20px;
@@ -1708,7 +1777,7 @@ Hide default number input spinner buttons */
   #products-container.lateral-container .item-info{
     gap: 1.5rem;
   } 
-  .size-selector, .color-selector{
+  .size-selector, .color-selector, .warning-free-shipping p{
     font-size:large;
   }
 
@@ -1731,6 +1800,12 @@ Hide default number input spinner buttons */
 }
 /*Media Query 1024*/
 @media (max-width: 1024px) {
+  .cart-total-container span, .cart-total-container p{
+    font-size: large;
+  }
+  .cart-total-container, .last-cart-actions{
+    width:650px;
+  }
   .lateral-container#products-container .product-card {
     padding: 16px 20px;
       margin: 12px;
@@ -1746,7 +1821,7 @@ Hide default number input spinner buttons */
     gap: 1rem;
   }
 
-  .size-selector, .color-selector{
+  .size-selector, .color-selector, .warning-free-shipping p{
     font-size: medium;
   }
   .size-selector{
@@ -1776,7 +1851,12 @@ Hide default number input spinner buttons */
 }
 
 @media (max-width: 600px) {
-  
+  .cart-total-container span, .cart-total-container p{
+    font-size: medium;
+  }
+  .cart-total-container, .last-cart-actions{
+    width:400px;
+  }
   .lateral-container#products-container .product-card {
     padding: 12px 14px;
       margin: 8px;
@@ -1793,7 +1873,7 @@ Hide default number input spinner buttons */
     gap: 0.5rem;
   } 
 
-  .size-selector, .color-selector{
+  .size-selector, .color-selector, .warning-free-shipping p{
     font-size: small;
   }
   .size-selector, .color-selector, .quantity-selector{
@@ -1818,6 +1898,7 @@ Hide default number input spinner buttons */
     flex: 1;
     font-size: 0.9em;
   }
+
 }
 
 /********************************************************************
@@ -1825,7 +1906,7 @@ Hide default number input spinner buttons */
      AUTHOR:SIMONE
 **********************************************************************/
 
-.order-info-tracking, .order-lifestate{
+.order-info-tracking, .order-lifestate , #step-title{
   margin-left:5%;
   width:100;
   display: block;
@@ -2000,7 +2081,7 @@ text-align: left;
 }
 
 @media (max-width: 2196px) {
-  .order-info-tracking h3, .order-lifestate h3{
+  .order-info-tracking h3, .order-lifestate h3, #step-title{
     font-size:x-large;
   }
   .status-info em {
@@ -2049,7 +2130,7 @@ text-align: left;
 
 
 @media (max-width: 1024px) {
-  .order-info-tracking h3, .order-lifestate h3{
+  .order-info-tracking h3, .order-lifestate h3, #step-title{
     font-size: larger;
   }
 
@@ -2086,7 +2167,7 @@ text-align: left;
 }
 
 @media (max-width: 600px) {
-  .order-info-tracking h3, .order-lifestate h3{
+  .order-info-tracking h3, .order-lifestate h3, #step-title{
     font-size: large;
   }
 
@@ -2123,6 +2204,360 @@ text-align: left;
 
 
 /********************************************************************
+     **STYLE CODE FOR CHECKOUT 1* 
+     AUTHOR:SIMONE
+**********************************************************************/
+#progress-bar{
+  margin-left:5%;
+  display: block;
+  width: 300px;
+  height:50px;
+}
+#progress-bar{
+  width:500px;
+  height:50px;
+}
+/*TODO. it's input field*/
+.promo-code{
+  margin-top:10px;
+  margin-left: 6%;
+  padding-left: 70px;
+}
+.gift-wrap{
+  margin-top:10px;
+  margin-left: 6%;
+  margin-bottom:10px;
+}
+.gift-wrap input, .gift-wrap p{
+  padding-left: 70px;
+}
+
+#summary-step footer{
+  margin-left: 8%;
+  width:300px;
+}
+#summary-step footer .subtot-tot{
+  float:right;
+  text-align: end;
+}
+#summary-step footer .subtot-tot p{
+  margin-bottom: 10px;
+}
+
+
+
+@media (min-width: 2560px) {
+
+  #progress-bar{
+    width:1000px;
+    height:50px;
+  }
+  .gift-wrap input, .gift-wrap p{
+    padding-left: 150px;
+    font-size:larger;
+  }
+  .gift-wrap input, .gift-wrap p{
+    padding-left: 150px;
+  }
+  #summary-step footer{
+    margin-left: 8%;
+    width:400px;
+  }
+  #summary-step footer .subtot-tot p{
+    margin-bottom: 10px;
+    font-size:larger;
+  }
+}
+@media (max-width: 2196px) {
+  #progress-bar{
+    width:800px;
+    height:50px;
+  }
+  .gift-wrap input, .gift-wrap p{
+    padding-left: 120px;
+  }
+  .gift-wrap input, .gift-wrap p{
+    padding-left: 120px;
+    font-size:larger;
+  }
+  #summary-step footer{
+    margin-left: 8%;
+    width:360px;
+  }
+  #summary-step footer .subtot-tot p{
+    margin-bottom: 10px;
+    font-size:larger;
+  }
+}
+
+@media (max-width: 1024px) {
+  #progress-bar{
+    width:500px;
+    height:50px;
+  }
+  .gift-wrap input, .gift-wrap p{
+    padding-left: 100px;
+    font-size:large;
+  }
+  .gift-wrap input, .gift-wrap p{
+    padding-left: 100px;
+  }
+
+  #summary-step footer{
+    margin-left: 8%;
+    width:320px;
+  }
+
+  #summary-step footer .subtot-tot p{
+    margin-bottom: 10px;
+    font-size:large;
+  }
+}
+@media (max-width: 600px) {
+  #progress-bar{
+    width:400px;
+    height:50px;
+  }
+  .gift-wrap input, .gift-wrap p{
+    padding-left: 70px;
+    font-size: medium;
+  }
+  #summary-step footer{
+    margin-left: 8%;
+    width:300px;
+  }
+
+  #summary-step footer .subtot-tot p{
+    margin-bottom: 10px;
+    font-size: medium;
+  }
+}
+
+/********************************************************************
+     **STYLE CODE FOR CHECKOUT 2* 
+     AUTHOR:SIMONE
+**********************************************************************/
+
+
+.block-checkout, .ad-form{
+  margin-left: 5%;
+  
+}
+
+.block-checkout legend{
+display: block;
+}
+
+.ad-form{
+  display: inline-block;
+}
+
+.fieldset-checkout{
+  margin-bottom:12px;
+  padding-bottom: 8px;
+}
+
+#invariable-part-address{
+  width:250px;
+  margin-left: 5%;
+  margin-top:8px;
+  margin-bottom:8px;
+  border: 1.5px solid black;
+  border-radius: 5px;
+  height:fit-content;
+  text-align: left;
+  padding-top:10px;
+  padding-left:20px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+}
+
+#shipping-form fieldset:nth-of-type(2) div{
+  margin-left: 5%;
+}
+
+#shipping-form fieldset:nth-of-type(2) div p{
+  margin-left:5px;
+  display: inline-block;
+}
+#shipping-form fieldset:nth-of-type(2) div p:nth-of-type(1){
+  margin-left:20px;
+}
+#shipping-step footer{
+  margin-top:10px;
+  margin-left:5%;
+  width:300px;
+}
+#shipping-step footer .subtot-tot{
+  float:right;
+  text-align: end;
+}
+#shipping-step footer .subtot-tot p{
+  margin-bottom: 10px;
+}
+
+
+
+@media (min-width: 2560px) {
+  #invariable-part-address{
+    width:400px;
+    padding-top:10px;
+    padding-left:40px;
+  }
+  #invariable-part-address p, .fieldset-checkout p{
+    font-size:larger;   
+  }
+  #shipping-form fieldset:nth-of-type(2) div p:nth-of-type(1){
+    margin-left:20px;
+  }
+
+  #shipping-form fieldset:nth-of-type(2) div p{
+    margin-left:5px;
+  }
+  #shipping-step footer .subtot-tot p{
+    margin-bottom: 10px;
+    font-size: larger;
+  }
+
+}
+
+@media (max-width: 2196px) {
+  #invariable-part-address{
+    width:350px;
+    padding-top:10px;
+    padding-left:35px;
+  }
+  #invariable-part-address p, .fieldset-checkout p{
+    font-size:large;
+  }
+  #shipping-form fieldset:nth-of-type(2) div p:nth-of-type(1){
+    margin-left:30px;
+  }
+
+  #shipping-form fieldset:nth-of-type(2) div p{
+    margin-left:12px;
+  }
+  #shipping-step footer .subtot-tot p{
+    margin-bottom: 10px;
+    font-size: large;
+  }
+}
+
+@media (max-width: 1024px) {
+  #invariable-part-address{
+    width:300px;
+    padding-top:10px;
+    padding-left:30px;
+  }
+  #invariable-part-address p, .fieldset-checkout p{
+    font-size:large;
+  }
+
+  #shipping-form fieldset:nth-of-type(2) div p:nth-of-type(1){
+    margin-left:30px;
+  }
+
+  #shipping-form fieldset:nth-of-type(2) div p{
+    margin-left:10px;
+  }
+  #shipping-step footer .subtot-tot p{
+    margin-bottom: 10px;
+    font-size: large;
+  }
+}
+
+@media (max-width: 600px) {
+  #invariable-part-address{
+    width:250px;
+    padding-top:10px;
+    padding-left:20px;
+  }
+  #invariable-part-address p, .fieldset-checkout p{
+    font-size:medium;
+  }
+  #shipping-form fieldset:nth-of-type(2) div p:nth-of-type(1){
+    margin-left:20px;
+  }
+
+  #shipping-form fieldset:nth-of-type(2) div p{
+    margin-left:5px;
+  }
+  #shipping-step footer .subtot-tot p{
+    margin-bottom: 10px;
+    font-size: medium;
+  }
+}
+
+/********************************************************************
+     **STYLE CODE FOR CHECKOUT 3* 
+     AUTHOR:SIMONE
+**********************************************************************/
+
+.pay-opt {
+  margin-top:10px;
+  margin-left: 5%;
+}
+.credit-card-fields label, .credit-card-fields input,
+.paypal-fields label, .paypal-fields input{
+  display: block;
+  margin-top:2px;
+  margin-bottom:2px;
+}
+
+.payment-method-selection > div > div label{
+  font-size:medium;
+}
+
+.payment-method-selection > div + div{
+  font-size:medium;
+}
+
+@media (min-width: 2560px) {
+  .payment-method-selection > div > div label{
+    font-size:larger;
+  }
+  .payment-method-selection > div + div{
+    font-size:larger;
+  }
+}
+
+@media (max-width: 2196px) {
+  .payment-method-selection > div > div label{
+    font-size:large;
+  }
+  .payment-method-selection > div + div{
+    font-size:large;
+  }
+}
+
+@media (max-width: 1024px) {
+  .payment-method-selection > div > div label{
+    font-size:large;
+  }
+  .payment-method-selection > div + div{
+    font-size:large;
+  }
+  
+}
+
+@media (max-width: 600px){
+  .payment-method-selection > div > div label{
+    font-size:medium;
+  }
+  .payment-method-selection > div + div{
+    font-size:medium;
+  }
+  
+}
+
+/*
+.pay-opt div input,.pay-opt div label{
+  display: block;
+  margin-top:2px;
+  margin-bottom:2px;
+}*/
+
+/********************************************************************
      **STYLE CODE FOR PRODUCTS IN TRACKING* 
      AUTHOR:SIMONE
 **********************************************************************/
@@ -2136,7 +2571,7 @@ text-align: left;
   vertical-align: top;
 }
 .order-card{
-  width: 450px;
+  width: 420px;
   height:100%;
   display: block;
 }
@@ -2188,7 +2623,7 @@ text-align: left;
 
 @media (max-width: 600px) {
   .order-card{
-    width: 420px;
+    width: 380px;
   }
 
 }
