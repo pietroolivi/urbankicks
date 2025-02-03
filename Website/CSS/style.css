@@ -1263,7 +1263,9 @@ input:disabled[type='file'],#images-product-admin-edit {
   margin: 16px;
   transition: transform 0.2s ease;
   overflow: hidden;
-  max-width: 400px; /* Limita la larghezza */
+  max-width: 100%; /* Limita la larghezza */
+  width:auto;
+  box-sizing: border-box;
 }
 
 
@@ -1369,7 +1371,8 @@ min-width: 100%;
   .product-card {
       padding: 22px 26px;
       margin: 20px;
-      max-width: 400px;
+      max-width: 100%; /* Limita la larghezza */
+      width:auto;
   }
 
   .product-name {
@@ -1391,7 +1394,8 @@ min-width: 100%;
   .product-card {
       padding: 20px 22px;
       margin: 20px;
-      max-width: 350px;
+      max-width: 100%; /* Limita la larghezza */
+      width:auto;
   }
 
   .product-name {
@@ -1411,7 +1415,8 @@ min-width: 100%;
   .product-card {
       padding: 16px 20px;
       margin: 12px;
-      max-width: 280px;
+      max-width: 100%; /* Limita la larghezza */
+      width:auto;
   }
 
   .product-name {
@@ -1431,7 +1436,8 @@ min-width: 100%;
   .product-card {
       padding: 12px 14px;
       margin: 8px;
-      max-width: 240px;
+      max-width: 100%; /* Limita la larghezza */
+      width:auto;
   }
 
   .product-name {
@@ -1495,6 +1501,7 @@ min-width: 100%;
 }
 
 .cart-total-container, .last-cart-actions{
+  max-width: 100%;
   width:400px;
 }
 .last-cart-actions{
@@ -1528,6 +1535,8 @@ min-width: 100%;
   text-align: left; /* centers the elements that are inline-block elements */
   vertical-align: top; /*Mantains them aligned vertically*/
   margin-left: 5%; 
+  max-width: 95%;
+  box-sizing: border-box;
 }
 
 
@@ -1546,7 +1555,9 @@ min-width: 100%;
   margin: 16px;
   transition: transform 0.2s ease;
   overflow: hidden;
-  max-width: 400px; /* Limita la larghezza */
+  width: auto; /* Limita la larghezza */
+  max-width:100%;
+  box-sizing: border-box;
 }
 
 
@@ -1577,18 +1588,22 @@ min-width: 100%;
   flex-direction: column;
   align-items: flex-start; /* Allinea a sinistra gli elementi */
   gap: 0.5rem;
-  width: 40%;
+  width: auto;
 }
 
 /*(THE CONTAINER FOR THE BUTTONS OF REMOVE AND ADD TO WISHLIST)*/
 .action-buttons{
-  max-width: 100%;
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  justify-content: flex-start;
+  flex: 1;
+  min-width: 30%;
+  aspect-ratio: unset; 
+  font-size: 1em;
 }
 
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
 
 .action-buttons button {
   flex: 1;
@@ -1723,7 +1738,8 @@ Hide default number input spinner buttons */
   .lateral-container#products-container .product-card {
     padding: 22px 26px;
     margin: 20px;
-    max-width: 1200px;
+    max-width:100%;
+    width: auto;
   }
   #products-container.lateral-container .product-details{
     gap: 2.5em;
@@ -1743,9 +1759,10 @@ Hide default number input spinner buttons */
     aspect-ratio: 2.5;
   }
   .action-buttons button{
-    width: 40%;
-    gap: 3.5em;
-    margin-left: 50px;
+    flex: 1;
+    min-width: 30%;
+    aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
+    font-size: 1em;
   }
   .selection-div label, .lateral-container#products-container p{
     font-size: 160%;
@@ -1761,12 +1778,14 @@ Hide default number input spinner buttons */
     font-size: large;
   }
   .cart-total-container, .last-cart-actions{
-    width:900px;
+    width: auto;
+    max-width:90%;
   }
   .lateral-container#products-container .product-card {
     padding: 20px 22px;
     margin: 20px;
-    max-width: 900px;
+   /* width: auto;
+    max-width:90%;*/
   }
   .lateral-container#products-container .product-card h3{
     margin-left:60%
@@ -1787,8 +1806,10 @@ Hide default number input spinner buttons */
   }
  
   .action-buttons button{
-    width:37%;
-    margin-left: 40px;
+    flex: 1;
+    min-width: 30%;
+    aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
+    font-size: 1em;
   }
   .selection-div label, .lateral-container#products-container p{
     font-size: 140%;
@@ -1805,11 +1826,13 @@ Hide default number input spinner buttons */
   }
   .cart-total-container, .last-cart-actions{
     width:650px;
+    width: auto;
   }
   .lateral-container#products-container .product-card {
     padding: 16px 20px;
       margin: 12px;
-      max-width: 650px;
+  /*    width: 650px;
+      width: auto;*/
   }
   .lateral-container#products-container .product-card h3{
     margin-left:60%
@@ -1837,9 +1860,10 @@ Hide default number input spinner buttons */
     aspect-ratio: 2.5;
   }
   .action-buttons button{
-    width:35%;
-    gap: 2.7em;
-    margin-left: 30px;
+    flex: 1;
+    min-width: 30%;
+    aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
+    font-size: 1em;
   }
   .selection-div label, .lateral-container#products-container p {
     font-size: 120%;
@@ -1855,12 +1879,14 @@ Hide default number input spinner buttons */
     font-size: medium;
   }
   .cart-total-container, .last-cart-actions{
-    width:400px;
+    max-width:90%;
+    width: auto;
   }
   .lateral-container#products-container .product-card {
     padding: 12px 14px;
       margin: 8px;
-      max-width: 400px;
+    /*  width: auto;
+      max-width:90%;*/
       
   }
   .lateral-container#products-container .product-card h3{
@@ -1882,14 +1908,16 @@ Hide default number input spinner buttons */
   }
 
   .action-buttons button{
-    margin-left: 20px;
-    font-size: smaller;
+    flex: 1;
+    min-width: 30%;
+    aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
+    font-size: 0.5em;
   }
   .action-buttons button{
-    margin-left: 20px;
-    display: inline-block;
-    width:28%;
-    aspect-ratio:2.2; 
+    flex: 1;
+    min-width: 30%;
+    aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
+    font-size: 1em;
   }
   .selection-div label, .lateral-container#products-container p {
     font-size: 100%;
