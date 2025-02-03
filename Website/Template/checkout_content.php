@@ -11,9 +11,21 @@
 <!-- Summary Step -->
 <div id="summary-step" class="checkout-step active">
     <div>
-        <ul class="products-overview" data-total="<?php echo $templateParams["cart"][0]["Valore_Totale"]; ?>">
+        <ul id="products-container" class="products-overview lateral-container" data-total="<?php echo $templateParams["cart"][0]["Valore_Totale"]; ?>">
             <?php foreach($templateParams["cart"] as $product): ?>
             <li>
+                <article class="product-card">
+                    <div class="product-details">
+                        <a class="product-link">
+                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . "1"); ?>.webp" 
+                            alt="<?php echo htmlspecialchars($product['Nome']); ?>"></a>
+                        <div class="item-info">
+                            <h4><?php echo $product["Nome"]; ?></h4>
+                            <p>Size: <?php echo $product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
+                            <p>Color: <?php echo $product["Colore"]; ?></p>
+                            <p>€<?php echo number_format($product["Prezzo"], 2); ?></p>
+                        </div>
+                    </div>
                 <article>
                     <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1"); ?>.webp" 
                         alt="<?php echo htmlspecialchars($product['Nome']); ?>">
@@ -34,31 +46,37 @@
         </form>
 
         <div class="gift-wrap">
-            <input id="gift-wrap-checkbox" type="checkbox">
+            <input style="display:inline-block" id="gift-wrap-checkbox" type="checkbox">
             <label for="gift-wrap-checkbox">
                 <img src="CSS/Images/Icons/gift.svg" alt="">Gift Wrap this order?
             </label>
-            <p>+€5.00</p>
+            <p style="display:inline-block">+€5.00</p>
         </div>
     </div>
 
     <footer>
-        <p>SUBTOTAL €<span id="subtotal">0</span></p>
-        <p id="discount-row" style="display:none">DISCOUNT -€<span id="discount">0.00</span></p>
-        <p>NEW SUBTOTAL €<span id="new-subtotal">0</span></p>
-        <button onclick="nextStep('shipping')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
+        <div class="subtot-tot">
+            <p>SUBTOTAL €<span id="subtotal">0</span></p>
+            <p id="discount-row" style="display:none">DISCOUNT -€<span id="discount">0.00</span></p>
+            <p>NEW SUBTOTAL €<span id="new-subtotal">0</span></p>
+            <button onclick="nextStep('shipping')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
+        </div>
     </footer>
 </div>
 
 <!-- Shipping Step -->
 <div id="shipping-step" class="checkout-step">
     <form id="shipping-form">
-        <fieldset>
-            <legend>ADDRESS</legend>
+        <fieldset class="fieldset-checkout">
+            <legend class="block-checkout">ADDRESS</legend>
+            <div class="ad-form">
             <label for="first-name-shipping">First Name</label>
             <input id="first-name-shipping" type="text" required/>
+            </div>
+            <div class="ad-form">
             <label for="last-name-shipping">Last Name</label>
             <input id="last-name-shipping" type="text" required/>
+            </div>
             <div id="invariable-part-address">
                 <p>Cesena Campus - UniBo</p>
                 <p>Piazza Aldo Moro, 90</p>
@@ -70,8 +88,8 @@
                 }
             </script>
         </fieldset>
-        <fieldset>
-            <legend>DELIVERY OPTIONS</legend>
+        <fieldset class="fieldset-checkout">
+            <legend class="block-checkout">DELIVERY OPTIONS</legend>
             <div id="standard-paid-option">
                 <input id="shipping-standard-paid" type="radio" name="delivery-options" value="Standard" data-cost="5.00"/>
                 <label for="shipping-standard-paid"><img src="CSS/Images/Icons/shipping_standard.svg" alt="" />Standard</label>
@@ -93,51 +111,60 @@
         </fieldset>
     </form>
     <footer>
+    <div class="subtot-tot">
         <p>SUBTOTAL €<span id="shipping-subtotal">0</span></p>
         <p>TOTAL €<span id="shipping-total">0</span></p>
         <button onclick="nextStep('payment')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
+    </div>
     </footer>
 </div>
 
 <!-- Payment Step -->
 <div id="payment-step" class="checkout-step">
     <form id="payment-form">
-        <fieldset>
-            <legend>Please, enter the details of a payment method to complete the purchase.</legend>
+        <fieldset class="fieldset-checkout">
+            <legend class="block-checkout">Please, enter the details of a payment method to complete the purchase.</legend>
             
             <div class="payment-method-selection">
-                <div onclick="changePaymentMethod('credit-card')">
-                    <input id="credit-card" type="radio" name="payment-method" value="credit-card" checked>
-                    <label for="credit-card">Credit Card</label>
-                    <img src="CSS/Images/Icons/visa.svg" alt="Visa">
-                    <img src="CSS/Images/Icons/mastercard.svg" alt="Mastercard">
-                    <img src="CSS/Images/Icons/maestro.svg" alt="Maestro">
-                    <img src="CSS/Images/Icons/amex.svg" alt="American Express">
-                    <img src="CSS/Images/Icons/diners_club.svg" alt="Diners Club">
+                <div class="pay-opt" onclick="changePaymentMethod('credit-card')">
+                    <div>
+                        <input id="credit-card" type="radio" name="payment-method" value="credit-card" checked>
+                        <label for="credit-card">Credit Card</label>
+                        <div>
+                            <img src="CSS/Images/Icons/visa.svg" alt="Visa">
+                            <img src="CSS/Images/Icons/mastercard.svg" alt="Mastercard">
+                            <img src="CSS/Images/Icons/maestro.svg" alt="Maestro">
+                            <img src="CSS/Images/Icons/amex.svg" alt="American Express">
+                            <img src="CSS/Images/Icons/diners_club.svg" alt="Diners Club">
+                        </div>
+                    </div>
+                            
+                    <div class="pay-opt credit-card-fields" >
+                        <label for="card-holder">Card Holder</label>
+                        <input type="text" id="card-holder" name="card-holder" required>
+                        
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" name="card-number" pattern="[0-9]{16}" maxlength="16" required>
+                        
+                        <label for="expiration-date">Expiration Date</label>
+                        <input type="month" id="expiration-date" name="expiration-date" required>
+                        
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" name="cvv" pattern="[0-9]{3}" maxlength="3" required>
+                    </div>
                 </div>
                 
-                <div onclick="changePaymentMethod('paypal')">
+                <div class="pay-opt" onclick="changePaymentMethod('paypal')">
                     <input id="paypal" type="radio" name="payment-method" value="Paypal">
                     <label for="paypal">PayPal</label>
-                    <img src="CSS/Images/Icons/paypal.svg" alt="PayPal">
+                    <div>
+                        <img src="CSS/Images/Icons/paypal.svg" alt="PayPal">
+                    </div>
                 </div>
             </div>
 
-            <div class="credit-card-fields">
-                <label for="card-holder">Card Holder</label>
-                <input type="text" id="card-holder" name="card-holder" required>
-                
-                <label for="card-number">Card Number</label>
-                <input type="text" id="card-number" name="card-number" pattern="[0-9]{16}" maxlength="16" required>
-                
-                <label for="expiration-date">Expiration Date</label>
-                <input type="month" id="expiration-date" name="expiration-date" required>
-                
-                <label for="cvv">CVV</label>
-                <input type="text" id="cvv" name="cvv" pattern="[0-9]{3}" maxlength="3" required>
-            </div>
 
-            <div class="paypal-fields" style="display: none;">
+            <div class="pay-opt paypal-fields" style="display: none;">
                 <label for="email-paypal">PayPal Email</label>
                 <input type="email" id="email-paypal" name="email-paypal">
             </div>

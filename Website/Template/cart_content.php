@@ -106,13 +106,15 @@ if (isset($_SESSION["user_email"])) {
             </li>
         <?php endforeach; ?>
     </ul>
-    <p><?= count($cartItems) ?> ITEMS</p>
-    <div class="last-cart-actions">
     <div class="cart-total-container">
+    <p><?= count($cartItems) ?> ITEMS</p>
         <span>Total:</span>
         <span class="cart-total">€<?= number_format($cartTotal, 2) ?></span>
     </div>
-    <button class="continue-shopping" onclick="window.location.href='home.php'">Continue shopping</button>
-    <button class="proceed-checkout" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
+    <div class="last-cart-actions">
+        <div class="cont-proc-buttons">
+            <button class="continue-shopping" onclick="window.location.href='home.php'">Continue shopping</button>
+            <button class="proceed-checkout" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
+        </div>
     </div>
     <?php endif; ?>
