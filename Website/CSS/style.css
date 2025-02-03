@@ -1936,7 +1936,7 @@ Hide default number input spinner buttons */
 
 .order-info-tracking, .order-lifestate , #step-title{
   margin-left:5%;
-  width:100;
+  width:100%;
   display: block;
 }
 /*also for orders_content.php*/
@@ -1959,7 +1959,8 @@ Hide default number input spinner buttons */
 
 #order-status {
   height: 400px;
-  width: 400px;
+  width: auto;
+  max-width:95%;
   /*max-width: 400px;*/
   margin-left: 5%;
   padding: 1rem;
@@ -2079,8 +2080,7 @@ Hide default number input spinner buttons */
   justify-content: flex-start;
   margin-left: 5%;
   margin-bottom: 1rem;
-  max-width: 400px;
- /* padding: 0.2rem 0;*/
+  max-width: 95%;
   width: auto;
 }
 
@@ -2100,7 +2100,8 @@ Hide default number input spinner buttons */
 /*  font-weight: bold;*/
 text-align: left;
   font-size: 1.1rem;
-  width:200px;
+  max-width: 45%;
+  width: auto;
 }
 
 .detail-track-block a {
@@ -2124,11 +2125,12 @@ text-align: left;
     color: #555;
   }
   .parcel-loc, #order-status{
-    width: 460px; 
+    width: auto;
+    max-width:95%;
     height: 480px;
   }
   .detail-track-block p:first-child {
-    width: 200px; 
+    max-width: 45%; 
     text-align: left;
    /* color: #828282;*/
     font-size: 1.1rem;
@@ -2174,24 +2176,25 @@ text-align: left;
     color: #555;
   }
   .parcel-loc, #order-status{
-    width: 420px;
+    width: auto;
+    max-width:95%;
     height:450px;
    /* max-width: 500px; 
     max-height: 650px;*/
   }
   .detail-track-block p:first-child {
-    width: 350px; 
+    max-width: 45%; 
     text-align: left;
    /* color: #828282;*/
     font-size: 1.2rem;
   }
   
-  .detail-track-block p:last-child {
-  /*  font-weight: bold;*/
+  /*.detail-track-block p:last-child {
+  
   text-align: left;
     font-size: 1.2rem;
     width:220px;
-  }
+  }*/
 }
 
 @media (max-width: 600px) {
@@ -2211,12 +2214,13 @@ text-align: left;
     color: #555;
   }
   .parcel-loc, #order-status{
-    width: 400px; 
+    width: auto;
+    max-width:95%;
     height: 400px;
   }
 
   .detail-track-block p:first-child {
-    width: 230px; 
+    max-width: 45%; 
     text-align: left;
    /* color: #828282;*/
     font-size: 1.1rem;
@@ -2226,7 +2230,7 @@ text-align: left;
   /*  font-weight: bold;*/
   text-align: left;
     font-size: 1.1rem;
-    width:200px;
+    max-width:45%;
   }
 }
 
@@ -2591,7 +2595,8 @@ display: block;
 **********************************************************************/
 
 .orders-container{
-  width: 100%;
+  max-width:90%;
+  width: auto;
   height:100%;
   box-sizing: border-box;
   margin-left: 10%;
@@ -2599,7 +2604,8 @@ display: block;
   vertical-align: top;
 }
 .order-card{
-  width: 420px;
+  max-width:95%;
+  width: auto;
   height:100%;
   display: block;
 }
@@ -2638,20 +2644,23 @@ display: block;
 
 @media (max-width: 2196px) {
   .order-card{
-    width: 650px;
+    max-width:95%;
+    width: auto;
   }
 }
 
 
 @media (max-width: 1024px) {
   .order-card{
-    width: 530px;
+    max-width:95%;
+    width: auto;
   }
 }
 
 @media (max-width: 600px) {
   .order-card{
-    width: 380px;
+    max-width:95%;
+    width: auto;
   }
 
 }
