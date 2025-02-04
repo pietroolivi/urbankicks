@@ -240,7 +240,9 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                     //discounted logic           ^
                     created_at:   product.Data_Aggiunta,
                     variants:     [],
+                    meanReviws: product.mediaRecensioni,
                     baseProduct:  product
+
                 });
             }
             // Add variant information
@@ -667,6 +669,10 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                     return b.price - a.price;
                 case 'alphabetical':
                     return a.name.localeCompare(b.name);
+                case 'reviews-low-to-high':
+                    return a.meanReviws - b.meanReviws;
+                case 'reviews-high-to-low':
+                    return b.meanReviws - a.meanReviws;
                 default:
                     return 0;
             }

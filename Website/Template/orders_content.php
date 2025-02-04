@@ -61,39 +61,7 @@
                     <?php endif; ?>
                 <?php endforeach; ?>
             </div>
-        <div class="orders-container">
-            <?php foreach($templateParams["orders"] as $order): ?>
-                <?php if($order["Tipo"] !== "Delivered"): ?>
-                    <article class="order-card">
-                        <header>
-                            <p>Order #<?php echo $order["ID_Ordine"]; ?></p>
-                            <p class="order-date"> <?php echo date("F j, Y", strtotime($order["Data_Ordine"])); ?></p>
-                            <a href="tracking.php?order=<?php echo $order["ID_Ordine"]; ?>" class="track-link">Track Order</a>
-                        </header>
-                        <div class="order-details">
-                            <div class="order-items">
-                                <?php foreach($order["products"] as $product): ?>
-                                    <div class="order-item">
-                                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1"); ?>.webp" 
-                                        alt="<?php echo htmlspecialchars($product['Nome']); ?>">
-                                        <div class="item-info">
-                                            <h4><?php echo $product["Nome"]; ?></h4>
-                                            <p>Size: <?php echo (int)$product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
-                                            <p>Color: <?php echo $product["Colore"]; ?></p>
-                                            <p>Price: €<?php echo number_format($product["Prezzo"], 2); ?></p>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <div class="order-summary">
-                                <p>Paid with: <?php echo $order["Metodo_Pagamento"]; ?></p>
-                                <p>Total: €<?php echo number_format($order["Costo_Totale"], 2); ?></p>
-                            </div>
-                        </div>
-                    </article>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </div>
+        </div>    
         <!-- Completed Orders Section -->
         <div class="order-lifestate"> 
     <h3>Completed Orders</h3>

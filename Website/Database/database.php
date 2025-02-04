@@ -82,7 +82,15 @@ class DatabaseHelper {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
+    public function getFilteredProducts(
+        $brand = null, 
+        $type = null, 
+        $size = null, 
+        $color = null, 
+        $minPrice = null, 
+        $maxPrice = null
+    ) {
+        // Costruiamo la query base con la sottoquery per la media dei punteggi
         $query = "
             SELECT 
                 p.*, 
@@ -92,7 +100,12 @@ class DatabaseHelper {
                 CASE 
                     WHEN ps.Prezzo IS NOT NULL AND p.Prezzo < ps.Prezzo THEN 1
                     ELSE 0 
-                END AS isDiscounted
+                END AS isDiscounted,
+                (
+                    SELECT COALESCE(AVG(r.Punteggio), 0)
+                    FROM RECENSIONE r
+                    WHERE r.ID_Prodotto = p.ID_Prodotto
+                ) AS mediaRecensioni
             FROM PRODOTTO p
             LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
             LEFT JOIN (
@@ -101,11 +114,13 @@ class DatabaseHelper {
                 ORDER BY Data_Modifica DESC
             ) ps ON p.ID_Prodotto = ps.ID_Prodotto
             WHERE 1=1
-            AND p.Sta_Tipo != 'Not Available'";
-        
+              AND p.Sta_Tipo != 'Not Available'
+        ";
+    
         $params = [];
         $types = "";
-        
+    
+        // Filtri opzionali
         if ($brand) {
             $query .= " AND p.Marca = ?";
             $params[] = $brand;
@@ -119,7 +134,9 @@ class DatabaseHelper {
         if ($size) {
             $query .= " AND v.Taglia = ?";
             $params[] = $size;
-            $types .= "d";
+            // supponendo Taglia sia numerica usa 'd', 
+            // se è VARCHAR allora usa 's'
+            $types .= "s"; 
         }
         if ($color) {
             $query .= " AND v.Colore = ?";
