@@ -17,7 +17,7 @@
                 <article class="product-card">
                     <div class="product-details">
                         <a class="product-link">
-                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . "1"); ?>.webp" 
+                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1"); ?>.webp" 
                             alt="<?php echo htmlspecialchars($product['Nome']); ?>"></a>
                         <div class="item-info">
                             <h4><?php echo $product["Nome"]; ?></h4>
@@ -26,13 +26,6 @@
                             <p>€<?php echo number_format($product["Prezzo"], 2); ?></p>
                         </div>
                     </div>
-                <article>
-                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1"); ?>.webp" 
-                        alt="<?php echo htmlspecialchars($product['Nome']); ?>">
-                    <h4><?php echo $product["Nome"]; ?></h4>
-                    <p>Size: <?php echo $product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
-                    <p>Color: <?php echo $product["Colore"]; ?></p>
-                    <p>€<?php echo number_format($product["Prezzo"], 2); ?></p>
                 </article>
             </li>
             <?php endforeach; ?>
