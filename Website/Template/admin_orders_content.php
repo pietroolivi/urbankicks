@@ -1,4 +1,4 @@
-<header>
+<header class="back-button-and-title">
     <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
     <h2>Orders Received</h2>
 </header>

@@ -10,16 +10,22 @@ if (isset($_SESSION["user_email"])) {
 }
 ?>
 
-<a href="javascript:history.back()" class="back">
-    <img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." />
-</a>
-<h2 id="cart-title">My Cart</h2>
+<header class="back-button-and-title">
+    <a href="javascript:history.back()" class="back">
+        <img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." />
+    </a>
+    <h2 id="cart-title">My Cart</h2>
+</header>
 
 <?php if (empty($cartItems)): ?>
-    <img src="CSS/Images/Illustrations/empty_cart.svg" alt="Illustration of an empty shopping cart">
-    <p>Hey, The cart feels light!</p>
-    <p>Explore products and add your favorite items</p>
-    <a href="home.php" class="explore-now">Explore Now</a>
+    <div class="cart-illustration-wrapper">
+        <img src="CSS/Images/Illustrations/empty_cart.svg" alt="Illustration of an empty shopping cart">
+        <p>Hey, The cart feels light!</p>
+        <p>Explore products and add your favorite items</p>
+    </div>
+    <footer>
+        <a href="home.php" class="explore-now" id="explore-now-cart">Explore Now</a>
+    </footer>
 <?php else: ?>
     <div class="warning-free-shipping">
         <img src="CSS/Images/Icons/information.svg" alt="Information symbol">

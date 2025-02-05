@@ -1,9 +1,9 @@
-<header>
+<header class="back-button-and-title">
     <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
     <h2>Published Products</h2>
 </header>
 
-<a href="admin_add_product.php">Add New Product</a>
+<button id="add-product-button" class="full-button-white" onclick="location.href='admin_add_product.php'">&#43; Add New Product</button>
 
 <form>
     <div class="search">
@@ -32,20 +32,36 @@
                 $stockStatus = "low_stocks"; 
             }
         ?>
-        <img src="<?php echo $image; ?>" alt=""/>
+        <h3>#<?php echo $product["ID_Prodotto"]; ?></h3>
+        <img class="admin-product-thumbnail" src="<?php echo $image; ?>" alt=""/>
         <div class="product-textual-info-admin">
-            <h3>#<?php echo $product["ID_Prodotto"]; ?></h3>
-            <p><?php echo $product["Marca"] . " " . $product["Nome"] . " - " . $product["Genere"]; ?></p>
+            <p><?php echo $product["Marca"]; ?></p>
+            <p><?php echo $product["Nome"];?></p>
+            <p><?php echo $product["Genere"];?></p>
         </div>
-        <img src="CSS/Images/Icons/<?php echo $stockStatus; ?>.svg" alt="<?php echo ucfirst(str_replace('_', ' ', $stockStatus)); ?>"/>
-        <a href="admin_edit_product.php?id=<?php echo $product["ID_Prodotto"]; ?>">
-            <img src="CSS/Images/Icons/edit.svg" alt="Edits one or more fields of the article or its variants."/>
-        </a>
-        <a href="admin_delete_product.php?id=<?php echo $product["ID_Prodotto"]; ?>">
-            <img src="CSS/Images/Icons/bin.svg" alt="Permanently deletes the product from the list."/>
-        </a>
-        <a href="admin_view_product.php?id=<?php echo $product["ID_Prodotto"]; ?>">
-            <img src="CSS/Images/Icons/eye_open.svg" alt="View product details, including its inventory.">
-        </a>
+        <div class="product-icons">
+            <img src="CSS/Images/Icons/<?php echo $stockStatus; ?>.svg" alt="<?php echo ucfirst(str_replace('_', ' ', $stockStatus)); ?>"/>
+            <a href="admin_edit_product.php?id=<?php echo $product["ID_Prodotto"]; ?>">
+                <img src="CSS/Images/Icons/edit.svg" alt="Edits one or more fields of the article or its variants."/>
+            </a>
+            <a href="admin_delete_product.php?id=<?php echo $product["ID_Prodotto"]; ?>">
+                <img src="CSS/Images/Icons/bin.svg" alt="Permanently deletes the product from the list."/>
+            </a>
+            <a href="admin_view_product.php?id=<?php echo $product["ID_Prodotto"]; ?>">
+                <img src="CSS/Images/Icons/eye_open.svg" alt="View product details, including its inventory.">
+            </a>
+        </div>
     </article>
 <?php endforeach; ?>
+<script>
+    adjustsOpenEyeHeight();
+    window.addEventListener("resize", adjustsOpenEyeHeight);
+
+    /* ******************************************************** */
+    /* We make the image element for the product display square */
+    /* so that it is vertically aligned with the other icons.   */
+    /* ******************************************************** */
+    function adjustsOpenEyeHeight() {
+        document.querySelector("img[src='CSS/Images/Icons/eye_open.svg']").style.height = document.querySelector("img[src='CSS/Images/Icons/eye_open.svg']").clientWidth + "px";
+    }
+</script>

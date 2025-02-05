@@ -4,11 +4,15 @@ if(isset($_SESSION['error'])) {
     unset($_SESSION['error']);
 }
 ?>
-<a href="javascript:history.back()" class="back">
-    <img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." />
-</a>
-<h2>Notifications</h2>
-<button>Mark all as read <img src="CSS/Images/Icons/eye_open.svg" alt="" /></button>
+
+<header class="back-button-and-title">
+    <a href="javascript:history.back()" class="back">
+        <img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page." />
+    </a>
+    <h2>Notifications</h2>
+</header>
+
+<button class="mark-all-as-read">Mark all as read <img src="CSS/Images/Icons/eye_open.svg" alt="" /></button>
 
 <?php
 $notifications = $dbh->getUserNotifications($_SESSION["user_email"]);

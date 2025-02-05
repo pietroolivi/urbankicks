@@ -82,7 +82,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     // Both allProducts and filteredProducts to mantain both states of products
     let allProducts = '';
     let filteredProducts = '';
-    let wishlistItems = '';
+    let wishlistItems = new Set();
     let urlParams = '';
     let filters='';
     /**All settings of global variables inside listener for complete document loading. */
@@ -168,7 +168,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                 // data.wishlistItems è un array di prodotti (con le colonne di PRODOTTO)
                 const wishlistIds = data.wishlistItems.map(item => item.ID_Prodotto.toString());
                 wishlistItems = new Set(wishlistIds);
-                console.log(this.wishlistItems.size);
+                console.log(wishlistItems.size);
             } else {
                 console.warn('Could not load wishlist items:', data.message);
             }

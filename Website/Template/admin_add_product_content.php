@@ -1,4 +1,4 @@
-<header>
+<header class="back-button-and-title">
     <a href="javascript:history.back()" class="back">
         <img src="CSS/Images/Icons/back.svg" alt="Back">
     </a>
@@ -9,7 +9,7 @@
 <div class="error"><?php echo $error; ?></div>
 <?php endif; ?>
 
-<form class="fields-product-admin" method="POST" action="admin_add_product.php" enctype="multipart/form-data">
+<form id="admin-add-product-form" class="fields-product-admin" method="POST" action="admin_add_product.php" enctype="multipart/form-data">
     <!-- Brand -->
     <label for="brand-product-admin">Brand</label>
     <select name="brand-product-admin" id="brand-product-admin" required>
@@ -32,9 +32,9 @@
     <fieldset>
         <legend>Genre</legend>
         <?php foreach(['man', 'woman', 'kids'] as $genre): ?>
-        <label for="<?php echo $genre; ?>-product-admin"><?php echo ucfirst($genre); ?></label>
-        <input id="<?php echo $genre; ?>-product-admin" name="genre[]" class="genre-product-admin" 
-               type="checkbox" value="<?php echo $genre; ?>"/>
+            <input id="<?php echo $genre; ?>-product-admin" name="genre[]" class="genre-product-admin" 
+                type="checkbox" value="<?php echo $genre; ?>"/>
+            <label for="<?php echo $genre; ?>-product-admin"><?php echo ucfirst($genre); ?></label>
         <?php endforeach; ?>
     </fieldset>
 
@@ -42,9 +42,9 @@
     <fieldset>
         <legend>Category</legend>
         <?php foreach(['sneakers', 'sandals', 'sliders'] as $category): ?>
-        <label for="<?php echo $category; ?>-product-admin"><?php echo ucfirst($category); ?></label>
-        <input id="<?php echo $category; ?>-product-admin" type="radio" 
-               name="category-product-admin" value="<?php echo $category; ?>" required>
+            <input id="<?php echo $category; ?>-product-admin" type="radio" 
+                name="category-product-admin" value="<?php echo $category; ?>" required>
+            <label for="<?php echo $category; ?>-product-admin"><?php echo ucfirst($category); ?></label>
         <?php endforeach; ?>
     </fieldset>
 
@@ -134,9 +134,6 @@
 
     <!-- Size/Color/Quantity Matrix -->
     <div id="variants-matrix"></div>
-
-    <button type="reset">Reset</button>
-    <button type="submit">Publish</button>
     <script>
         /* ************************************************************************* */
         /* Since there are no out-of-the-box methods to ensure that at least one of  */
@@ -156,6 +153,8 @@
         })
     </script>
 </form>
+<button form="admin-add-product-form" class="full-button-white" type="reset">Reset</button>
+<button form="admin-add-product-form" class="full-button-black" type="submit">Publish</button>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
