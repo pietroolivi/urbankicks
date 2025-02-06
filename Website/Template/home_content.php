@@ -22,8 +22,8 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
             $brands = ["Adidas", "Nike", "New Balance", "Converse"];
             foreach($brands as $brand): ?>
             <li class="brand-option">
-                <input type="checkbox" id="filter-sidebar-<?php echo strtolower($brand); ?>" name="designers[]" value="<?php echo $brand; ?>" autocomplete="off" onchange="updateSelectedBorders()">
-                <label for="filter-sidebar-<?php echo strtolower($brand); ?>"><?php echo strtoupper($brand); ?></label>
+                <input type="checkbox" id="filter-sidebar-<?php echo str_replace(' ', '', strtolower($brand)); ?>" name="designers[]" value="<?php echo $brand; ?>" onchange="updateSelectedBorders()">
+                <label for="filter-sidebar-<?php echo str_replace(' ', '',strtolower($brand)); ?>"><?php echo strtoupper($brand); ?></label>
             </li>
             <?php endforeach; ?>
         </ul>
@@ -149,12 +149,12 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
      data-products='<?php echo htmlspecialchars(json_encode($templateParams["products"]), ENT_QUOTES, 'UTF-8'); ?>'>
 </div>
 
-<template id="product-template">
+<template id="product-template" hidden>
     <div class="product-card">
         <a href="" class="product-link">
-            <img src="" alt="">
-            <label class="wishlist-container">
-            <input type="checkbox" class="wishlist-checkbox" hidden>
+            <img src="" alt="Visualizza dettagli prodotto">
+            <label class="wishlist-container" for="wish-checkbox-id">
+            <input id="wish-checkbox-id" type="checkbox" class="wishlist-checkbox sr-only" aria-label="Aggiungi alla wishlist">
             <img src="CSS/Images/Icons/heart_empty.svg" alt="Add to Wishlist" class="wishlist-checkbox">
             </label></a>
         <h3 class="product-name"></h3>
