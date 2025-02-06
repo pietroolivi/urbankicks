@@ -8,7 +8,7 @@ if(isset($_SESSION['error'])) {
 <h2>My Wishlist</h2>
 <?php if(!empty($templateParams["wishlistItems"])): ?>
     <nav>
-        <ul id="products-container">
+        <ul class="products-container">
         <?php foreach($templateParams["wishlistItems"] as $item):?>
         <li class="product-card" data-product-id="<?php echo $item['ID_Prodotto'];?>">
         <a class="product-link" href="product.php?id=<?php echo htmlspecialchars($item["ID_Prodotto"]);?>">

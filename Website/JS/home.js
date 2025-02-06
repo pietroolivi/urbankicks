@@ -17,7 +17,7 @@ class ProductManager {
      *  applyFilters (this is the main function that applies the filters and populate the filteredProducts array)
      */
     constructor() {
-        const rawProducts = JSON.parse(document.getElementById('products-container').dataset.products);
+        const rawProducts = JSON.parse(document.getElementsByClassName('products-container').dataset.products);
         this.wishlistItems = new Set();
         const urlParams = new URLSearchParams(window.location.search);
         /* We initialize the dictionary containing the currently applied filters with the values we find in the URL, if present. */
@@ -235,7 +235,7 @@ class ProductManager {
     }
 
     renderProducts() {
-        const container = document.getElementById('products-container');
+        const container = document.getElementsByClassName('products-container');
         container.innerHTML = '';
         //debug to see if there's a filed name mismatch
         console.log(this.allProducts);

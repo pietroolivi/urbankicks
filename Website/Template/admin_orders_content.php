@@ -10,7 +10,7 @@
     </div>
 </form>
 
-<section>
+<section class="a-orders-section">
     <h3>ONGOING ORDERS</h3>
     <ol>
         <?php foreach($templateParams["ongoingOrders"] as $order): ?>
@@ -24,7 +24,7 @@
                     <?php foreach($order["products"] as $product): ?>
                         <li>
                             <article>
-                                <img src="CSS/Images/Products/<?php echo $product["Nome"] . '_'; ?>1.webp" alt="<?php echo htmlspecialchars($product["Nome"]); ?>" />
+                                <img src="CSS/Images/Products/<?php echo str_replace(' ', '', $product["Nome"] . '_'); ?>1.webp" alt="<?php echo htmlspecialchars($product["Nome"]); ?>" />
                                 <h4><?php echo htmlspecialchars($product["Nome"]); ?></h4>
                                 <p>Size: <?php echo $product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
                                 <p>Color: <?php echo $product["Colore"]; ?></p>
@@ -61,7 +61,7 @@
     </ol>
 </section>
 
-<section>
+<section class="a-orders-section">
     <h3>COMPLETED ORDERS</h3>
     <ol>
         <?php foreach($templateParams["completedOrders"] as $order): ?>
@@ -75,7 +75,7 @@
                     <?php foreach($order["products"] as $product): ?>
                         <li>
                             <article>
-                                <img src="CSS/Images/Products/<?php echo $product["Nome"] . '_'; ?>1.webp" alt="<?php echo htmlspecialchars($product["Nome"]); ?>" />
+                                <img src="CSS/Images/Products/<?php echo str_replace(' ', '',$product["Nome"] . '_'); ?>1.webp" alt="<?php echo htmlspecialchars($product["Nome"]); ?>" />
                                 <h4><?php echo htmlspecialchars($product["Nome"]); ?></h4>
                                 <p>Size: <?php echo $product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
                                 <p>Color: <?php echo $product["Colore"]; ?></p>

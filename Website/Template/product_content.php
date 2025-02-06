@@ -32,7 +32,7 @@ foreach ($variants as $variant) {
         <ul>
             <?php for($i = 1; $i <= 4; $i++): ?>
                 <li id="slide<?php echo $i; ?>">
-                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
+                    <img src="CSS/Images/Products/<?php echo str_replace(' ', '',htmlspecialchars($product['Nome']. '_' . $i)); ?>.webp" 
                             alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>">
                 </li>
             <?php endfor; ?>
@@ -41,7 +41,7 @@ foreach ($variants as $variant) {
     <div class="slides">
         <?php for($i = 1; $i <= 4; $i++): ?>
             <a href="#slide<?php echo $i; ?>">
-                <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
+                <img src="CSS/Images/Products/<?php echo str_replace(' ', '',htmlspecialchars($product['Nome']. '_' . $i)); ?>.webp" 
                         alt="<?php echo htmlspecialchars($product['Nome']); ?> - Thumbnail <?php echo $i; ?>">
             </a>
         <?php endfor; ?>

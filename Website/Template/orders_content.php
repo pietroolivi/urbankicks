@@ -26,13 +26,13 @@
                                 </tr>
                                 <tr>
                                     <td colspan="3">
-                                        <ul id="products-container" class="products-overview lateral-container">
+                                        <ul class="products-overview lateral-container products-container">
                                             <?php foreach($order["products"] as $product):?>
                                                 <li>
                                                     <div class="product-card">
                                                         <div class="product-details">
                                                             <a class="product-link">
-                                                                <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . "1");?>.webp" 
+                                                                <img src="CSS/Images/Products/<?php echo str_replace(' ', '', htmlspecialchars($product['Nome']. '_' . "1"));?>.webp" 
                                                                 alt="<?php echo htmlspecialchars($product['Nome']);?>"></a>
                                                             <div class="item-info">
                                                                 <h4><?php echo $product["Nome"];?></h4>
@@ -85,13 +85,13 @@
                         </tr>
                         <tr>
                             <td colspan="3">
-                                <ul id="products-container" class="products-overview lateral-container">
+                                <ul class="products-overview lateral-container">
                                     <?php foreach($order["products"] as $product): ?>
                                         <li>
                                             <div class="product-card">
                                                 <div class="product-details">
                                                     <a class="product-link">
-                                                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . "1");?>.webp" 
+                                                        <img src="CSS/Images/Products/<?php echo str_replace(' ', '',htmlspecialchars($product['Nome']. '_' . "1"));?>.webp" 
                                                         alt="<?php echo htmlspecialchars($product["Nome"]); ?>">
                                                     </a>
                                                     <div class="item-info">
