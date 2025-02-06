@@ -11,10 +11,9 @@ if(isset($_SESSION['error'])) {
 <button>Mark all as read <img src="CSS/Images/Icons/eye_open.svg" alt="" /></button>
 
 <?php
-$notifications = $dbh->getUserNotifications($_SESSION["user_email"]);
 $groupedNotifications = [];
 
-foreach ($notifications as $notification) {
+foreach ($templateParams["notifications"] as $notification) {
     $date = date('d F Y', strtotime($notification['Timestamp_Invio']));
     $groupedNotifications[$date][] = $notification;
 }
@@ -24,27 +23,10 @@ foreach ($groupedNotifications as $date => $dayNotifications): ?>
         <h3><?= strtoupper($date) ?></h3>
         <ol>
         <?php foreach ($dayNotifications as $notification): 
-            // Extract ID from message for products and orders
-            $url = '#';
-            if (preg_match('/\[(\d+)\]/', $notification['Messaggio'], $matches)) {
-                $id = $matches[1];
-                switch($notification['TipoNotifica']) {
-                    case 'Stock Product':
-                    case 'Review Request':
-                    case 'Flash Sale':
-                        $url = "product.php?id=" . $id;
-                        break;
-                    case 'Order Status':
-                        $url = "tracking.php?order=" . $id;
-                        break;
-                    case 'Cart Reminder':
-                        $url = "cart.php";
-                        break;
-                    case 'Admin Message':
-                        $url = "contact_us.php";
-                        break;
-                }
-            }
+            $isAdminMessage = $notification['TipoNotifica'] === 'Admin Message';
+            $isExpanded = isset($_GET['expanded']) && $_GET['expanded'] == $notification['ID_Notifica'];
+            $messageContent = $isAdminMessage ? $notification['MessaggioCompleto'] : $notification['Messaggio'];
+            $url = $isAdminMessage ? "?expanded=" . $notification['ID_Notifica'] : getNotificationUrl($notification);
         ?>
             <li data-notification-id="<?= htmlspecialchars($notification['ID_Notifica']) ?>" 
                 data-tipo="<?= htmlspecialchars($notification['Tipo']) ?>"
@@ -59,6 +41,12 @@ foreach ($groupedNotifications as $date => $dayNotifications): ?>
                             alt="Blue dot, notification not yet read">
                     <?php endif; ?>
                 </a>
+                <?php if ($isAdminMessage && $isExpanded): ?>
+                    <div class="message-content">
+                        <p class="message-body"><?= htmlspecialchars($messageContent) ?></p>
+                        <a href="contact_us.php" class="reply-btn">Reply</a>
+                    </div>
+                <?php endif; ?>
             </li>
         <?php endforeach; ?>
         </ol>
@@ -88,5 +76,22 @@ function getNotificationIconAlt($type) {
         'Review Request' => 'Icon of a star, indicating a notification about a review request.'
     ];
     return $alts[$type] ?? 'Notification icon';
+}
+
+function getNotificationUrl($notification) {
+    if (preg_match('/\[(\d+)\]/', $notification['Messaggio'], $matches)) {
+        $id = $matches[1];
+        switch($notification['TipoNotifica']) {
+            case 'Stock Product':
+            case 'Review Request':
+            case 'Flash Sale':
+                return "product.php?id=" . $id;
+            case 'Order Status':
+                return "tracking.php?order=" . $id;
+            case 'Cart Reminder':
+                return "cart.php";
+        }
+    }
+    return '#';
 }
 ?>

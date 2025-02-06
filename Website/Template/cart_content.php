@@ -76,14 +76,16 @@ if (isset($_SESSION["user_email"])) {
                                     <!-- <label for="quantity-selector-<?= $item['ID_Prodotto'] ?>">
                                     Quantity
                                     </label> -->
-                                    <div class="quantity-control">
+                                    <div class="quantity-control" 
+                                            data-max-quantity="<?= htmlspecialchars($dbh->getQuantity($item['ID_Prodotto'], $item['Colore'], $item['Taglia'])) ?>">
                                         <button type="button" class="quantity-btn increment">+</button>
                                         <span class="quantity-display"><?= htmlspecialchars($item['Quantita']) ?></span>
                                         <button type="button" class="quantity-btn decrement">-</button>
                                     </div>
                                     <input id="quantity-selector-<?= $item['ID_Prodotto'] ?>" 
                                         type="hidden" 
-                                        name="quantity" 
+                                        name="quantity"
+                                        class="quantity-selector" 
                                         value="<?= htmlspecialchars($item['Quantita']) ?>" />
                                 </div>
                             <p class="price">

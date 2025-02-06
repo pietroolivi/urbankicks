@@ -14,54 +14,18 @@ class DatabaseHelper {
      * PRODUCT QUERIES *
      *******************/
 
-    // Returns filtered products
- /*   public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
-        $query = "SELECT p.*, v.Colore, v.Quantita, v.Taglia 
-            FROM PRODOTTO p 
-            LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
-            WHERE 1=1";
-        $params = [];
-        $types = "";
+    // Get all product brands
+    public function getDistinctBrands(): array {
+        $query = "SELECT DISTINCT Marca FROM PRODOTTO WHERE Marca IS NOT NULL ORDER BY Marca ASC";
+        $result = $this->db->query($query);
         
-        if ($brand) {
-            $query .= " AND p.Marca = ?";
-            $params[] = $brand;
-            $types .= "s";
+        $brands = [];
+        while ($row = $result->fetch_array(MYSQLI_NUM)) {
+            $brands[] = $row[0];
         }
-        if ($type) {
-            $query .= " AND p.Tipo = ?";
-            $params[] = $type;
-            $types .= "s";
-        }
-        if ($size) {
-            $query .= " AND v.Taglia = ?";
-            $params[] = $size;
-            $types .= "d";
-        }
-        if ($color) {
-            $query .= " AND v.Colore = ?";
-            $params[] = $color;
-            $types .= "s";
-        }
-        if ($minPrice) {
-            $query .= " AND p.Prezzo >= ?";
-            $params[] = $minPrice;
-            $types .= "d";
-        }
-        if ($maxPrice) {
-            $query .= " AND p.Prezzo <= ?";
-            $params[] = $maxPrice;
-            $types .= "d";
-        }
-
-        $stmt = $this->db->prepare($query);
-        if (!empty($params)) {
-            $stmt->bind_param($types, ...$params);
-        }
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }*/
+        
+        return $brands;
+    }
 
     // Get product Variants
     public function getProductVariants($productId) {
@@ -714,11 +678,22 @@ class DatabaseHelper {
 
     // Get user notifications
     public function getUserNotifications($email) {
-        $query = "SELECT * FROM NOTIFICA WHERE Email = ? ORDER BY Timestamp_Invio DESC";
+        $query = "SELECT DISTINCT n.*, 
+                  CASE 
+                    WHEN n.TipoNotifica = 'Admin Message' THEN m.Corpo 
+                    ELSE NULL 
+                  END as MessaggioCompleto
+                  FROM NOTIFICA n 
+                  LEFT JOIN MESSAGGIO m ON n.Timestamp_Invio = m.Timestamp_Invio 
+                    AND n.TipoNotifica = 'Admin Message'
+                  WHERE n.Email = ? 
+                  ORDER BY n.Timestamp_Invio DESC";
+        
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
+        
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
@@ -1252,6 +1227,17 @@ class DatabaseHelper {
         $stmt->bind_param("is", $productId, $color);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get quantity of a product variant
+    public function getQuantity($productId, $color, $size) {
+        $query = "SELECT Quantita FROM VARIANTE 
+                  WHERE ID_Prodotto = ? AND Colore = ? AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('iss', $productId, $color, $size);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc()['Quantita'] ?? 0;
     }
 
     // Get all Colors of a product

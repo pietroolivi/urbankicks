@@ -29,7 +29,7 @@
 </section>
 <script>
     let eyeIcon = document.getElementById("eye-icon");
-    let password = document.getElementById("password");
+    let password = document.getElementById("password-login");
 
     eyeIcon.onclick = function() {
         if (password.type == "password") {

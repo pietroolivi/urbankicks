@@ -102,6 +102,7 @@ try {
                 1
             );
             $cartInfo = calculateCartInfo($dbh, $cart['ID_Carrello']);
+            $dbh->modifyCartTotalValue($cart['ID_Carrello'], $cartInfo['total']);
             $response = [
                 'success' => true,
                 'message' => 'Cart updated successfully',
