@@ -127,7 +127,7 @@ foreach ($variants as $variant) {
                     }
                 }
             ?>
-            <li class="color-option">
+            <li class="color-option color-option-product">
                 <label>
                     <input id="color<?php echo $color; ?>" 
                         type="radio" 
