@@ -53,9 +53,9 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         </div>
     </section>
 
-    <section>
+    <section class="size-options-section">
         <h3>SIZE</h3>
-        <ul class="size-options">
+        <ul class="size-options size-options-sidebar">
             <?php for ($i = 28; $i <= 45; $i++) { ?>
             <li class="size-option">
                 <input id="filter-sidebar-size<?php echo $i  ?>" type="checkbox" name="sizes[]" value="<?php echo $i ?>">

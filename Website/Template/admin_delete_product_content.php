@@ -1,10 +1,10 @@
-<header>
+<header style="padding-bottom: 0%;" class="back-button-and-title">
     <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
     <h2>Delete Product</h2>
-    <h3>#<?php echo $templateParams["product"]["product"]["ID_Prodotto"]; ?></h3>
 </header>
+<h3>#<?php echo $templateParams["product"]["product"]["ID_Prodotto"]; ?></h3>
 
-<form class="fields-product-admin" method="POST" action="#" enctype="multipart/form-data">
+<form id="admin-delete-product-form" class="fields-product-admin" method="POST" action="#" enctype="multipart/form-data">
     <input type="hidden" name="product_id" value="<?php echo $templateParams["product"]["product"]["ID_Prodotto"]; ?>">
 
     <!--BRAND-->
@@ -35,9 +35,9 @@
         foreach($genres as $genre):
             $checked = (strtolower($genre) === strtolower($templateParams["product"]["product"]["Genere"])) ? "checked" : "";
         ?>
-            <label for="<?php echo strtolower($genre); ?>-product-admin"><?php echo $genre; ?></label>
             <input id="<?php echo strtolower($genre); ?>-product-admin" class="genre-product-admin" 
-                   type="checkbox" value="<?php echo strtolower($genre); ?>" <?php echo $checked; ?> disabled/>
+                type="checkbox" value="<?php echo strtolower($genre); ?>" <?php echo $checked; ?> disabled/>
+            <label for="<?php echo strtolower($genre); ?>-product-admin"><?php echo $genre; ?></label>
         <?php endforeach; ?>
     </fieldset>
     
@@ -49,10 +49,10 @@
         foreach($categories as $category):
             $checked = (strtolower($category) === strtolower($templateParams["product"]["product"]["Tipo"])) ? "checked" : "";
         ?>
-            <label for="<?php echo strtolower($category); ?>-product-admin"><?php echo $category; ?></label>
             <input id="<?php echo strtolower($category); ?>-product-admin" 
-                   type="radio" name="category-product-admin" 
-                   value="<?php echo strtolower($category); ?>" <?php echo $checked; ?> disabled>
+                type="radio" name="category-product-admin" 
+                value="<?php echo strtolower($category); ?>" <?php echo $checked; ?> disabled>
+            <label for="<?php echo strtolower($category); ?>-product-admin"><?php echo $category; ?></label>
         <?php endforeach; ?>
     </fieldset>
     
@@ -83,7 +83,7 @@
     
     <!--NUMBER SIZE COLOR-->
     <table id="quantity-size-color">
-        <caption>Product availability for each size and colour.</caption>
+        <caption>Product availability</caption>
         <tr>
             <td></td>
             <?php
@@ -129,6 +129,5 @@
             </tr>
         <?php endforeach; ?>
     </table>            
-    
-    <button type="submit">Remove</button>
 </form>
+<button form="admin-delete-product-form" class="full-button-black" type="submit">Remove</button>

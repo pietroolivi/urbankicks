@@ -1,8 +1,8 @@
-<header>
+<header style="padding-bottom: 0%;" class="back-button-and-title">
     <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
     <h2>Product Details</h2>
-    <h3>#<?php echo $templateParams["product"]["product"]["ID_Prodotto"]; ?></h3>
 </header>
+<h3>#<?php echo $templateParams["product"]["product"]["ID_Prodotto"]; ?></h3>
 <div class="fields-product-admin">
 
     <!--BRAND-->
@@ -33,9 +33,9 @@
         foreach($genres as $genre):
             $checked = (strtolower($genre) === strtolower($templateParams["product"]["product"]["Genere"])) ? "checked" : "";
         ?>
-            <label for="<?php echo strtolower($genre); ?>-product-admin"><?php echo $genre; ?></label>
             <input id="<?php echo strtolower($genre); ?>-product-admin" class="genre-product-admin" 
-                   type="checkbox" value="<?php echo strtolower($genre); ?>" <?php echo $checked; ?> disabled/>
+                type="checkbox" value="<?php echo strtolower($genre); ?>" <?php echo $checked; ?> disabled/>
+            <label for="<?php echo strtolower($genre); ?>-product-admin"><?php echo $genre; ?></label>
         <?php endforeach; ?>
     </fieldset>
 
@@ -47,10 +47,10 @@
         foreach($categories as $category):
             $checked = (strtolower($category) === strtolower($templateParams["product"]["product"]["Tipo"])) ? "checked" : "";
         ?>
-            <label for="<?php echo strtolower($category); ?>-product-admin"><?php echo $category; ?></label>
             <input id="<?php echo strtolower($category); ?>-product-admin" 
                    type="radio" name="category-product-admin" 
                    value="<?php echo strtolower($category); ?>" <?php echo $checked; ?> disabled>
+            <label for="<?php echo strtolower($category); ?>-product-admin"><?php echo $category; ?></label>
         <?php endforeach; ?>
     </fieldset>
 
@@ -81,7 +81,7 @@
     
     <!--NUMBER SIZE COLOR-->
     <table id="quantity-size-color">
-        <caption>Product availability for each size and colour.</caption>
+        <caption>Product availability</caption>
         <tr>
             <td></td>
             <?php
@@ -127,6 +127,5 @@
             </tr>
         <?php endforeach; ?>
     </table>
-
-    <a href="javascript:history.back()" class="back">Done</a>
 </div>
+<button onclick='location.href="javascript:history.back()"' class="back full-button-black">Done</a>

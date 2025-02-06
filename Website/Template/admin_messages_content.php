@@ -1,11 +1,11 @@
-<header>
+<header class="back-button-and-title">
     <a href="javascript:history.back()" class="back">
         <img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page.">
     </a>
     <h2>Messages</h2>
 </header>
 
-<a href="admin_new_message.php" class="button">New Message</a>
+<button id="new-message-button" onclick='location.href="admin_new_message.php"' class="full-button-white">+ New Message</button>
 
 <section class="messages-to-admin">
     <h3>Messages</h3>
@@ -109,7 +109,7 @@ function expandMessage(profilePic, fullName, email, subject, messageBody, timest
                 <p>${messageBody}</p>
             </div>
             <footer>
-                <button onclick="replyToMessage('${email}', '${subject}')" class="reply-btn">Reply</button>
+                <button class="full-button-black" onclick="replyToMessage('${email}', '${subject}')" class="reply-btn">Reply</button>
             </footer>
         </article>
     `;

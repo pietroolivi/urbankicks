@@ -73,15 +73,15 @@ class RecoveryHandler {
         const errors = [];
 
         if (!this.passwordRules.length(password)) {
-            errors.push('Password must be 8-20 characters long');
+            errors.push('* Password must be 8-20 characters long');
             isValid = false;
         }
         if (!this.passwordRules.alphanumeric(password)) {
-            errors.push('Password must contain both letters and numbers');
+            errors.push('* Password must contain both letters and numbers');
             isValid = false;
         }
         if (!this.passwordRules.special(password)) {
-            errors.push('Password must contain at least one special character');
+            errors.push('* Password must contain at least one special character');
             isValid = false;
         }
 
