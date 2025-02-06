@@ -65,20 +65,6 @@
     <?php endif; ?>
 </section>
 
-<style>
-.message-reply {
-    margin-left: 40px;
-    border-left: 3px solid #007bff;
-    padding-left: 10px;
-}
-.timestamp {
-    color: #666;
-    font-size: 0.8em;
-}
-.message-thread {
-    margin-bottom: 20px;
-}
-</style>
 
 <!-- The Modal -->
 <div id="myModal" class="modal">

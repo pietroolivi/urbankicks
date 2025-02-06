@@ -27,8 +27,8 @@
 </ul>
 <h2>Actions</h2>
 <div class="admin-actions">
-    <button class="full-button-white" onclick="location.href='admin_orders.php'" class="admin-button">Orders Received</button>
-    <button class="full-button-white" onclick="location.href='admin_products.php'" class="admin-button">Published Products</button>
-    <button class="full-button-white" onclick="location.href='admin_statistics.php'" class="admin-button">Statistics</button>
-    <button class="full-button-white" onclick="location.href='admin_messages.php'" class="admin-button">Messages</button>
+    <button class="full-button-white admin-button" onclick="location.href='admin_orders.php'" >Orders Received</button>
+    <button class="full-button-white admin-button" onclick="location.href='admin_products.php'" >Published Products</button>
+    <button class="full-button-white admin-button" onclick="location.href='admin_statistics.php'" >Statistics</button>
+    <button class="full-button-white admin-button" onclick="location.href='admin_messages.php'" >Messages</button>
 </div>

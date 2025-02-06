@@ -4070,3 +4070,20 @@ div.textual-part-message {
 .a-orders-section ol > li footer button:hover {
   background-color: #626262;
 }
+
+/**********************
+  ADMIN MESSAGES STYLE
+*********************/
+
+.message-reply {
+  margin-left: 40px;
+  border-left: 3px solid #007bff;
+  padding-left: 10px;
+}
+.timestamp {
+  color: #666;
+  font-size: 0.8em;
+}
+.message-thread {
+  margin-bottom: 20px;
+}
