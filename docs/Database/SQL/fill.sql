@@ -12,9 +12,6 @@ INSERT INTO STATO_PRODOTTO (Tipo, Descrizione) VALUES
     	('Not Available', 'Il prodotto non è attualmente disponibile in magazzino'),
     	('Coming', 'Il prodotto è previsto in arrivo prossimamente');
 
--- Aggiornamento dati nella tabella RECENSIONE
-INSERT INTO RECENSIONE (`ID_Prodotto`, `Email`, `Punteggio`, `Descrizione`, `Data_Recensione`) VALUES ('1', 	'tomassimartin@hotmail.com', '4', 'Ottima Scarpa', NOW());
-
 -- Aggiornamento dati nella tabella MESSAGGIO
 INSERT INTO `messaggio` (`Email`, `Oggetto`, `Corpo`, `Timestamp_Invio`) VALUES ('tomassimartin@hotmail.com', 	'Risposta', 'Ciao, ho pensato a questo', NOW());
 
@@ -53,6 +50,9 @@ INSERT INTO PRODOTTO (Nome, Descrizione, Marca, Tipo, Genere, Prezzo, Data_Aggiu
     ('Banda', 'Scarpa sportiva casual', 'Kappa', 'Sneakers', 'Man', 50.00, '2025-01-08', 'Available'),
     ('HOVR', 'Scarpa da corsa ammortizzata', 'Under Armour', 'Sneakers', 'Woman', 110.00, '2025-01-08', 'Available'),
     ('N9000', 'Scarpa sportiva retrò', 'Diadora', 'Sneakers', 'Man', 95.00, '2025-01-08', 'Available');
+
+-- Aggiornamento dati nella tabella RECENSIONE
+INSERT INTO RECENSIONE (`ID_Prodotto`, `Email`, `Punteggio`, `Descrizione`, `Data_Recensione`) VALUES ('1', 	'tomassimartin@hotmail.com', '4', 'Ottima Scarpa', NOW());
 
 -- Inserimento dati nella tabella VARIANTE per UOMO
 INSERT INTO VARIANTE (ID_Prodotto, Colore, Taglia, Quantita)
