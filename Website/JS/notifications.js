@@ -40,6 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function updateNotificationCount(decrease = 1) {
+    const notificationCountSpan = document.querySelector('.notification-count');
+    if (notificationCountSpan) {
+        const currentCount = parseInt(notificationCountSpan.textContent.replace(/[()]/g, ''));
+        const newCount = currentCount - decrease;
+        
+        if (newCount <= 0) {
+            notificationCountSpan.remove();
+        } else {
+            notificationCountSpan.textContent = `(${newCount})`;
+        }
+    }
+}
+
 async function markNotificationAsRead(notificationElement) {
     const notificationId = notificationElement.dataset.notificationId;
     
@@ -57,6 +71,7 @@ async function markNotificationAsRead(notificationElement) {
             notificationElement.setAttribute('data-tipo', 'Read');
             const unreadDot = notificationElement.querySelector('.unread-dot');
             if (unreadDot) unreadDot.remove();
+            updateNotificationCount(1);
         }
     } catch (error) {
         console.error('Error:', error);
@@ -86,6 +101,10 @@ function markAllNotificationsAsRead() {
                 const unreadDot = item.querySelector('.unread-dot');
                 if (unreadDot) unreadDot.remove();
             });
+            const notificationCountSpan = document.querySelector('.notification-count');
+            if (notificationCountSpan) {
+                notificationCountSpan.remove();
+            }
         }
     })
     .catch(error => console.error('Error:', error));

@@ -136,7 +136,19 @@ require_once("bootstrap.php");
                         <?php if(isset($_SESSION['user_email'])): ?>
                             <li><a href="orders.php">MY ORDERS</a></li>
                             <li><a href="wishlist.php">WISHLIST</a></li>
-                            <li><a href="notifications.php">NOTIFICATIONS</a></li>
+                            <li>
+                                <a href="notifications.php">
+                                    NOTIFICATIONS
+                                    <?php if(isset($_SESSION['user_email'])): ?>
+                                        <?php 
+                                        $unreadCount = $dbh->getUnreadNotificationsCount($_SESSION['user_email']); 
+                                        if($unreadCount > 0): 
+                                        ?>
+                                            <span class="notification-count">(<?php echo $unreadCount; ?>)</span>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </a>
+                            </li>
                             <li><a href="account.php">SETTINGS</a></li>
                             <li><a href="logout.php">LOGOUT</a></li>
                         <?php else: ?>
