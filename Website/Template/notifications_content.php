@@ -24,14 +24,16 @@ foreach ($groupedNotifications as $date => $dayNotifications): ?>
         <ol>
         <?php foreach ($dayNotifications as $notification): 
             $isAdminMessage = $notification['TipoNotifica'] === 'Admin Message';
-            $isExpanded = isset($_GET['expanded']) && $_GET['expanded'] == $notification['ID_Notifica'];
             $messageContent = $isAdminMessage ? $notification['MessaggioCompleto'] : $notification['Messaggio'];
-            $url = $isAdminMessage ? "?expanded=" . $notification['ID_Notifica'] : getNotificationUrl($notification);
         ?>
             <li data-notification-id="<?= htmlspecialchars($notification['ID_Notifica']) ?>" 
                 data-tipo="<?= htmlspecialchars($notification['Tipo']) ?>"
                 class="notification-item">
-                <a href="<?= htmlspecialchars($url) ?>" class="notification-link">
+                <a href="<?= $isAdminMessage ? '#' : htmlspecialchars(getNotificationUrl($notification)) ?>" 
+                class="notification-link <?= $isAdminMessage ? 'admin-message' : '' ?>"
+                <?php if ($isAdminMessage): ?>
+                data-full-message="<?= htmlspecialchars($messageContent) ?>"
+                <?php endif; ?>>
                     <img src="CSS/Images/Icons/notification_<?= getNotificationIcon($notification['TipoNotifica']) ?>.svg" 
                         alt="<?= getNotificationIconAlt($notification['TipoNotifica']) ?>" />
                     <h4><?= htmlspecialchars($notification['TipoNotifica']) ?></h4>
@@ -41,12 +43,10 @@ foreach ($groupedNotifications as $date => $dayNotifications): ?>
                             alt="Blue dot, notification not yet read">
                     <?php endif; ?>
                 </a>
-                <?php if ($isAdminMessage && $isExpanded): ?>
-                    <div class="message-content">
-                        <p class="message-body"><?= htmlspecialchars($messageContent) ?></p>
-                        <a href="contact_us.php" class="reply-btn">Reply</a>
-                    </div>
-                <?php endif; ?>
+                <div class="message-content hidden">
+                    <p class="message-body"></p>
+                    <a href="contact_us.php" class="reply-btn">Reply</a>
+                </div>
             </li>
         <?php endforeach; ?>
         </ol>
@@ -79,6 +79,10 @@ function getNotificationIconAlt($type) {
 }
 
 function getNotificationUrl($notification) {
+    if ($notification['TipoNotifica'] === 'Cart Reminder') {
+        return "cart.php";
+    }
+    
     if (preg_match('/\[(\d+)\]/', $notification['Messaggio'], $matches)) {
         $id = $matches[1];
         switch($notification['TipoNotifica']) {

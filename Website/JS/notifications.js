@@ -6,15 +6,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('click', async (e) => {
         const notificationLink = e.target.closest('.notification-link');
-        if (notificationLink) {
+        if (!notificationLink) return;
+        const notificationItem = notificationLink.closest('.notification-item');
+        
+        if (notificationLink.classList.contains('admin-message')) {
             e.preventDefault();
-            const notificationItem = notificationLink.closest('.notification-item');
             
+            // Mark as read if unread
             if (notificationItem.getAttribute('data-tipo') === 'Unread') {
                 await markNotificationAsRead(notificationItem);
             }
-            
-            // Follow the link after marking as read
+
+            // Toggle message content
+            const messageContent = notificationItem.querySelector('.message-content');
+            const messageBody = messageContent.querySelector('.message-body');
+            const fullMessage = notificationLink.dataset.fullMessage;
+
+            // Toggle visibility
+            if (messageContent.classList.contains('hidden')) {
+                messageBody.textContent = fullMessage;
+                messageContent.classList.remove('hidden');
+            } else {
+                messageContent.classList.add('hidden');
+            }
+        } else {
+            // Handle other notification types as before
+            e.preventDefault();
+            if (notificationItem.getAttribute('data-tipo') === 'Unread') {
+                await markNotificationAsRead(notificationItem);
+            }
             window.location.href = notificationLink.href;
         }
     });

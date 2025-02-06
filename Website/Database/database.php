@@ -634,6 +634,9 @@ class DatabaseHelper {
 
         // Create notification
         $this->createOrderNotification($orderId, strtolower($newStatus));
+        if ($newStatus === 'Delivered') {
+            $this->createReviewRequestNotification($orderId);
+        }
         return true;
     }
 
@@ -783,24 +786,26 @@ class DatabaseHelper {
 
     // Create a cart reminder notification
     public function createCartReminderNotification($email) {
-        $query = "SELECT c.ID_Carrello, COUNT(*) as count 
+        $query = "SELECT c.ID_Carrello, c.Valore_Totale, COUNT(co.ID_Prodotto) as item_count 
                  FROM CARRELLO c 
                  JOIN comprendere co ON c.ID_Carrello = co.ID_Carrello 
-                 WHERE c.Email = ?
+                 WHERE c.Email = ? AND c.Valore_Totale > 0
                  GROUP BY c.ID_Carrello";
+        
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
-
-        if ($result && $result['count'] > 0) {
-            $message = "You spend a lot of time browsing but, just spend a minute to make them yours!";
-            $this->createNotification(
+    
+        if ($result && $result['item_count'] > 0) {
+            $message = "You have " . $result['item_count'] . " items waiting in your cart! Complete your purchase to avoid missing out.";
+            return $this->createNotification(
                 'Cart Reminder',
                 $message,
                 $email
             );
         }
+        return false;
     }
 
     // Create a review request notification
