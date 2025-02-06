@@ -29,6 +29,6 @@
 <div class="admin-actions">
     <button class="full-button-white admin-button" onclick="location.href='admin_orders.php'" >Orders Received</button>
     <button class="full-button-white admin-button" onclick="location.href='admin_products.php'" >Published Products</button>
-    <button class="full-button-white admin-button" onclick="location.href='admin_statistics.php'" >Statistics</button>
+    <button class="full-button-white admin-button" onclick="location.href='admin_statistics.html'" >Statistics</button>
     <button class="full-button-white admin-button" onclick="location.href='admin_messages.php'" >Messages</button>
 </div>
