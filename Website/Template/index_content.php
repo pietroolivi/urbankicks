@@ -6,7 +6,7 @@
 <nav class="brands">
     <h2>Our Brands</h2>
     <ul>
-        <li><a href="home.php?brand=adidas">
+        <li><a href="home.php?brand=Adidas">
             <img src="CSS/Images/Icons/adidas.svg" alt="Adidas products."></a></li>
         <li><a href="home.php?brand=New Balance">
             <img src="CSS/Images/Icons/new_balance.svg" alt="New Balance products."></a></li>
