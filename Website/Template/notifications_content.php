@@ -47,10 +47,12 @@ foreach ($groupedNotifications as $date => $dayNotifications): ?>
                             alt="Blue dot, notification not yet read">
                     <?php endif; ?>
                 </a>
+                <?php if ($isAdminMessage): ?>
                 <div class="message-content hidden">
                     <p class="message-body"></p>
                     <a href="contact_us.php" class="reply-btn">Reply</a>
                 </div>
+                <?php endif; ?>
             </li>
         <?php endforeach; ?>
         </ol>
