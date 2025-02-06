@@ -860,6 +860,16 @@ class DatabaseHelper {
         return $stmt->execute();
     }
 
+    // Get unread notifications count
+    public function getUnreadNotificationsCount($email) {
+        $query = "SELECT COUNT(*) as count FROM NOTIFICA WHERE Email = ? AND Tipo = 'Unread'";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc()['count'];
+    }
+
     /*******************
      * STATISTICS QUERIES *
      *******************/
