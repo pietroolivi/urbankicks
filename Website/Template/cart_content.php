@@ -39,8 +39,17 @@ if (isset($_SESSION["user_email"])) {
                     <h3><?= htmlspecialchars($item['Nome']) ?></h3>
                     <div class="product-details">
                         <a class="product-link">
-                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($item["Nome"]. "_" . "1"); ?>.webp" 
-                            alt="<?php echo htmlspecialchars($item["Nome"]); ?>"> </a>
+                        <?php
+                    $nomeFile = str_replace(' ', '', $item['Nome']) . '_1.webp';
+                    $percorsoFile ='CSS/Images/Products/' . $nomeFile;
+                    if (file_exists($percorsoFile)) {
+                        echo '<img src="CSS/Images/Products/' . htmlspecialchars(str_replace(' ', '', $item['Nome']) . '_' . '1') . '.webp" alt="' . htmlspecialchars(str_replace(' ', '', $item['Nome'])) . '">';
+                    } else {
+                        // Il file non esiste, ad esempio mostra un'immagine di default oppure un messaggio di errore
+                        echo '<img src="CSS/Images/Products/default_shoe.webp" alt="Immagine non disponibile">';
+                    }
+                ?>
+                        </a>
                         <div class="item-info">
                             <div class="selection-div">
                             <label for="size-selector-<?= $item['ID_Prodotto'] ?>">Size

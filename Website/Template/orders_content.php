@@ -32,8 +32,16 @@
                                                     <div class="product-card">
                                                         <div class="product-details">
                                                             <a class="product-link">
-                                                                <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1");?>.webp" 
-                                                                alt="<?php echo htmlspecialchars($product['Nome']);?>"></a>
+                                                            <?php
+                                                                $nomeFile = str_replace(' ', '', $product['Nome']) . '_1.webp';
+                                                                $percorsoFile ='CSS/Images/Products/' . $nomeFile;
+                                                                if (file_exists($percorsoFile)) {
+                                                                    echo '<img src="CSS/Images/Products/' . htmlspecialchars(str_replace(' ', '', $product['Nome']) . '_' . '1') . '.webp" alt="' . htmlspecialchars(str_replace(' ', '', $product['Nome'])) . '">';
+                                                                } else {
+                                                                    // Il file non esiste, ad esempio mostra un'immagine di default oppure un messaggio di errore
+                                                                    echo '<img src="CSS/Images/Products/default_shoe.webp" alt="Immagine non disponibile">';
+                                                                }
+                                                            ?></a>
                                                             <div class="item-info">
                                                                 <h4><?php echo $product["Nome"];?></h4>
                                                                 <p>Size: <?php echo (int)$product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"];?></p>
@@ -91,8 +99,16 @@
                                             <div class="product-card">
                                                 <div class="product-details">
                                                     <a class="product-link">
-                                                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1");?>.webp" 
-                                                        alt="<?php echo htmlspecialchars($product["Nome"]); ?>">
+                                                    <?php
+                                                                $nomeFile = str_replace(' ', '', $product['Nome']) . '_1.webp';
+                                                                $percorsoFile ='CSS/Images/Products/' . $nomeFile;
+                                                                if (file_exists($percorsoFile)) {
+                                                                    echo '<img src="CSS/Images/Products/' . htmlspecialchars(str_replace(' ', '', $product['Nome']) . '_' . '1') . '.webp" alt="' . htmlspecialchars(str_replace(' ', '', $product['Nome'])) . '">';
+                                                                } else {
+                                                                    // Il file non esiste, ad esempio mostra un'immagine di default oppure un messaggio di errore
+                                                                    echo '<img src="CSS/Images/Products/default_shoe.webp" alt="Immagine non disponibile">';
+                                                                }
+                                                            ?>
                                                     </a>
                                                     <div class="item-info">
                                                         <h4><?php echo htmlspecialchars($product["Nome"]); ?></h4>

@@ -43,8 +43,16 @@ if(!isset($templateParams["tracking"])): ?>
                     <article class="product-card">
                         <div class="product-details">
                             <a class="product-link">
-                            <img src="CSS/Images/Products/<?php echo htmlspecialchars($item['image']);?>.webp" 
-                                alt="<?php echo htmlspecialchars($item['name']); ?>"/></a>
+                            <?php
+                                $nomeFile = str_replace(' ', '', $item['name']) . '_1.webp';
+                                $percorsoFile ='CSS/Images/Products/' . $nomeFile;
+                                if (file_exists($percorsoFile)) {
+                                    echo '<img src="CSS/Images/Products/' . htmlspecialchars(str_replace(' ', '', $item['name']) . '_' . '1') . '.webp" alt="' . htmlspecialchars(str_replace(' ', '', $item['name'])) . '">';
+                                } else {
+                                    // Il file non esiste, ad esempio mostra un'immagine di default oppure un messaggio di errore
+                                    echo '<img src="CSS/Images/Products/default_shoe.webp" alt="Immagine non disponibile">';
+                                }
+                            ?></a>
                             <div class="item-info">
                                     <h4><?php echo htmlspecialchars($item['name']);?></h4>
                                     <p >Size: <?php echo htmlspecialchars($item['size']);?> | Qty: <?php echo htmlspecialchars($item['quantity']); ?></p>
