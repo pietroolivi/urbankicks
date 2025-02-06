@@ -100,14 +100,19 @@ class CartHandler {
                 alertElement.textContent = 'Color changed: Quantity has been reset to 1';
                 alertElement.style.cssText = `
                     position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 15px;
-                    background-color: #f8f9fa;
-                    border: 1px solid #ddd;
-                    border-radius: 4px;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                    z-index: 1000;
+                    top: 80px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    background-color: #fff;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 9999;
+                    font-size: 14px;
+                    text-align: center;
+                    min-width: 200px;
+                    max-width: 90%;
                 `;
                 
                 document.body.appendChild(alertElement);
