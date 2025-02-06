@@ -2571,7 +2571,7 @@ Hide default number input spinner buttons */
     font-size: 1em;
   }
   .selection-div label, .products-overview.lateral-container p{
-    font-size: 140%;
+    font-size: 120%;
   }
   .action-buttons button {
     flex: 1;
@@ -2625,7 +2625,7 @@ Hide default number input spinner buttons */
     font-size: 1em;
   }
   .selection-div label, .products-overview.lateral-container p {
-    font-size: 120%;
+    font-size: 100%;
   }
   .action-buttons button {
     flex: 1;
@@ -2680,7 +2680,7 @@ Hide default number input spinner buttons */
     font-size: 1em;
   }
   .selection-div label, .products-overview.lateral-container p {
-    font-size: 100%;
+    font-size: 80%;
   }
   .action-buttons button {
     flex: 1;
@@ -2711,7 +2711,7 @@ Hide default number input spinner buttons */
   text-overflow: ellipsis;
 }
 .item-info p{
-  white-space: nowrap;
+  white-space: wrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
