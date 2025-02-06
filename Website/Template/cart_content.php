@@ -130,8 +130,8 @@ if (isset($_SESSION["user_email"])) {
     </div>
     <div class="last-cart-actions">
         <div class="cont-proc-buttons">
-            <button class="continue-shopping" onclick="window.location.href='home.php'">Continue shopping</button>
-            <button class="proceed-checkout" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
+            <button class="continue-shopping full-button-white" onclick="window.location.href='home.php'">Continue shopping</button>
+            <button class="proceed-checkout full-button-black" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
         </div>
     </div>
     <?php endif; ?>

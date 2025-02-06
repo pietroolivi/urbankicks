@@ -60,7 +60,7 @@
             <p>SUBTOTAL €<span id="subtotal">0</span></p>
             <p id="discount-row" style="display:none">DISCOUNT -€<span id="discount">0.00</span></p>
             <p>NEW SUBTOTAL €<span id="new-subtotal">0</span></p>
-            <button onclick="nextStep('shipping')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
+            <button class="full-button-black" onclick="nextStep('shipping')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
         </div>
     </footer>
 </div>
@@ -115,7 +115,7 @@
     <div class="subtot-tot">
         <p>SUBTOTAL €<span id="shipping-subtotal">0</span></p>
         <p>TOTAL €<span id="shipping-total">0</span></p>
-        <button onclick="nextStep('payment')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
+        <button class="full-button-black" onclick="nextStep('payment')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
     </div>
     </footer>
 </div>
@@ -171,7 +171,7 @@
             </div>
         </fieldset>
         <footer>
-            <button type="submit">Place Order (€<span id="payment-total">0.00</span>)</button>
+            <button class="full-button-black" type="submit">Place Order (€<span id="payment-total">0.00</span>)</button>
         </footer>
     </form>
 </div>

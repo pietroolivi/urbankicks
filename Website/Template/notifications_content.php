@@ -40,8 +40,10 @@ foreach ($groupedNotifications as $date => $dayNotifications): ?>
                 <?php endif; ?>>
                     <img src="CSS/Images/Icons/notification_<?= getNotificationIcon($notification['TipoNotifica']) ?>.svg" 
                         alt="<?= getNotificationIconAlt($notification['TipoNotifica']) ?>" />
-                    <h4><?= htmlspecialchars($notification['TipoNotifica']) ?></h4>
-                    <p><?= htmlspecialchars($notification['Messaggio']) ?></p>
+                    <div class="notification-title-body">
+                        <h4><?= htmlspecialchars($notification['TipoNotifica']) ?></h4>
+                        <p><?= htmlspecialchars($notification['Messaggio']) ?></p>
+                    </div>
                     <?php if ($notification['Tipo'] === 'Unread'): ?>
                         <img class="unread-dot" src="CSS/Images/Icons/notification_unread.svg" 
                             alt="Blue dot, notification not yet read">

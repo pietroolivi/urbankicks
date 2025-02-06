@@ -21,22 +21,17 @@ foreach ($variants as $variant) {
     <h2><?php echo htmlspecialchars($product['Nome']); ?></h2>
     <div class="price-reviews-preview">
         <h3>€<?php echo number_format($product['Prezzo'], 2); ?></h3>
+        <?php if(!empty($reviews)): 
+            $avgRating = array_sum(array_column($reviews, 'Punteggio')) / count($reviews);
+        ?>
         <div class="reviews-preview">
-            <p>(4)</p>
-            <span id="average-stars1" style="--rating:4.5"></span>
-            <p><a href="#reviews">4.5</a></p>
+            <p>(<?php echo count($reviews); ?>)</p>
+            <span id="average-stars1" class="star-reviews" style="--rating:<?php echo $avgRating; ?>"></span>
+            <p><a class="number-reviews" href="#reviews"><?php echo number_format($avgRating, 1); ?></a></p>
         </div>
+        <?php endif; ?>
     </div>
 </header>
-
-<?php if(!empty($reviews)): 
-    $avgRating = array_sum(array_column($reviews, 'Punteggio')) / count($reviews);
-?>
-    <p>(<?php echo count($reviews); ?>)</p>
-    <span class="star-reviews" style="--rating:<?php echo $avgRating; ?>"></span>
-    <p><a class="number-reviews" href="#reviews"><?php echo number_format($avgRating, 1); ?></a></p>
-<?php endif; ?>
-
 
 <div class="product-image">    
     <div class="track">

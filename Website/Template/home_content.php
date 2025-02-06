@@ -12,17 +12,6 @@ $genre = isset($_GET['genre']) ? $_GET['genre'] : "";
 $type = isset($_GET['type']) ? $_GET['type'] : "";
 ?>
 
-<h2>
-    <?php 
-    if ($genre || $type) {
-        echo(trim(ucfirst($genre) . ' ' . ucfirst($type)));
-    } else if ($genre) {
-        echo(ucfirst($genre));
-    } else {
-        echo("All Products");
-    }
-    ?>
-</h2>
 <!-- Filter Menu -->
 <aside class="filter-sidebar">
 
@@ -104,7 +93,17 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     </fieldset>
 </aside>
 
-
+<h2>
+    <?php 
+    if ($genre || $type) {
+        echo(trim(ucfirst($genre) . ' ' . ucfirst($type)));
+    } else if ($genre) {
+        echo(ucfirst($genre));
+    } else {
+        echo("All Products");
+    }
+    ?>
+</h2>
 
 <div class="filters-and-sorters-switches">
     <!-- Filter Icon -->

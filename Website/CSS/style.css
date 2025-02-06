@@ -493,6 +493,103 @@ label[for="filter-icon"] {
   width: 100%;
 }
 
+li.notification-item > a {
+  width: 100%;
+}
+
+li.notification-item {
+  display: flex;
+  border: 1px solid black;
+  margin: auto;
+  width: 95%;
+  margin-bottom: 3%;
+  padding: 2% 2%;
+}
+
+a.notification-link > .notification-title-body {
+  width: 80%;
+}
+
+img.unread-dot {
+  width: 10%;
+}
+
+#reviews > .review {
+  border: 1px solid black;
+  width: 80%;
+  padding: 3%;
+  margin: auto;
+  margin-top: 10%;
+  margin-bottom: 10%;
+}
+
+button.mark-all-as-read ~ section > h3 {
+  margin: 4% 0;
+}
+
+.last-cart-actions > .cont-proc-buttons {
+  width: 100%;
+  padding: 0;
+}
+
+button[onclick="nextStep('shipping')"],
+button[onclick="nextStep('payment')"] {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding-left: 10%;
+}
+
+button[onclick="nextStep('payment')"] {
+  width: 66%;
+}
+
+fieldset.fieldset-checkout + footer {
+  text-align: center;
+}
+
+fieldset.fieldset-checkout + footer > button {
+  margin: auto;
+  margin-bottom: 4%;
+}
+
+.fieldset-checkout
+
+.notification-item {
+  display: flex;
+  border: 1px solid black;
+  margin: auto;
+  width: 95%;
+  margin-bottom: 3%;
+  padding: 2% 2%;
+}
+
+.notification-item > a {
+  width: 100%;
+}
+
+.notification-item > a > img {
+  width: 15%;
+}
+
+.unread-dot {
+  width: 10%;
+}
+
+article.review > p {
+  font-family: 'Beatrice Headline Trial', sans-serif;
+  font-size: 16px;
+}
+
+article.review > small {
+  font-size: 12px;
+}
+
+article.review > span::after {
+  font-size: 16px;
+}
+
+
 #explore-now-cart {
   position: relative;
 }
@@ -3923,6 +4020,19 @@ div.textual-part-message {
   .mark-all-as-read > img {
     width: 10%;
   }
+
+  article.review > p {
+    font-family: 'Beatrice Headline Trial', sans-serif;
+    font-size: 60px;
+  }
+  
+  article.review > small {
+    font-size: 50px;
+  }
+
+  article.review > span::after {
+    font-size: 60px;
+}
 }
 
 /********************************************************
