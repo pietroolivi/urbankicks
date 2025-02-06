@@ -153,13 +153,12 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     <div class="product-card">
         <a href="" class="product-link">
             <img src="" alt="Visualizza dettagli prodotto">
-            <label class="wishlist-container" for="wish-checkbox-id">
+            <label class="wishlist-container">
             <input id="wish-checkbox-id" type="checkbox" class="wishlist-checkbox sr-only" aria-label="Aggiungi alla wishlist">
             <img src="CSS/Images/Icons/heart_empty.svg" alt="Add to Wishlist" class="wishlist-checkbox">
             </label></a>
         <h3 class="product-name"></h3>
         <p class="product-price"></p>
-       
     </div>
 </template>
 
