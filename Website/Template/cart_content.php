@@ -98,10 +98,10 @@ if (isset($_SESSION["user_email"])) {
                     </div>
                     <div class="action-buttons">
                         <button class="move-to-wishlist">
-                            Move to wishlist <img src="CSS/Images/Icons/heart_empty.svg" alt="" style="display: inline  vertical-align: middle;">
+                            Move to wishlist <img src="CSS/Images/Icons/heart_empty.svg" alt="" style="display: inline;  vertical-align: middle;">
                         </button>
                         <button class="remove-from-cart">
-                            Remove from cart <img src="CSS/Images/Icons/bin.svg" alt="" style="display: inline  vertical-align: middle;">
+                            Remove from cart <img src="CSS/Images/Icons/bin.svg" alt="" style="display: inline;  vertical-align: middle;">
                         </button>
                     </div>
                 </article>
