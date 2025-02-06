@@ -35,7 +35,7 @@ if (isset($_SESSION["user_email"])) {
             <p>Just €<?= number_format(100 - $cartTotal, 2) ?> away from getting FREE STANDARD SHIPPING</p>
         <?php endif; ?>
     </div>
-    <ul id="products-container" class="lateral-container">
+    <ul class="products-container lateral-container">
         <?php foreach ($cartItems as $item): ?>
             <li data-product-id="<?= htmlspecialchars($item['ID_Prodotto']) ?>"
                 data-color="<?= htmlspecialchars($item['Colore']) ?>"
@@ -45,8 +45,17 @@ if (isset($_SESSION["user_email"])) {
                     <h3><?= htmlspecialchars($item['Nome']) ?></h3>
                     <div class="product-details">
                         <a class="product-link">
-                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($item["Nome"]. "_" . "1"); ?>.webp" 
-                            alt="<?php echo htmlspecialchars($item["Nome"]); ?>"> </a>
+                        <?php
+                    $nomeFile = str_replace(' ', '', $item['Nome']) . '_1.webp';
+                    $percorsoFile ='CSS/Images/Products/' . $nomeFile;
+                    if (file_exists($percorsoFile)) {
+                        echo '<img src="CSS/Images/Products/' . htmlspecialchars(str_replace(' ', '', $item['Nome']) . '_' . '1') . '.webp" alt="' . htmlspecialchars(str_replace(' ', '', $item['Nome'])) . '">';
+                    } else {
+                        // Il file non esiste, ad esempio mostra un'immagine di default oppure un messaggio di errore
+                        echo '<img src="CSS/Images/Products/default_shoe.webp" alt="Immagine non disponibile">';
+                    }
+                ?>
+                        </a>
                         <div class="item-info">
                             <div class="selection-div">
                             <label for="size-selector-<?= $item['ID_Prodotto'] ?>">Size
@@ -82,14 +91,16 @@ if (isset($_SESSION["user_email"])) {
                                     <!-- <label for="quantity-selector-<?= $item['ID_Prodotto'] ?>">
                                     Quantity
                                     </label> -->
-                                    <div class="quantity-control">
+                                    <div class="quantity-control" 
+                                            data-max-quantity="<?= htmlspecialchars($dbh->getQuantity($item['ID_Prodotto'], $item['Colore'], $item['Taglia'])) ?>">
                                         <button type="button" class="quantity-btn increment">+</button>
                                         <span class="quantity-display"><?= htmlspecialchars($item['Quantita']) ?></span>
                                         <button type="button" class="quantity-btn decrement">-</button>
                                     </div>
                                     <input id="quantity-selector-<?= $item['ID_Prodotto'] ?>" 
                                         type="hidden" 
-                                        name="quantity" 
+                                        name="quantity"
+                                        class="quantity-selector" 
                                         value="<?= htmlspecialchars($item['Quantita']) ?>" />
                                 </div>
                             <p class="price">
@@ -102,23 +113,25 @@ if (isset($_SESSION["user_email"])) {
                     </div>
                     <div class="action-buttons">
                         <button class="move-to-wishlist">
-                            Move to wishlist <img src="CSS/Images/Icons/heart_empty.svg" alt="" style="display: inline  vertical-align: middle;">
+                            Move to wishlist <img src="CSS/Images/Icons/heart_empty.svg" alt="" style="display: inline;  vertical-align: middle;">
                         </button>
                         <button class="remove-from-cart">
-                            Remove from cart <img src="CSS/Images/Icons/bin.svg" alt="" style="display: inline  vertical-align: middle;">
+                            Remove from cart <img src="CSS/Images/Icons/bin.svg" alt="" style="display: inline;  vertical-align: middle;">
                         </button>
                     </div>
                 </article>
             </li>
         <?php endforeach; ?>
     </ul>
-    <p><?= count($cartItems) ?> ITEMS</p>
-    <div class="last-cart-actions">
     <div class="cart-total-container">
+    <p><?= count($cartItems) ?> ITEMS</p>
         <span>Total:</span>
         <span class="cart-total">€<?= number_format($cartTotal, 2) ?></span>
     </div>
-    <button class="continue-shopping" onclick="window.location.href='home.php'">Continue shopping</button>
-    <button class="proceed-checkout" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
+    <div class="last-cart-actions">
+        <div class="cont-proc-buttons">
+            <button class="continue-shopping" onclick="window.location.href='home.php'">Continue shopping</button>
+            <button class="proceed-checkout" onclick="window.location.href='checkout.php'">Proceed to checkout</button>
+        </div>
     </div>
     <?php endif; ?>

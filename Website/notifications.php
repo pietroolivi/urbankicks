@@ -7,6 +7,8 @@ if(!isset($_SESSION["user_email"])){
     exit();
 }
 
+$templateParams["notifications"] = $dbh->getUserNotifications($_SESSION["user_email"]);
+
 $templateParams["title"] = "Notifications";
 $templateParams["name"] = "notifications_content.php";
 $templateParams["js"] = [

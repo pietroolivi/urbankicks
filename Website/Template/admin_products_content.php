@@ -32,6 +32,16 @@
                 $stockStatus = "low_stocks"; 
             }
         ?>
+        <?php
+            $nomeFile = str_replace(' ', '', $product['Nome']) . '_1.webp';
+            $percorsoFile ='CSS/Images/Products/' . $nomeFile;
+            if (file_exists($percorsoFile)) {
+                echo '<img src="CSS/Images/Products/' . htmlspecialchars(str_replace(' ', '', $product['Nome']) . '_' . '1') . '.webp" alt="' . htmlspecialchars(str_replace(' ', '', $product['Nome'])) . '">';
+            } else {
+                // Il file non esiste, ad esempio mostra un'immagine di default oppure un messaggio di errore
+                echo '<img src="CSS/Images/Products/default_shoe.webp" alt="Immagine non disponibile">';
+            }
+        ?>
         <h3>#<?php echo $product["ID_Prodotto"]; ?></h3>
         <img class="admin-product-thumbnail" src="<?php echo $image; ?>" alt=""/>
         <div class="product-textual-info-admin">

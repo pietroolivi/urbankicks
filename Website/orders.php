@@ -9,7 +9,6 @@ if(!isset($_SESSION["user_email"])){
 
 // Get orders from database
 $templateParams["orders"] = $dbh->getOrders($_SESSION["user_email"]);
-
 // Set template parameters
 $templateParams["title"] = "Orders";
 $templateParams["name"] = "orders_content.php";

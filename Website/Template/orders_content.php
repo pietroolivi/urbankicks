@@ -4,75 +4,143 @@
         <p>You haven't placed any orders yet.</p>
     <?php else: ?>
         <!-- Ongoing Orders Section -->
+        <div class="order-lifestate"> 
         <h3>Ongoing Orders</h3>
-        <div class="orders-container">
-            <?php foreach($templateParams["orders"] as $order): ?>
-                <?php if($order["Tipo"] !== "Delivered"): ?>
-                    <article class="order-card">
-                        <header>
-                            <p>Order #<?php echo $order["ID_Ordine"]; ?></p>
-                            <p class="order-date"> <?php echo date("F j, Y", strtotime($order["Data_Ordine"])); ?></p>
-                            <a href="tracking.php?order=<?php echo $order["ID_Ordine"]; ?>" class="track-link">Track Order</a>
-                        </header>
-                        <div class="order-details">
-                            <div class="order-items">
-                                <?php foreach($order["products"] as $product): ?>
-                                    <div class="order-item">
-                                    <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1"); ?>.webp" 
-                                        alt="<?php echo htmlspecialchars($product['Nome']); ?>">
-                                        <div class="item-info">
-                                            <h4><?php echo $product["Nome"]; ?></h4>
-                                            <p>Size: <?php echo (int)$product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
-                                            <p>Color: <?php echo $product["Colore"]; ?></p>
-                                            <p>Price: €<?php echo number_format($product["Prezzo"], 2); ?></p>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <div class="order-summary">
-                                <p>Paid with: <?php echo $order["Metodo_Pagamento"]; ?></p>
-                                <p>Total: €<?php echo number_format($order["Costo_Totale"], 2); ?></p>
-                            </div>
-                        </div>
-                    </article>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </div>
-        
+    </div>
+        <div>
+            <div class="orders-container">
+                <?php foreach($templateParams["orders"] as $order): ?>
+                    <?php if(!$order["tracking_delivered"]): ?>
+                        <article class="order-card">
+                            <table>
+                                <tr class="order-header">
+                                    <td>
+                                        <p>Order #<?php echo $order["ID_Ordine"];?></p>
+                                    </td>
+                                    <td>
+                                        <p class="order-date"> <?php echo date("F j, Y", strtotime($order["Data_Ordine"]));?></p>
+                                    </td>
+                                    <td>    
+                                        <a href="tracking.php?order=<?php echo $order["ID_Ordine"]; ?>" class="track-link">Track Order</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <ul class="products-overview lateral-container products-container">
+                                            <?php foreach($order["products"] as $product):?>
+                                                <li>
+                                                    <div class="product-card">
+                                                        <div class="product-details">
+                                                            <a class="product-link">
+                                                            <?php
+                                                                $nomeFile = str_replace(' ', '', $product['Nome']) . '_1.webp';
+                                                                $percorsoFile ='CSS/Images/Products/' . $nomeFile;
+                                                                if (file_exists($percorsoFile)) {
+                                                                    echo '<img src="CSS/Images/Products/' . htmlspecialchars(str_replace(' ', '', $product['Nome']) . '_' . '1') . '.webp" alt="' . htmlspecialchars(str_replace(' ', '', $product['Nome'])) . '">';
+                                                                } else {
+                                                                    // Il file non esiste, ad esempio mostra un'immagine di default oppure un messaggio di errore
+                                                                    echo '<img src="CSS/Images/Products/default_shoe.webp" alt="Immagine non disponibile">';
+                                                                }
+                                                            ?></a>
+                                                            <div class="item-info">
+                                                                <h4><?php echo $product["Nome"];?></h4>
+                                                                <p>Size: <?php echo (int)$product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"];?></p>
+                                                                <p>Color: <?php echo $product["Colore"];?></p>
+                                                                <p>Price: €<?php echo number_format($product["Prezzo"], 2);?></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            <?php endforeach;?>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="order-summary">
+                                    <td colspan="2">
+                                        <p>Paid with: <?php echo $order["Metodo_Pagamento"]; ?></p>
+                                    </td>
+                                    <td>
+                                        <p>Total: €<?php echo number_format($order["Costo_Totale"], 2); ?></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </article>
+
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>    
         <!-- Completed Orders Section -->
-        <h3>Completed Orders</h3>
-        <div class="orders-container">
-            <?php foreach($templateParams["orders"] as $order): ?>
-                <?php if($order["Tipo"] === "Delivered"): ?>
-                    <article class="order-card">
-                        <header>
-                            <p>Order #<?php echo $order["ID_Ordine"]; ?></p>
-                            <p class="order-date"> <?php echo date("F j, Y", strtotime($order["Data_Ordine"])); ?></p>
-                            <p> <?php echo($order["Tipo"]) ?></p>
-                        </header>
-                        <div class="order-details">
-                            <div class="order-items">
-                                <?php foreach($order["products"] as $product): ?>
-                                    <div class="order-item">
-                                        <img src="<?php echo $product["Immagine"]; ?>" alt="<?php echo $product["Nome"]; ?>">
-                                        <div class="item-info">
-                                            <h4><?php echo $product["Nome"]; ?></h4>
-                                            <p>Size: <?php echo (int)$product["Taglia"]; ?> | Qty: <?php echo $product["Quantita"]; ?></p>
-                                            <p>Color: <?php echo $product["Colore"]; ?></p>
-                                            <p>Price: €<?php echo number_format($product["Prezzo"], 2); ?></p>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <div class="order-summary">
-                                <p>Paid with: <?php echo $order["Metodo_Pagamento"]; ?></p>
+        <div class="order-lifestate"> 
+    <h3>Completed Orders</h3>
+</div>
+<div>
+    <div class="orders-container">
+        <?php foreach($templateParams["orders"] as $order): ?>
+            <?php if($order["tracking_delivered"]): ?>
+                <article class="order-card">
+                    <table>
+                        <tr class="order-header">
+                            <td>
+                                <p>Order #<?php echo $order["ID_Ordine"]; ?></p>
+                            </td>
+                            <td>
+                                <p class="order-date"> <?php echo date("F j, Y", strtotime($order["Data_Ordine"])); ?></p>
+                            </td>
+                            <td>
+                                <p><?php echo htmlspecialchars($order["Tipo"]); ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <ul class="products-overview lateral-container">
+                                    <?php foreach($order["products"] as $product): ?>
+                                        <li>
+                                            <div class="product-card">
+                                                <div class="product-details">
+                                                    <a class="product-link">
+                                                    <?php
+                                                                $nomeFile = str_replace(' ', '', $product['Nome']) . '_1.webp';
+                                                                $percorsoFile ='CSS/Images/Products/' . $nomeFile;
+                                                                if (file_exists($percorsoFile)) {
+                                                                    echo '<img src="CSS/Images/Products/' . htmlspecialchars(str_replace(' ', '', $product['Nome']) . '_' . '1') . '.webp" alt="' . htmlspecialchars(str_replace(' ', '', $product['Nome'])) . '">';
+                                                                } else {
+                                                                    // Il file non esiste, ad esempio mostra un'immagine di default oppure un messaggio di errore
+                                                                    echo '<img src="CSS/Images/Products/default_shoe.webp" alt="Immagine non disponibile">';
+                                                                }
+                                                            ?>
+                                                    </a>
+                                                    <div class="item-info">
+                                                        <h4><?php echo htmlspecialchars($product["Nome"]); ?></h4>
+                                                        <p>Size: <?php echo (int)$product["Taglia"]; ?> | Qty: <?php echo htmlspecialchars($product["Quantita"]); ?></p>
+                                                        <p>Color: <?php echo htmlspecialchars($product["Colore"]); ?></p>
+                                                        <p>Price: €<?php echo number_format($product["Prezzo"], 2); ?></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>    
+                                    <?php endforeach; ?>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="order-summary">
+                            <td colspan="2">
+                                <p>Paid with: <?php echo htmlspecialchars($order["Metodo_Pagamento"]); ?></p>
+                            </td>
+                            <td>
                                 <p>Total: €<?php echo number_format($order["Costo_Totale"], 2); ?></p>
+                            </td>
+                        </tr>
+                        <tr class="order-actions">
+                            <td colspan="3">
                                 <a href="tracking.php?order=<?php echo $order["ID_Ordine"]; ?>" class="track-link">Track Order</a>
-                            </div>
-                        </div>
-                    </article>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </div>
+                            </td>
+                        </tr>
+                    </table>
+                </article>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+</div>
     <?php endif; ?>
 </section>

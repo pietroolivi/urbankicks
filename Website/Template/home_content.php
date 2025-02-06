@@ -12,6 +12,17 @@ $genre = isset($_GET['genre']) ? $_GET['genre'] : "";
 $type = isset($_GET['type']) ? $_GET['type'] : "";
 ?>
 
+<h2>
+    <?php 
+    if ($genre || $type) {
+        echo(trim(ucfirst($genre) . ' ' . ucfirst($type)));
+    } else if ($genre) {
+        echo(ucfirst($genre));
+    } else {
+        echo("All Products");
+    }
+    ?>
+</h2>
 <!-- Filter Menu -->
 <aside class="filter-sidebar">
 
@@ -19,11 +30,10 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         <h3>DESIGNERS</h3>
         <ul class="brand-options">
             <?php
-            $brands = ["Adidas", "Nike", "New Balance", "Converse"];
-            foreach($brands as $brand): ?>
+            foreach($templateParams["brands"] as $brand): ?>
             <li class="brand-option">
-                <input type="checkbox" id="filter-sidebar-<?php echo strtolower($brand); ?>" name="designers[]" value="<?php echo $brand; ?>" autocomplete="off" onchange="updateSelectedBorders()">
-                <label for="filter-sidebar-<?php echo strtolower($brand); ?>"><?php echo strtoupper($brand); ?></label>
+                <input type="checkbox" id="filter-sidebar-<?php echo str_replace(' ', '', strtolower($brand)); ?>" name="designers[]" value="<?php echo $brand; ?>" onchange="updateSelectedBorders()">
+                <label for="filter-sidebar-<?php echo str_replace(' ', '',strtolower($brand)); ?>"><?php echo strtoupper($brand); ?></label>
             </li>
             <?php endforeach; ?>
         </ul>
@@ -46,7 +56,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     <section class="size-options-section">
         <h3>SIZE</h3>
         <ul class="size-options size-options-sidebar">
-            <?php for ($i = 36; $i <= 47; $i++) { ?>
+            <?php for ($i = 28; $i <= 45; $i++) { ?>
             <li class="size-option">
                 <input id="filter-sidebar-size<?php echo $i  ?>" type="checkbox" name="sizes[]" value="<?php echo $i ?>">
                 <label for="filter-sidebar-size<?php echo $i  ?>"><?php echo $i ?></label>
@@ -77,6 +87,83 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     </footer>
 </aside>
 
+<!-- Sort Menu -->
+<aside class="sort-sidebar">
+    <fieldset class="sort-switch" onchange="shiftSortSidebar('fieldset')">
+        <legend>Please select the order in which to display the items:</legend>
+        <input type="radio" id="price-low-to-high" name="sort" value="price-low-to-high" <?php echo $sort === 'price-low-to-high' ? 'checked' : ''; ?>>
+        <label for="price-low-to-high">PRICE LOW TO HIGH</label>
+        <input type="radio" id="price-high-to-low" name="sort" value="price-high-to-low" <?php echo $sort === 'price-high-to-low' ? 'checked' : ''; ?>>
+        <label for="price-high-to-low">PRICE HIGH TO LOW</label>
+        <input type="radio" id="alphabetical" name="sort" value="alphabetical" <?php echo $sort === 'alphabetical' ? 'checked' : ''; ?>>
+        <label for="alphabetical">ALPHABETICAL</label>
+        <input type="radio" id="reviews-low-to-high" name="sort" value="reviews-low-to-high" <?php echo $sort === 'reviews-low-to-high' ? 'checked' : ''; ?>>
+        <label for="reviews-low-to-high">REVIEWS LOW TO HIGH</label>
+        <input type="radio" id="reviews-high-to-low" name="sort" value="reviews-high-to-low" <?php echo $sort === 'reviews-high-to-low' ? 'checked' : ''; ?>>
+        <label for="reviews-high-to-low">REVIEWS HIGH TO LOW</label>
+    </fieldset>
+</aside>
+
+
+
+<div class="filters-and-sorters-switches">
+    <!-- Filter Icon -->
+    <label for="filter-icon">Open/close menu with available product filters.</label>
+    <label class="filter-menu"><img src="CSS/Images/Icons/filter.svg" alt=""><input id="filter-icon" type="checkbox" onchange="shiftFilterSidebar()"></label>
+
+    <!-- Category Selection -->
+    <fieldset class="category-switch">
+        <legend>Please select the category of articles to be displayed:</legend>
+        <!-- We call the function when we intercept a change in the radio button related to categories, which does not necessarily occur in conjunction with the closing of the filter sidebar. -->
+        <input onchange="updateURL()" type="radio" id="popular" name="category" value="popular" checked>
+        <label for="popular">Popular</label>
+        <input onchange="updateURL()" type="radio" id="discounted" name="category" value="discounted">
+        <label for="discounted">Discounted</label>
+        <input onchange="updateURL()" type="radio" id="novelties" name="category" value="novelties">
+        <label for="novelties">Novelties</label>
+    </fieldset>
+
+    <!-- Sort Icon -->
+    <label for="sort-icon">Open/close menu with available product sorting criteria.</label>
+    <label class="sort-menu"><img src="CSS/Images/Icons/sort.svg" alt=""><input id="sort-icon" type="checkbox" onchange="shiftSortSidebar('icon')"></label>
+</div>
+
+<?php if ($genre || $type): ?>
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="Breadcrumb" class="breadcrumb">
+        <ol>
+            <li><a href="home.php">Home</a></li>
+            <?php if ($genre): ?>
+                <li><a href="home.php?genre=<?php echo urlencode($genre); ?>"><?php echo ucfirst($genre); ?></a></li>
+            <?php endif; ?>
+            <?php if ($type): ?>
+                <li><span aria-current="page"><?php echo ucfirst($type); ?></span></li>
+            <?php endif; ?>
+        </ol>
+    </nav>
+<?php endif; ?>
+
+<div class="removable-dynamic-filters"></div>
+
+<div id="home-products-container" class="products-grid" 
+     data-products='<?php echo htmlspecialchars(json_encode($templateParams["products"]), ENT_QUOTES, 'UTF-8'); ?>'>
+</div>
+
+<template id="product-template" hidden>
+    <div class="product-card">
+        <a href="" class="product-link">
+            <img src="" alt="Visualizza dettagli prodotto">
+            <label class="wishlist-container" for="wish-checkbox-id">
+            <input id="wish-checkbox-id" type="checkbox" class="wishlist-checkbox sr-only" aria-label="Aggiungi alla wishlist">
+            <img src="CSS/Images/Icons/heart_empty.svg" alt="Add to Wishlist" class="wishlist-checkbox">
+            </label></a>
+        <h3 class="product-name"></h3>
+        <p class="product-price"></p>
+       
+    </div>
+</template>
+
+
 <script>
     let rawProducts = '';
     // Both allProducts and filteredProducts to mantain both states of products
@@ -87,7 +174,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     let filters='';
     /**All settings of global variables inside listener for complete document loading. */
     document.addEventListener('DOMContentLoaded', async() => {
-        rawProducts=JSON.parse(document.getElementById('products-container').dataset.products);
+        rawProducts=JSON.parse(document.getElementById('home-products-container').dataset.products);
         urlParams = new URLSearchParams(window.location.search);
         initializeProducts(rawProducts);
         loadWishlistItems();
@@ -103,6 +190,20 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
             type:     urlParams.get('type')      || '',
             sort:     urlParams.get('sort')      || 'price-low-to-high'
         };
+        document.getElementsByClassName("sort-sidebar")[0].style.translate = "0px 300%";
+        document.body.addEventListener('click', function() {
+            let myElementToCheckIfClicksAreInsideOf = document.getElementsByClassName("sort-sidebar")[0];
+            if (document.getElementsByClassName("sort-sidebar")[0].style.translate == "0px" && !myElementToCheckIfClicksAreInsideOf.contains(event.target)) {
+                document.getElementById("sort-icon").checked = false;
+                shiftSortSidebar('body');
+                event.preventDefault();
+            }
+        });
+        document.addEventListener('change', (event) => {
+            if (event.target.classList.contains('wishlist-checkbox')) {
+                handleWishlistToggle(event.target);
+            }
+        });
     });
 
 
@@ -115,13 +216,18 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     window.addEventListener('load', updateHomePageFilters);
 
     function initializeProducts(rawProducts) {
-        // Group products by model
-        const groupedProducts = new Map();/*    
-        rawProducts.forEach(p=>{
-            if(p.inWishlist==true)
-            console.log("prodotto in wishlist:"+p.ID_Prodotto);
-        });*/
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('search')?.toLowerCase();
+
+        const groupedProducts = new Map();
         rawProducts.forEach(product => {
+            if (searchQuery && 
+                !product.Nome.toLowerCase().includes(searchQuery) && 
+                !product.Descrizione.toLowerCase().includes(searchQuery) &&
+                !product.Marca.toLowerCase().includes(searchQuery)) {
+                return;
+            }
+
             const modelKey = product.Nome.toLowerCase();            
             if (!groupedProducts.has(modelKey)) {
                 // Create new product entry
@@ -139,7 +245,9 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                     //discounted logic           ^
                     created_at:   product.Data_Aggiunta,
                     variants:     [],
+                    meanReviws: product.mediaRecensioni,
                     baseProduct:  product
+
                 });
             }
             // Add variant information
@@ -151,9 +259,88 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                 state: product.Sta_Tipo
             });
         });
+        
         // Convert Map to array and store
         allProducts = Array.from(groupedProducts.values());
         filteredProducts = [...allProducts];
+
+        const container = document.getElementById('products-container');
+
+        // Display search results count if search was performed
+        if (searchQuery) {
+            container.innerHTML = ''; // Clear container first
+            
+            const searchInfo = document.createElement('div');
+            searchInfo.className = 'search-results-info';
+            
+            if (filteredProducts.length === 0) {
+                searchInfo.innerHTML = `
+                    <p>No results found for "${searchQuery}"</p>
+                    <p>Try:</p>
+                    <ul>
+                        <li>Checking your spelling</li>
+                        <li>Using more general terms</li>
+                        <li>Using fewer terms</li>
+                    </ul>
+                    <a href="home.php" class="reset-search">Clear search</a>
+                `;
+            }
+            container.appendChild(searchInfo); // Append inside products container
+        }
+    }
+
+    async function handleWishlistToggle(checkbox) {
+        const productCard = checkbox.closest('.product-card');
+        const productId = productCard.dataset.productId;
+        const isAdd = checkbox.checked;
+        const wishlistText = checkbox.nextElementSibling;
+        const imgHeart = productCard.querySelector('img.wishlist-checkbox');
+        try {/*
+            const formData = new FormData();
+            formData.append('action', 'toggleWishlist');
+            formData.append('productId', productId);
+            formData.append('isAdd', isAdd);*/
+            const response = await fetch('home_handler.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body:new URLSearchParams({
+                    action: 'toggleWishlist',
+                    productId: productId,
+                    isAdd: isAdd 
+                })
+            });/*
+            const data= await response.text();
+            console.log(data);*/
+            const data = await response.json();
+            if (data.success) {
+                // Update UI
+                if(checkbox.checked) {
+                    imgHeart.src="CSS/Images/Icons/heart_filled.svg";
+                    wishlistText.textContent=' Remove from Wishlist';
+                } else {
+                    imgHeart.src="CSS/Images/Icons/heart_empty.svg";
+                    wishlistText.textContent='Add to Wishlist';
+                } 
+            } else {
+                /* Revert checkbox state on error */
+                checkbox.checked = !isAdd;
+                wishlistText.textContent = !isAdd ? 'Remove from Wishlist' : 'Add to Wishlist';
+                /* Show error message */
+                if (data.message === 'Please login first') {
+                    window.location.href = 'login.php';
+                } else {
+                    alert(data.message);
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            /* Revert checkbox state on error */
+            checkbox.checked = !isAdd;
+            wishlistText.textContent = !isAdd ? 'Remove from Wishlist' : 'Add to Wishlist';
+            alert('An error occurred. Please try again.');
+        }
     }
 
     async function loadWishlistItems() {
@@ -450,6 +637,13 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         if(queryStringMaxPrice != null) {
             maxPriceTag.value = queryStringMaxPrice;
         }
+
+        let categoryInputs = document.querySelectorAll('input[name="category"]');
+        let queryStringCategory = new URLSearchParams(window.location.search).get('category') || 'popular';
+        categoryInputs.forEach(input => {
+            input.checked = (input.value === queryStringCategory);
+        });
+
         correctPriceBounds();
         /* We curate the style of the selections deduced from the URL, since if we did not do this now the next         */
         /* call to the updateSelectedBorders() function would occur at the first state change of one of the checkboxes. */
@@ -462,7 +656,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
             const hasMatchingVariant = !filters.color.length && !filters.size.length ? true :
             product.variants.some(variant => {
                 const matchesColor = !filters.color.length || filters.color.includes(variant.color);
-                const matchesSize = filters.size.length    || filters.size.includes(variant.size);
+                const matchesSize = !filters.size.length    || filters.size.includes(variant.size);
                 return matchesColor && matchesSize;
             });
             /* Brand filter */
@@ -488,7 +682,8 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
             const minPriceMatch = Number(filters.minPrice) <= Number(product.price);
             /* Max price filter */
             const maxPriceMatch = Number(filters.maxPrice) >= Number(product.price);
-            return brandMatch && genreMatch && typeMatch && categoryMatch && hasMatchingVariant;
+            return brandMatch && genreMatch && typeMatch && categoryMatch 
+                        && hasMatchingVariant && minPriceMatch && maxPriceMatch;
         });
         sortProducts();
         renderProducts();
@@ -504,6 +699,10 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                     return b.price - a.price;
                 case 'alphabetical':
                     return a.name.localeCompare(b.name);
+                case 'reviews-low-to-high':
+                    return a.meanReviws - b.meanReviws;
+                case 'reviews-high-to-low':
+                    return b.meanReviws - a.meanReviws;
                 default:
                     return 0;
             }
@@ -511,7 +710,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     }
 
     function renderProducts() {
-        const container = document.getElementById('products-container');
+        const container = document.getElementById('home-products-container');
         container.innerHTML = '';
         //debug to see if there's a filed name mismatch
         console.log(allProducts);
@@ -532,11 +731,11 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         const card = productCard.querySelector('.product-card');
         card.dataset.productId = product.id;
         const link = card.querySelector('.product-link');
-        link.href = `product.php?id=${product.id}`;
-        /*<img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
-        alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>"> */
+ 
         const img = card.querySelector('img');
-        img.src = `CSS/Images/Products/${product.name}_1.webp`;
+        const nameNoSpace = product.name.replace(/\s+/g, '');
+        img.src = `CSS/Images/Products/${nameNoSpace}_1.webp`;
+        //console.log(product.name);
         //fallback image if image fetch fails.
         img.onerror = function() {
             img.src = `CSS/Images/Products/default_shoe.webp`;
@@ -564,6 +763,11 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         }
         return card;
     }
+    function capitalizeFirstLetter(string) {
+        if (!string) return '';
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+
 
     function updateBreadcrumb() {
         const breadcrumbNav = document.querySelector('.breadcrumb');
@@ -600,7 +804,15 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         let sizeInputs     = document.querySelectorAll('.size-options .size-option input');
         let colorInputs    = document.querySelectorAll('.color-options .color-option input');
         let currentSorting = document.querySelector(".sort-sidebar .sort-switch input:checked").value;
+        
         const newParams = new URLSearchParams();
+
+        /* Genre */
+        newParams.set("genre",filters.genre);
+
+        /*Type */
+        newParams.set("type",filters.type);
+
         /*Categories*/
         for (let category of categoryInputs) {
             if (category.checked) {
@@ -633,7 +845,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         let colorQueryString = "";
         for (let colorInput of colorInputs) {
             if (colorInput.checked) {
-                colorQueryString += colorInput.value + ",";
+                colorQueryString += colorInput.value.charAt(0).toUpperCase() + String(colorInput.value).slice(1) + ",";
             }
         }
         if (colorQueryString != "") {
@@ -647,29 +859,8 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         /* Product sorting. */
         newParams.set("sort", currentSorting);
         /* Category */
-        /* Genre */
         window.location.search = newParams.toString();
     }
-</script>
-
-<!-- Sort Menu -->
-<aside class="sort-sidebar">
-    <fieldset class="sort-switch" onchange="shiftSortSidebar('fieldset')">
-        <legend>Please select the order in which to display the items:</legend>
-        <input type="radio" id="price-low-to-high" name="sort" value="price-low-to-high" <?php echo $sort === 'price-low-to-high' ? 'checked' : ''; ?>>
-        <label for="price-low-to-high">PRICE LOW TO HIGH</label>
-        <input type="radio" id="price-high-to-low" name="sort" value="price-high-to-low" <?php echo $sort === 'price-high-to-low' ? 'checked' : ''; ?>>
-        <label for="price-high-to-low">PRICE HIGH TO LOW</label>
-        <input type="radio" id="alphabetical" name="sort" value="alphabetical" <?php echo $sort === 'alphabetical' ? 'checked' : ''; ?>>
-        <label for="alphabetical">ALPHABETICAL</label>
-        <input type="radio" id="reviews-low-to-high" name="sort" value="reviews-low-to-high" <?php echo $sort === 'reviews-low-to-high' ? 'checked' : ''; ?>>
-        <label for="reviews-low-to-high">REVIEWS LOW TO HIGH</label>
-        <input type="radio" id="reviews-high-to-low" name="sort" value="reviews-high-to-low" <?php echo $sort === 'reviews-high-to-low' ? 'checked' : ''; ?>>
-        <label for="reviews-high-to-low">REVIEWS HIGH TO LOW</label>
-    </fieldset>
-</aside>
-<script>
-    document.getElementsByClassName("sort-sidebar")[0].style.translate = "0px 300%";
 
     function shiftSortSidebar(whoCalled) {/*
         if (whoCalled == 'icon') {
@@ -692,84 +883,11 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         } else {
             document.getElementsByClassName("sort-sidebar")[0].style.translate = "0px 300%";
             enableScrollOnBG();
+            updateURL();
+            applyFilters();
+         //   applyFilters();
         }
     }
 
-    document.body.addEventListener('click', function() {
-        let myElementToCheckIfClicksAreInsideOf = document.getElementsByClassName("sort-sidebar")[0];
-        if (document.getElementsByClassName("sort-sidebar")[0].style.translate == "0px" && !myElementToCheckIfClicksAreInsideOf.contains(event.target)) {
-            document.getElementById("sort-icon").checked = false;
-            shiftSortSidebar('body');
-            event.preventDefault();
-        }
-    });
 </script>
 
-<h2>
-    <?php 
-    if ($genre || $type) {
-        echo(trim(ucfirst($genre) . ' ' . ucfirst($type)));
-    } else if ($genre) {
-        echo(ucfirst($genre));
-    } else {
-        echo("All Products");
-    }
-    ?>
-</h2>
-
-<div class="filters-and-sorters-switches">
-    <!-- Filter Icon -->
-    <label for="filter-icon">Open/close menu with available product filters.</label>
-    <label class="filter-menu"><img src="CSS/Images/Icons/filter.svg" alt=""><input id="filter-icon" type="checkbox" onchange="shiftFilterSidebar()"></label>
-
-    <!-- Category Selection -->
-    <fieldset class="category-switch">
-        <legend>Please select the category of articles to be displayed:</legend>
-        <!-- We call the function when we intercept a change in the radio button related to categories, which does not necessarily occur in conjunction with the closing of the filter sidebar. -->
-        <input onchange="updateURL()" type="radio" id="popular" name="category" value="popular" checked>
-        <label for="popular">Popular</label>
-        <input onchange="updateURL()" type="radio" id="discounted" name="category" value="discounted">
-        <label for="discounted">Discounted</label>
-        <input onchange="updateURL()" type="radio" id="novelties" name="category" value="novelties">
-        <label for="novelties">Novelties</label>
-    </fieldset>
-
-    <!-- Sort Icon -->
-    <label for="sort-icon">Open/close menu with available product sorting criteria.</label>
-    <label class="sort-menu"><img src="CSS/Images/Icons/sort.svg" alt=""><input id="sort-icon" type="checkbox" onchange="shiftSortSidebar('icon')"></label>
-</div>
-
-<?php if ($genre || $type): ?>
-    <!-- Breadcrumb Navigation -->
-    <nav aria-label="Breadcrumb" class="breadcrumb">
-        <ol>
-            <li><a href="home.php">Home</a></li>
-            <?php if ($genre): ?>
-                <li><a href="home.php?genre=<?php echo urlencode($genre); ?>"><?php echo ucfirst($genre); ?></a></li>
-            <?php endif; ?>
-            <?php if ($type): ?>
-                <li><span aria-current="page"><?php echo ucfirst($type); ?></span></li>
-            <?php endif; ?>
-        </ol>
-    </nav>
-<?php endif; ?>
-
-<div class="removable-dynamic-filters"></div>
-
-<div id="products-container" class="products-grid" 
-     data-products='<?php echo htmlspecialchars(json_encode($templateParams["products"]), ENT_QUOTES, 'UTF-8'); ?>'>
-</div>
-
-<template id="product-template">
-    <div class="product-card">
-        <a href="" class="product-link">
-            <img src="" alt="">
-            <label class="wishlist-container">
-            <input type="checkbox" class="wishlist-checkbox" hidden>
-            <img src="CSS/Images/Icons/heart_empty.svg" alt="Add to Wishlist" class="wishlist-checkbox">
-            </label></a>
-        <h3 class="product-name"></h3>
-        <p class="product-price"></p>
-       
-    </div>
-</template>

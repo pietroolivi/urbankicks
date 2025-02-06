@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const statusButtons = document.querySelectorAll('footer button');
+    const searchInput = document.getElementById('search');
+    const orders = document.querySelectorAll('.a-orders-section ol li');
     
     statusButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -9,6 +11,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const newStatus = this.textContent.replace('Mark as ', '').trim();
             
             updateOrderStatus(orderId, newStatus, orderItem);
+        });
+    });
+
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+
+        orders.forEach(order => {
+            const orderId = order.querySelector('header p:first-child')
+                .textContent.replace('Order #', '').trim()
+                .toLowerCase();
+            
+            order.style.display = orderId.includes(searchTerm) ? '' : 'none';
         });
     });
 });

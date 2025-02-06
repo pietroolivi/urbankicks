@@ -14,54 +14,18 @@ class DatabaseHelper {
      * PRODUCT QUERIES *
      *******************/
 
-    // Returns filtered products
- /*   public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
-        $query = "SELECT p.*, v.Colore, v.Quantita, v.Taglia 
-            FROM PRODOTTO p 
-            LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
-            WHERE 1=1";
-        $params = [];
-        $types = "";
+    // Get all product brands
+    public function getDistinctBrands(): array {
+        $query = "SELECT DISTINCT Marca FROM PRODOTTO WHERE Marca IS NOT NULL ORDER BY Marca ASC";
+        $result = $this->db->query($query);
         
-        if ($brand) {
-            $query .= " AND p.Marca = ?";
-            $params[] = $brand;
-            $types .= "s";
+        $brands = [];
+        while ($row = $result->fetch_array(MYSQLI_NUM)) {
+            $brands[] = $row[0];
         }
-        if ($type) {
-            $query .= " AND p.Tipo = ?";
-            $params[] = $type;
-            $types .= "s";
-        }
-        if ($size) {
-            $query .= " AND v.Taglia = ?";
-            $params[] = $size;
-            $types .= "d";
-        }
-        if ($color) {
-            $query .= " AND v.Colore = ?";
-            $params[] = $color;
-            $types .= "s";
-        }
-        if ($minPrice) {
-            $query .= " AND p.Prezzo >= ?";
-            $params[] = $minPrice;
-            $types .= "d";
-        }
-        if ($maxPrice) {
-            $query .= " AND p.Prezzo <= ?";
-            $params[] = $maxPrice;
-            $types .= "d";
-        }
-
-        $stmt = $this->db->prepare($query);
-        if (!empty($params)) {
-            $stmt->bind_param($types, ...$params);
-        }
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }*/
+        
+        return $brands;
+    }
 
     // Get product Variants
     public function getProductVariants($productId) {
@@ -82,7 +46,15 @@ class DatabaseHelper {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getFilteredProducts($brand = null, $type = null, $size = null, $color = null, $minPrice = null, $maxPrice = null) {
+    public function getFilteredProducts(
+        $brand = null, 
+        $type = null, 
+        $size = null, 
+        $color = null, 
+        $minPrice = null, 
+        $maxPrice = null
+    ) {
+        // Costruiamo la query base con la sottoquery per la media dei punteggi
         $query = "
             SELECT 
                 p.*, 
@@ -92,7 +64,12 @@ class DatabaseHelper {
                 CASE 
                     WHEN ps.Prezzo IS NOT NULL AND p.Prezzo < ps.Prezzo THEN 1
                     ELSE 0 
-                END AS isDiscounted
+                END AS isDiscounted,
+                (
+                    SELECT COALESCE(AVG(r.Punteggio), 0)
+                    FROM RECENSIONE r
+                    WHERE r.ID_Prodotto = p.ID_Prodotto
+                ) AS mediaRecensioni
             FROM PRODOTTO p
             LEFT JOIN VARIANTE v ON p.ID_Prodotto = v.ID_Prodotto
             LEFT JOIN (
@@ -101,11 +78,13 @@ class DatabaseHelper {
                 ORDER BY Data_Modifica DESC
             ) ps ON p.ID_Prodotto = ps.ID_Prodotto
             WHERE 1=1
-            AND p.Sta_Tipo != 'Not Available'";
-        
+              AND p.Sta_Tipo != 'Not Available'
+        ";
+    
         $params = [];
         $types = "";
-        
+    
+        // Filtri opzionali
         if ($brand) {
             $query .= " AND p.Marca = ?";
             $params[] = $brand;
@@ -119,7 +98,9 @@ class DatabaseHelper {
         if ($size) {
             $query .= " AND v.Taglia = ?";
             $params[] = $size;
-            $types .= "d";
+            // supponendo Taglia sia numerica usa 'd', 
+            // se è VARCHAR allora usa 's'
+            $types .= "s"; 
         }
         if ($color) {
             $query .= " AND v.Colore = ?";
@@ -653,6 +634,9 @@ class DatabaseHelper {
 
         // Create notification
         $this->createOrderNotification($orderId, strtolower($newStatus));
+        if ($newStatus === 'Delivered') {
+            $this->createReviewRequestNotification($orderId);
+        }
         return true;
     }
 
@@ -697,11 +681,22 @@ class DatabaseHelper {
 
     // Get user notifications
     public function getUserNotifications($email) {
-        $query = "SELECT * FROM NOTIFICA WHERE Email = ? ORDER BY Timestamp_Invio DESC";
+        $query = "SELECT DISTINCT n.*, 
+                  CASE 
+                    WHEN n.TipoNotifica = 'Admin Message' THEN m.Corpo 
+                    ELSE NULL 
+                  END as MessaggioCompleto
+                  FROM NOTIFICA n 
+                  LEFT JOIN MESSAGGIO m ON n.Timestamp_Invio = m.Timestamp_Invio 
+                    AND n.TipoNotifica = 'Admin Message'
+                  WHERE n.Email = ? 
+                  ORDER BY n.Timestamp_Invio DESC";
+        
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
+        
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
@@ -791,24 +786,26 @@ class DatabaseHelper {
 
     // Create a cart reminder notification
     public function createCartReminderNotification($email) {
-        $query = "SELECT c.ID_Carrello, COUNT(*) as count 
+        $query = "SELECT c.ID_Carrello, c.Valore_Totale, COUNT(co.ID_Prodotto) as item_count 
                  FROM CARRELLO c 
                  JOIN comprendere co ON c.ID_Carrello = co.ID_Carrello 
-                 WHERE c.Email = ?
+                 WHERE c.Email = ? AND c.Valore_Totale > 0
                  GROUP BY c.ID_Carrello";
+        
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
-
-        if ($result && $result['count'] > 0) {
-            $message = "You spend a lot of time browsing but, just spend a minute to make them yours!";
-            $this->createNotification(
+    
+        if ($result && $result['item_count'] > 0) {
+            $message = "You have " . $result['item_count'] . " items waiting in your cart! Complete your purchase to avoid missing out.";
+            return $this->createNotification(
                 'Cart Reminder',
                 $message,
                 $email
             );
         }
+        return false;
     }
 
     // Create a review request notification
@@ -1237,6 +1234,17 @@ class DatabaseHelper {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    // Get quantity of a product variant
+    public function getQuantity($productId, $color, $size) {
+        $query = "SELECT Quantita FROM VARIANTE 
+                  WHERE ID_Prodotto = ? AND Colore = ? AND Taglia = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param('iss', $productId, $color, $size);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc()['Quantita'] ?? 0;
+    }
+
     // Get all Colors of a product
     public function getProductColors($productId) {
         $query = "SELECT DISTINCT v.Colore 
@@ -1409,25 +1417,43 @@ class DatabaseHelper {
     
     // Get all orders for a user
     public function getOrders($email) {
-        $query = "SELECT o.ID_Ordine,
-                         o.Data_Ordine,
-                         o.Costo_Totale,
-                         o.Metodo_Pagamento,
-                         o.Regalo,
-                         o.Tipo_Spedizione as Tipo,
-                         o.ID_Sconto,
-                         p.ID_Prodotto,
-                         p.Nome,
-                         p.Genere,
-                         po.Prezzo_Acquisto,
-                         po.Quantita,
-                         po.Taglia,
-                         po.Colore
-                  FROM ORDINE o
-                  JOIN PRODOTTO_ORDINE po ON o.ID_Ordine = po.ID_Ordine
-                  JOIN PRODOTTO p ON po.ID_Prodotto = p.ID_Prodotto
-                  WHERE o.Email = ?
-                  ORDER BY o.Data_Ordine DESC, p.ID_Prodotto ASC";
+        // Utilizziamo una subquery in SELECT per verificare la consegna
+        // (restituirà 1 se esiste almeno un tracking "Delivered" con data non NULL, altrimenti 0)
+        $query = "SELECT 
+                    o.ID_Ordine,
+                    o.Data_Ordine,
+                    o.Costo_Totale,
+                    o.Metodo_Pagamento,
+                    o.Regalo,
+                    o.Tipo_Spedizione AS Tipo,
+                    o.ID_Sconto,
+                    
+                    p.ID_Prodotto,
+                    p.Nome,
+                    p.Genere,
+    
+                    po.Prezzo_Acquisto,
+                    po.Quantita,
+                    po.Taglia,
+                    po.Colore,
+    
+                    -- Subquery che determina se l'ordine è Delivered
+                    (
+                      SELECT COUNT(*) 
+                      FROM Tracking_Spedizione ts
+                      WHERE ts.ID_Ordine = o.ID_Ordine 
+                        AND ts.Stato = 'Delivered'
+                        AND ts.Arrivo_Effettivo IS NOT NULL
+                    ) > 0 AS delivered_flag
+    
+                FROM ORDINE o
+                JOIN PRODOTTO_ORDINE po 
+                      ON o.ID_Ordine = po.ID_Ordine
+                JOIN PRODOTTO p 
+                      ON po.ID_Prodotto = p.ID_Prodotto
+                WHERE o.Email = ?
+                -- Esempio: ordina per Data_Ordine (decrescente) e poi per ID_Prodotto
+                ORDER BY o.Data_Ordine DESC, p.ID_Prodotto ASC";
     
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("s", $email);
@@ -1435,28 +1461,35 @@ class DatabaseHelper {
         $result = $stmt->get_result();
     
         $orders = [];
+    
         while ($row = $result->fetch_assoc()) {
-            if (!isset($orders[$row['ID_Ordine']])) {
-                $orders[$row['ID_Ordine']] = [
-                    'ID_Ordine' => $row['ID_Ordine'],
-                    'Data_Ordine' => $row['Data_Ordine'],
-                    'Costo_Totale' => $row['Costo_Totale'],
-                    'Metodo_Pagamento' => $row['Metodo_Pagamento'],
-                    'Regalo' => $row['Regalo'],
-                    'Tipo' => $row['Tipo'],
-                    'ID_Sconto' => $row['ID_Sconto'],
-                    'products' => []
+            $orderId = $row['ID_Ordine'];
+    
+            // Se l'ordine non è ancora in $orders, inizializzalo
+            if (!isset($orders[$orderId])) {
+                $orders[$orderId] = [
+                    'ID_Ordine'       => $row['ID_Ordine'],
+                    'Data_Ordine'     => $row['Data_Ordine'],
+                    'Costo_Totale'    => $row['Costo_Totale'],
+                    'Metodo_Pagamento'=> $row['Metodo_Pagamento'],
+                    'Regalo'          => $row['Regalo'],
+                    'Tipo'            => $row['Tipo'],
+                    'ID_Sconto'       => $row['ID_Sconto'],
+                    // Salviamo il valore booleano una sola volta per ogni ordine:
+                    'tracking_delivered' => (bool) $row['delivered_flag'],
+                    'products'        => []
                 ];
             }
     
-            $orders[$row['ID_Ordine']]['products'][] = [
+            // Aggiungi le informazioni del prodotto
+            $orders[$orderId]['products'][] = [
                 'ID_Prodotto' => $row['ID_Prodotto'],
-                'Nome' => $row['Nome'],
-                'Genere' => $row['Genere'],
-                'Prezzo' => $row['Prezzo_Acquisto'],
-                'Quantita' => $row['Quantita'],
-                'Taglia' => $row['Taglia'],
-                'Colore' => $row['Colore']
+                'Nome'        => $row['Nome'],
+                'Genere'      => $row['Genere'],
+                'Prezzo'      => $row['Prezzo_Acquisto'],
+                'Quantita'    => $row['Quantita'],
+                'Taglia'      => $row['Taglia'],
+                'Colore'      => $row['Colore']
             ];
         }
     
