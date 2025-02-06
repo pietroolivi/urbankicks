@@ -34,11 +34,11 @@ require_once("bootstrap.php");
         </header>
         <main>
             <aside class="hamburger-sidebar">
-                <form>
+                <form action="home.php" method="GET">
                     <div class="search">
                         <span class="search-icon"><img src="CSS/Images/Icons/search.svg" alt="Execute search."></span>
                         <label for="search">Please, type the words that will be searched among the product names and descriptions.</label>
-                        <input id="search" class="search-input" type="search" placeholder="Search within the site">
+                        <input id="search" name="search" class="search-input" type="search" placeholder="Search within the site">
                     </div>
                 </form>
                 <fieldset>

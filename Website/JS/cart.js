@@ -163,18 +163,18 @@ class CartHandler {
     async handleQuantityButton(change, display, input) {
         const currentValue = parseInt(input.value);
         const newValue = currentValue + change;
+        const quantityControl = display.closest('.quantity-control');
+        const maxQuantity = parseInt(quantityControl.dataset.maxQuantity);
         
-        // Don't allow less than 1
-        if (newValue < 1) return;
-
-        const item = input.closest('li');
-        
+        // Don't allow less than 1 or more than max
+        if (newValue < 1 || newValue > maxQuantity) return;
+    
         // Update display and hidden input
         display.textContent = newValue;
         input.value = newValue;
-
+    
         // Update cart
-        await this.updateCartItem(item, {
+        await this.updateCartItem(input.closest('li'), {
             quantity: newValue
         });
     }

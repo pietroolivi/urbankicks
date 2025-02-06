@@ -71,12 +71,8 @@ async function handleWishlistToggle(checkbox) {
 
 function checkEmptyWishlist() {
     const wishlistItems = document.querySelectorAll('.product-card');
-    const wishlistNav = document.querySelector('nav');
     
     if (wishlistItems.length === 0) {
-        if (wishlistNav) {
-            wishlistNav.style.display = 'none';
-        }
         const emptyMessage = document.createElement('p');
         emptyMessage.textContent = 'Your wishlist is empty. Browse our products to add items!';
         document.querySelector('h2').insertAdjacentElement('afterend', emptyMessage);

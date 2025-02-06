@@ -32,7 +32,7 @@
                                                     <div class="product-card">
                                                         <div class="product-details">
                                                             <a class="product-link">
-                                                                <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . "1");?>.webp" 
+                                                                <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1");?>.webp" 
                                                                 alt="<?php echo htmlspecialchars($product['Nome']);?>"></a>
                                                             <div class="item-info">
                                                                 <h4><?php echo $product["Nome"];?></h4>
@@ -91,7 +91,7 @@
                                             <div class="product-card">
                                                 <div class="product-details">
                                                     <a class="product-link">
-                                                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['ID_Prodotto']. '_' . $product['Genere'] . "1");?>.webp" 
+                                                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1");?>.webp" 
                                                         alt="<?php echo htmlspecialchars($product["Nome"]); ?>">
                                                     </a>
                                                     <div class="item-info">

@@ -19,8 +19,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         <h3>DESIGNERS</h3>
         <ul class="brand-options">
             <?php
-            $brands = ["Adidas", "Nike", "New Balance", "Converse"];
-            foreach($brands as $brand): ?>
+            foreach($templateParams["brands"] as $brand): ?>
             <li class="brand-option">
                 <input type="checkbox" id="filter-sidebar-<?php echo strtolower($brand); ?>" name="designers[]" value="<?php echo $brand; ?>" autocomplete="off" onchange="updateSelectedBorders()">
                 <label for="filter-sidebar-<?php echo strtolower($brand); ?>"><?php echo strtoupper($brand); ?></label>
@@ -46,7 +45,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     <section>
         <h3>SIZE</h3>
         <ul class="size-options">
-            <?php for ($i = 36; $i <= 47; $i++) { ?>
+            <?php for ($i = 28; $i <= 45; $i++) { ?>
             <li class="size-option">
                 <input id="filter-sidebar-size<?php echo $i  ?>" type="checkbox" name="sizes[]" value="<?php echo $i ?>">
                 <label for="filter-sidebar-size<?php echo $i  ?>"><?php echo $i ?></label>
@@ -216,13 +215,18 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     window.addEventListener('load', updateHomePageFilters);
 
     function initializeProducts(rawProducts) {
-        // Group products by model
-        const groupedProducts = new Map();/*    
-        rawProducts.forEach(p=>{
-            if(p.inWishlist==true)
-            console.log("prodotto in wishlist:"+p.ID_Prodotto);
-        });*/
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('search')?.toLowerCase();
+
+        const groupedProducts = new Map();
         rawProducts.forEach(product => {
+            if (searchQuery && 
+                !product.Nome.toLowerCase().includes(searchQuery) && 
+                !product.Descrizione.toLowerCase().includes(searchQuery) &&
+                !product.Marca.toLowerCase().includes(searchQuery)) {
+                return;
+            }
+
             const modelKey = product.Nome.toLowerCase();            
             if (!groupedProducts.has(modelKey)) {
                 // Create new product entry
@@ -254,9 +258,34 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
                 state: product.Sta_Tipo
             });
         });
+        
         // Convert Map to array and store
         allProducts = Array.from(groupedProducts.values());
         filteredProducts = [...allProducts];
+
+        const container = document.getElementById('products-container');
+
+        // Display search results count if search was performed
+        if (searchQuery) {
+            container.innerHTML = ''; // Clear container first
+            
+            const searchInfo = document.createElement('div');
+            searchInfo.className = 'search-results-info';
+            
+            if (filteredProducts.length === 0) {
+                searchInfo.innerHTML = `
+                    <p>No results found for "${searchQuery}"</p>
+                    <p>Try:</p>
+                    <ul>
+                        <li>Checking your spelling</li>
+                        <li>Using more general terms</li>
+                        <li>Using fewer terms</li>
+                    </ul>
+                    <a href="home.php" class="reset-search">Clear search</a>
+                `;
+            }
+            container.appendChild(searchInfo); // Append inside products container
+        }
     }
 
     async function handleWishlistToggle(checkbox) {

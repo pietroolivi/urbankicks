@@ -1,5 +1,5 @@
 <header>
-    <a href="javascript:history.back()" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
+    <a href="admin_home.php" class="back"><img src="CSS/Images/Icons/back.svg" alt="Icon representing a backward arrow, to return to the previous page."></a>
     <h2>Published Products</h2>
 </header>
 
