@@ -731,7 +731,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         const card = productCard.querySelector('.product-card');
         card.dataset.productId = product.id;
         const link = card.querySelector('.product-link');
- 
+        link.href = `product.php?id=${product.id}`;
         const img = card.querySelector('img');
         const nameNoSpace = product.name.replace(/\s+/g, '');
         img.src = `CSS/Images/Products/${nameNoSpace}_1.webp`;
