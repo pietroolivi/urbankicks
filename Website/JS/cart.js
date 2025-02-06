@@ -50,6 +50,9 @@ class CartHandler {
         const item = select.closest('li');
         const sizeSelect = item.querySelector('.size-selector');
         const currentSize = sizeSelect.value;
+        const quantityInput = item.querySelector('.quantity-selector');
+        const quantityDisplay = item.querySelector('.quantity-display');
+        const currentQuantity = parseInt(quantityInput.value);
         
         try {
             const formData = new FormData();
@@ -90,38 +93,39 @@ class CartHandler {
                 sizeSelect.appendChild(option);
             });
 
-            // Disable quantity if no size selected
-            const quantityInput = item.querySelector('.quantity-selector');
-            if (quantityInput) {
-                if (!currentSizeAvailable || !currentSize) {
-                    quantityInput.disabled = true;
-                    quantityInput.value = 1;
-                } else {
-                    // Get max quantity for new color+size combination
-                    const qtyFormData = new FormData();
-                    qtyFormData.append('getQuantity', true);
-                    qtyFormData.append('productId', item.dataset.productId);
-                    qtyFormData.append('color', select.value);
-                    qtyFormData.append('size', currentSize);
-
-                    const qtyResponse = await fetch('cart_handler.php', {
-                        method: 'POST',
-                        body: qtyFormData
-                    });
-                    
-                    const qtyResult = await qtyResponse.json();
-                    if (qtyResult.success) {
-                        quantityInput.max = qtyResult.quantity;
-                        if (parseInt(quantityInput.value) > qtyResult.quantity) {
-                            quantityInput.value = qtyResult.quantity;
-                        }
-                        quantityInput.disabled = false;
-                    }
-                }
+            // Show alert if quantity was greater than 1
+            if (currentQuantity > 1) {
+                const alertElement = document.createElement('div');
+                alertElement.className = 'alert alert-info';
+                alertElement.textContent = 'Color changed: Quantity has been reset to 1';
+                alertElement.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px;
+                    background-color: #f8f9fa;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                    z-index: 1000;
+                `;
+                
+                document.body.appendChild(alertElement);
+                
+                // Remove alert after 3 seconds
+                setTimeout(() => {
+                    alertElement.remove();
+                }, 3000);
             }
-            
-            // Update cart if we have a valid size
-            if (currentSizeAvailable) {
+
+            // Always reset quantity to 1 when color changes
+            quantityInput.value = 1;
+            quantityDisplay.textContent = '1';
+
+            if (!currentSizeAvailable || !currentSize) {
+                quantityInput.disabled = true;
+            } else {
+                quantityInput.disabled = false;
                 await this.updateCartItem(item, {
                     color: select.value,
                     size: currentSize
@@ -153,7 +157,6 @@ class CartHandler {
 
         if (item.querySelector('.color-selector').value !== 'Select size') {
             await this.updateCartItem(item, {
-                color: item.querySelector('.color-selector').value,
                 size: select.value
             });
         }
@@ -255,6 +258,10 @@ class CartHandler {
         try {
             const data = new FormData();
             data.append('productId', item.dataset.productId);
+
+            // Get current quantity from the selector
+            const quantitySelector = item.querySelector('.quantity-selector');
+            const currentQuantity = parseInt(quantitySelector.value);
             
             if (changes.color && changes.size) {
                 data.append('updateBoth', true);
@@ -267,13 +274,13 @@ class CartHandler {
                 data.append('oldSize', item.dataset.size);
                 data.append('newSize', changes.size);
                 data.append('color', item.dataset.color);
-                data.append('quantity', parseInt(item.dataset.quantity));
+                data.append('quantity', currentQuantity);
             } else if (changes.color) {
                 data.append('updateColor', true);
                 data.append('oldColor', item.dataset.color);
                 data.append('newColor', changes.color);
                 data.append('size', item.dataset.size);
-                data.append('quantity', parseInt(item.dataset.quantity));
+                data.append('quantity', currentQuantity);
             } else if (changes.quantity) {
                 data.append('adjustQuantity', true);
                 data.append('quantity', changes.quantity);
