@@ -144,7 +144,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
 
 <div class="removable-dynamic-filters"></div>
 
-<div id="products-container" class="products-grid" 
+<div id="home-products-container" class="products-grid" 
      data-products='<?php echo htmlspecialchars(json_encode($templateParams["products"]), ENT_QUOTES, 'UTF-8'); ?>'>
 </div>
 
@@ -173,7 +173,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     let filters='';
     /**All settings of global variables inside listener for complete document loading. */
     document.addEventListener('DOMContentLoaded', async() => {
-        rawProducts=JSON.parse(document.getElementById('products-container').dataset.products);
+        rawProducts=JSON.parse(document.getElementById('home-products-container').dataset.products);
         urlParams = new URLSearchParams(window.location.search);
         initializeProducts(rawProducts);
         loadWishlistItems();
@@ -709,7 +709,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
     }
 
     function renderProducts() {
-        const container = document.getElementById('products-container');
+        const container = document.getElementById('home-products-container');
         container.innerHTML = '';
         //debug to see if there's a filed name mismatch
         console.log(allProducts);
@@ -731,7 +731,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : "";
         card.dataset.productId = product.id;
         const link = card.querySelector('.product-link');
         link.href = `product.php?id=${product.id}`;
-        /*<img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . $i); ?>.webp" 
+        /*<img src="CSS/Images/Products/<?php echo str_replace(' ', '', htmlspecialchars($product['Nome']. '_' . $i)); ?>.webp" 
         alt="<?php echo htmlspecialchars($product['Nome']); ?> - View <?php echo $i; ?>"> */
         const img = card.querySelector('img');
         img.src = `CSS/Images/Products/${product.name}_1.webp`;

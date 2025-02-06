@@ -1298,7 +1298,7 @@ input:disabled[type='file'],#images-product-admin-edit {
 **AUTHOR:SIMONE
 /***********************************************************/
                               
-#products-container{ 
+#home-products-container, .products-overview.lateral-container{ 
   text-align: center; /* Centra gli elementi inline-block */
   vertical-align: top; /* Mantiene l'allineamento verticale */
 }
@@ -1586,7 +1586,7 @@ min-width: 100%;
   margin-left:10px;
 }
 
-#products-container.lateral-container{ 
+.products-container.lateral-container, .products-overview.lateral-container{ 
   text-align: left; /* centers the elements that are inline-block elements */
   vertical-align: top; /*Mantains them aligned vertically*/
   margin-left: 5%; 
@@ -1595,11 +1595,11 @@ min-width: 100%;
 }
 
 
-.lateral-container#products-container .product-card:hover {
+.products-overview.lateral-container .product-card:hover {
   transform: none;
 }
 
-.lateral-container#products-container .product-card {
+.products-overview.lateral-container .product-card {
   display: inline-block;
   /*flex-direction: column;*/
   align-items: center;
@@ -1611,13 +1611,13 @@ min-width: 100%;
   transition: transform 0.2s ease;
   overflow: hidden;
   width: auto; /* Limita la larghezza */
-  max-width:60%;
+  max-width:100%;
   box-sizing: border-box;
 }
 
 
 /*(THE CONTAINER FOR THE IMAGE AND THE NAME)*/
-#products-container.lateral-container .product-details{
+.products-overview.lateral-container .product-details{
   display: flex;
   align-items: center; 
   justify-content: space-between; 
@@ -1625,7 +1625,7 @@ min-width: 100%;
 }
 
 /*(THE CONTAINER FOR THE IMAGE)*/
-#products-container.lateral-container .product-link{
+.products-overview.lateral-container .product-link{
   display: block;  
 
   background-color: #F6F6F6;
@@ -1638,7 +1638,7 @@ min-width: 100%;
 }
 
 /*(THE CONTAINER FOR PRICE AND SELECTORS OF SIZE, COLOR AND QUANTITY)*/
-#products-container.lateral-container .item-info {
+.products-overview.lateral-container .item-info {
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Allinea a sinistra gli elementi */
@@ -1772,7 +1772,7 @@ Hide default number input spinner buttons */
 .selection-div:has(.quantity-selector) {
   align-items: flex-start;
 }
-.lateral-container#products-container .product-card h3{
+.products-overview.lateral-container .product-card h3{
   margin-left:35%
 }
 
@@ -1790,19 +1790,19 @@ Hide default number input spinner buttons */
   .cart-total-container, .last-cart-actions{
     width:1200px;
   }
-  .lateral-container#products-container .product-card {
+  .products-overview.lateral-container .product-card {
     padding: 22px 26px;
     margin: 20px;
     max-width:100%;
     width: auto;
   }
-  #products-container.lateral-container .product-details{
+  .products-overview.lateral-container .product-details{
     gap: 2.5em;
   }
-  .lateral-container#products-container .product-card h3{
+  .products-overview.lateral-container .product-card h3{
     margin-left:60%
   }
-  #products-container.lateral-container .item-info{
+  .products-overview.lateral-container .item-info{
     gap: 1.5rem;
   } 
   .size-selector, .color-selector, .warning-free-shipping p{
@@ -1819,7 +1819,7 @@ Hide default number input spinner buttons */
     aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
     font-size: 1em;
   }
-  .selection-div label, .lateral-container#products-container p{
+  .selection-div label, .products-overview.lateral-container p{
     font-size: 160%;
   }
   .action-buttons button {
@@ -1836,19 +1836,19 @@ Hide default number input spinner buttons */
     width: auto;
     max-width:90%;
   }
-  .lateral-container#products-container .product-card {
+  .products-overview.lateral-container .product-card {
     padding: 20px 22px;
     margin: 20px;
    /* width: auto;
     max-width:90%;*/
   }
-  .lateral-container#products-container .product-card h3{
+  .products-overview.lateral-container.product-card h3{
     margin-left:60%
   }
-  #products-container.lateral-container .product-details{
+  .products-overview.lateral-container.product-details{
     gap: 1.8em;
   }
-  #products-container.lateral-container .item-info{
+  .products-overview.lateral-container .item-info{
     gap: 1.5rem;
   } 
   .size-selector, .color-selector, .warning-free-shipping p{
@@ -1866,7 +1866,7 @@ Hide default number input spinner buttons */
     aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
     font-size: 1em;
   }
-  .selection-div label, .lateral-container#products-container p{
+  .selection-div label, .products-overview.lateral-container p{
     font-size: 140%;
   }
   .action-buttons button {
@@ -1883,19 +1883,19 @@ Hide default number input spinner buttons */
     width:650px;
     width: auto;
   }
-  .lateral-container#products-container .product-card {
+  .products-overview.lateral-container .product-card {
     padding: 16px 20px;
       margin: 12px;
   /*    width: 650px;
       width: auto;*/
   }
-  .lateral-container#products-container .product-card h3{
+  .products-overview.lateral-container .product-card h3{
     margin-left:60%
   }
-  #products-container.lateral-container .product-details{
+  .products-overview.lateral-container .product-details{
     gap: 1.2em;
   }
-  #products-container.lateral-container .item-info{
+  .products-overview.lateral-container .item-info{
     gap: 1rem;
   }
 
@@ -1920,7 +1920,7 @@ Hide default number input spinner buttons */
     aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
     font-size: 1em;
   }
-  .selection-div label, .lateral-container#products-container p {
+  .selection-div label, .products-overview.lateral-container p {
     font-size: 120%;
   }
   .action-buttons button {
@@ -1937,20 +1937,20 @@ Hide default number input spinner buttons */
     max-width:90%;
     width: auto;
   }
-  .lateral-container#products-container .product-card {
+  .products-overview.lateral-container .product-card {
     padding: 12px 14px;
       margin: 8px;
     /*  width: auto;
       max-width:90%;*/
       
   }
-  .lateral-container#products-container .product-card h3{
+  .products-overview.lateral-container .product-card h3{
     margin-left:60%
   }
-  #products-container.lateral-container .product-details{
+  .products-overview.lateral-container .product-details{
     gap: 1em;
   }
-  #products-container.lateral-container .item-info{
+  .products-overview.lateral-container .item-info{
     gap: 0.5rem;
   } 
 
@@ -1974,7 +1974,7 @@ Hide default number input spinner buttons */
     aspect-ratio: unset; /* Rimuovi l'aspect-ratio per adattarsi */
     font-size: 1em;
   }
-  .selection-div label, .lateral-container#products-container p {
+  .selection-div label, .products-overview.lateral-container p {
     font-size: 100%;
   }
   .action-buttons button {
@@ -2653,7 +2653,7 @@ display: block;
   display: block;
 }
 
-.order-card #products-container.lateral-container{ 
+.order-card .products-overview.lateral-container{ 
   margin-left: 0%; 
 }
 
@@ -2745,4 +2745,150 @@ display: block;
   color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+/********************************************************
+     **STYLE CODE FOR ADMIN ORDERS* 
+     AUTHOR:SIMONE
+********************************************************/
+
+/* Contenitore generale delle liste di ordini (ongoing e completed) */
+.a-orders-section {
+  margin: 2em 0;
+}
+
+.a-orders-section h3 {
+  font-size: 1.2rem; /* simile a .order-lifestate h3 del cliente */
+  margin-bottom: 1em;
+  font-weight: 600;
+}
+
+/* Reset base della lista per impedire che ol o ul mostrino i numeri/pallini */
+.a-orders-section ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Singolo "blocco" di ordine (li) */
+.a-orders-section ol > li {
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  margin-bottom: 1.5em;
+  padding: 1em;
+  transition: transform 0.2s ease;
+}
+
+.a-orders-section ol > li:hover {
+  transform: scale(1.01);
+}
+
+/* Header dell'ordine: ordine #, data, status */
+.a-orders-section ol > li > header {
+  display: flex;
+  flex-wrap: wrap;         /* permette di adattarsi su schermi piccoli */
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #e6e6e6;
+  margin-bottom: 1em;
+}
+
+.a-orders-section ol > li > header p {
+  margin: 0.3em 0;
+  font-weight: 600;
+}
+
+/* Lista dei prodotti (products-overview) */
+.products-overview {
+  display: flex;
+  flex-wrap: wrap;         /* simile a .products-overview.lateral-container */
+  gap: 1em;
+  margin: 1em 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Singolo prodotto (article) */
+.products-overview li article {
+  background: #efefef;
+  border-radius: 30px;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: transform 0.2s ease;
+  width: 200px;              /* puoi adattare in base alle tue necessità */
+  max-width: 100%;
+}
+
+.products-overview li article:hover {
+  transform: scale(1.02);
+}
+
+.products-overview li article img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 0.5em;
+}
+
+/* Titolo, taglia, quantità e colore */
+.products-overview li article h4 {
+  margin: 0.5em 0 0.3em;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.products-overview li article p {
+  margin: 0.2em 0;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+/* Indirizzo del compratore */
+.buyer-address {
+  margin: 1em 0;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+/* Sezione pagamento: icona e testo */
+.payment-details {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+.payment-details img {
+  width: 24px;
+  height: 24px;
+}
+
+.payment-details p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Footer con bottone per cambiare stato (se non Delivered) */
+.a-orders-section ol > li footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1em;
+}
+
+.a-orders-section ol > li footer button {
+  background-color: #aaaaaa;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.a-orders-section ol > li footer button:hover {
+  background-color: #626262;
 }

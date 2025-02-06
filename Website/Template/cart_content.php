@@ -29,7 +29,7 @@ if (isset($_SESSION["user_email"])) {
             <p>Just €<?= number_format(100 - $cartTotal, 2) ?> away from getting FREE STANDARD SHIPPING</p>
         <?php endif; ?>
     </div>
-    <ul id="products-container" class="lateral-container">
+    <ul class="products-container lateral-container">
         <?php foreach ($cartItems as $item): ?>
             <li data-product-id="<?= htmlspecialchars($item['ID_Prodotto']) ?>"
                 data-color="<?= htmlspecialchars($item['Colore']) ?>"

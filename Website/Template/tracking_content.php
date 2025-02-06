@@ -37,7 +37,7 @@ if(!isset($templateParams["tracking"])): ?>
             <h3>#<?php echo htmlspecialchars($_GET["order"]); ?></h3>
         </div>
 
-        <ul id="products-container" class="products-overview lateral-container">
+        <ul class="products-overview lateral-container products-container">
             <?php foreach($products as $item): ?>
                 <li>
                     <article class="product-card">

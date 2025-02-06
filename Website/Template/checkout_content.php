@@ -11,13 +11,13 @@
 <!-- Summary Step -->
 <div id="summary-step" class="checkout-step active">
     <div>
-        <ul id="products-container" class="products-overview lateral-container" data-total="<?php echo $templateParams["cart"][0]["Valore_Totale"]; ?>">
+        <ul class="products-containe products-overview lateral-container" data-total="<?php echo $templateParams["cart"][0]["Valore_Totale"]; ?>">
             <?php foreach($templateParams["cart"] as $product): ?>
             <li>
                 <article class="product-card">
                     <div class="product-details">
                         <a class="product-link">
-                        <img src="CSS/Images/Products/<?php echo htmlspecialchars($product['Nome']. '_' . "1"); ?>.webp" 
+                        <img src="CSS/Images/Products/<?php echo str_replace(' ', '',htmlspecialchars($product['Nome']. '_' . "1")); ?>.webp" 
                             alt="<?php echo htmlspecialchars($product['Nome']); ?>"></a>
                         <div class="item-info">
                             <h4><?php echo $product["Nome"]; ?></h4>

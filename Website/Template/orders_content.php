@@ -26,7 +26,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="3">
-                                        <ul id="products-container" class="products-overview lateral-container">
+                                        <ul class="products-overview lateral-container products-container">
                                             <?php foreach($order["products"] as $product):?>
                                                 <li>
                                                     <div class="product-card">
@@ -85,7 +85,7 @@
                         </tr>
                         <tr>
                             <td colspan="3">
-                                <ul id="products-container" class="products-overview lateral-container">
+                                <ul class="products-overview lateral-container">
                                     <?php foreach($order["products"] as $product): ?>
                                         <li>
                                             <div class="product-card">
