@@ -1328,6 +1328,20 @@ class DatabaseHelper {
         return $result->fetch_assoc();
     }
 
+    // Get Abandoned Carts
+    public function getAbandonedCarts($threshold) {
+        $query = "SELECT DISTINCT c.Email, c.Data_Modifica 
+                 FROM CARRELLO c 
+                 JOIN comprendere co ON c.ID_Carrello = co.ID_Carrello 
+                 WHERE c.Valore_Totale > 0 
+                 AND TIMESTAMPDIFF(HOUR, c.Data_Modifica, NOW()) >= ?";
+    
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $threshold);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     /*********************
      * REVIEW FUNCTIONS *
      *********************/
