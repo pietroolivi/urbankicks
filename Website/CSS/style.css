@@ -4452,6 +4452,10 @@ div.textual-part-message {
   .images-product-to-delete img {
     width: 20%;
   }
+
+  .fields-product-admin > fieldset > input:checked + label {
+    outline: 5px solid black;
+}
 }
 
 /********************************************************
