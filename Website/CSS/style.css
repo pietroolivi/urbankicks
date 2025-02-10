@@ -731,6 +731,17 @@ h2 {
   text-decoration: underline;
 }
 
+footer > button[onclick="nextStep('shipping')"],
+button[onclick="nextStep('payment')"] {
+  display: flex;
+  align-items: center;
+  text-align: -webkit-right;
+  margin: auto;
+  margin-bottom: 5%;
+  padding-left: 18%;
+  width: 55%;
+}
+
 main > .filters-and-sorters-switches {
   width: 100%;
   display: flex;
@@ -4455,7 +4466,12 @@ div.textual-part-message {
 
   .fields-product-admin > fieldset > input:checked + label {
     outline: 5px solid black;
-}
+  }
+
+  .warning-free-shipping > p {
+    display: flex;
+    margin-left: 1%;
+  }
 }
 
 /********************************************************

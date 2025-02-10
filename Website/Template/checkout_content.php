@@ -1,12 +1,12 @@
 <!-- Step indicators will always be visible -->
-<header>
+<header class="back-button-and-title">
     <a href="#" onclick="goBack(); return false;" class="back">
         <img src="CSS/Images/Icons/back.svg" alt="Go back">
     </a>
     <h2>Checkout</h2>
-    <img id="progress-bar" src="CSS/Images/Illustrations/progress_bar1.svg" alt="Checkout progress">
-    <h3 id="step-title">ORDER SUMMARY</h3>
 </header>
+<img style="margin:auto;" id="progress-bar" src="CSS/Images/Illustrations/progress_bar1.svg" alt="Checkout progress">
+<h3 id="step-title">ORDER SUMMARY</h3>
 
 <!-- Summary Step -->
 <div id="summary-step" class="checkout-step active">
@@ -60,8 +60,8 @@
             <p>SUBTOTAL €<span id="subtotal">0</span></p>
             <p id="discount-row" style="display:none">DISCOUNT -€<span id="discount">0.00</span></p>
             <p>NEW SUBTOTAL €<span id="new-subtotal">0</span></p>
-            <button class="full-button-black" onclick="nextStep('shipping')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
         </div>
+        <button class="full-button-black" onclick="nextStep('shipping')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
     </footer>
 </div>
 
@@ -115,8 +115,8 @@
     <div class="subtot-tot">
         <p>SUBTOTAL €<span id="shipping-subtotal">0</span></p>
         <p>TOTAL €<span id="shipping-total">0</span></p>
-        <button class="full-button-black" onclick="nextStep('payment')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
     </div>
+    <button class="full-button-black" onclick="nextStep('payment')">Next<img src="CSS/Images/Icons/next.svg" alt=""></button>
     </footer>
 </div>
 
