@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         products.forEach(product => {
             const productInfo = product.querySelector('.product-textual-info-admin');
-            const productId = productInfo.querySelector('h3').textContent.toLowerCase();
+            const productId = product.querySelector('h3').textContent.toLowerCase();
             const productName = productInfo.querySelector('p').textContent.toLowerCase();
             
             if (productId.includes(searchTerm) || productName.includes(searchTerm)) {
