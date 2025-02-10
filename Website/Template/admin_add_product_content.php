@@ -62,9 +62,9 @@
         uploader.addEventListener("change", function(){
             if(uploader.files.length != 4){
                 error.style.display='block';
-                document.querySelector(".fields-product-admin > button[type='submit']").disabled = true;
+                document.querySelector(".fields-product-admin ~ button[type='submit']").disabled = true;
             } else {
-                document.querySelector(".fields-product-admin > button[type='submit']").disabled = false;
+                document.querySelector(".fields-product-admin ~ button[type='submit']").disabled = false;
                 error.style.display='none';
             }
             // We update the preview of presently uploaded images.

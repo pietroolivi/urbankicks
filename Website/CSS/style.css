@@ -495,19 +495,35 @@ label[for="filter-icon"] {
 
 li.notification-item > a {
   width: 100%;
+  display: flex;
 }
 
 li.notification-item {
-  display: flex;
+  display: block;
   border: 1px solid black;
   margin: auto;
-  width: 95%;
+  width: 90%;
   margin-bottom: 3%;
   padding: 2% 2%;
 }
 
 a.notification-link > .notification-title-body {
   width: 80%;
+  margin-left: 5%;
+  overflow: hidden;
+}
+
+a.notification-link > img.unread-dot {
+  width: 4%;
+}
+
+button.mark-all-as-read ~ section button {
+  text-align: right;
+  margin-bottom: 0%;
+  font-size: 10px;
+  margin-left: 80%;
+  width: 20%;
+  text-align: center;
 }
 
 img.unread-dot {
@@ -521,10 +537,6 @@ img.unread-dot {
   margin: auto;
   margin-top: 10%;
   margin-bottom: 10%;
-}
-
-button.mark-all-as-read ~ section > h3 {
-  margin: 4% 0;
 }
 
 .last-cart-actions > .cont-proc-buttons {
@@ -1053,20 +1065,22 @@ main > .filters-and-sorters-switches > .category-switch {
 }
 
 .mark-all-as-read {
+  font-family: 'Beatrice Headline Trial', sans-serif;
   align-items: center;
   display: inline-flex;
   height: max-content;
   border: none;
   background: none;
-  margin-left: 5%;
+  margin-left: 5%;  
 }
 
 .mark-all-as-read:hover {
-  border: 1px solid grey;
+  text-decoration: underline;
 }
 
 .mark-all-as-read > img {
   margin-left: 5px;
+  width: 13%;
 }
 
 button#share-page {
@@ -1316,6 +1330,10 @@ textarea {
   font-family: 'Menlo Regular', sans-serif;
 }
 
+button.mark-all-as-read ~ section > h3 {
+  margin: 4% 5%;
+}
+
 .product-image {
   width: 600px;
   justify-content: center;
@@ -1464,6 +1482,7 @@ input:disabled[type='file'],#images-product-admin-edit {
 #section-register > p,
 #section-forgot1 > p,
 #authentication-typed-label > p,
+#section-forgot2 > p,
 #section-forgot3 > p {
   display: inline-block;
   text-align: left;
@@ -3628,12 +3647,25 @@ div.textual-part-message {
     font-size: 70px;
   }
 
+  a.explore-now {
+    border: 10px solid white;
+    outline: 10px solid black;
+  }
+
+  input#search {
+    padding-left: 5%;
+  }
+
   input#search, .filter-sidebar > footer > input {
     font-size: 60px;
   }
 
   body > footer > nav > ul > li > a, #wishlistButton, #addToCartButton {
     font-size: 50px;
+  }
+
+  #wishlistButton {
+    border: 5px solid black;
   }
 
   #review-submit {
@@ -3679,7 +3711,7 @@ div.textual-part-message {
   }
 
   .search {
-    padding: 4%;
+    padding: 6%;
   }
 
   .search > .search-icon {
@@ -3711,7 +3743,7 @@ div.textual-part-message {
     content: '';
     position: absolute;
     left: 0;
-    width: 30%;
+    width: 27%;
     height: 70%;
     top: 15%;
     bottom: 15%;
@@ -3720,6 +3752,15 @@ div.textual-part-message {
     border-radius: 100px;
     opacity: 0.3;
     transition: .5s left ease;
+  }
+
+  nav.breadcrumb > ol > li::before {
+    padding: 0 1%;
+  }
+
+  .filter-sidebar > footer > input[type="button"] {
+    padding: 2% 0;
+    width: 40%;
   }
 
   main > .filters-and-sorters-switches > .category-switch {
@@ -3957,6 +3998,7 @@ div.textual-part-message {
 
   #add-a-review > textarea {
     font-size: 50px;
+    border: 5px solid black;
   }
 
   #share-page {
@@ -3969,6 +4011,7 @@ div.textual-part-message {
 
   #size > .size-options > .size-option-product {
     padding: 0%;
+    border: 5px solid black;
   }
 
   #size > .size-options > .size-option-product > label {
@@ -3996,6 +4039,7 @@ div.textual-part-message {
     margin: auto;
   }
 
+  /*
   .back-button-and-title {
     display: flex;
     align-items: center;
@@ -4010,15 +4054,22 @@ div.textual-part-message {
   .back-button-and-title > a > img {
     position: relative;
     width: 100%;
-  }
+  }*/
 
   .mark-all-as-read {
+    font-family: 'Beatrice Headline Trial', sans-serif;
     font-size: 50px;
-    width: 20%;
+    width: 25%;
   }
 
   .mark-all-as-read > img {
-    width: 10%;
+    width: 11%;
+    margin-left: 3%;
+  }
+
+  button.mark-all-as-read ~ section > h3 {
+    margin: 4% 5%;
+    font-size: 70px;
   }
 
   article.review > p {
@@ -4032,7 +4083,375 @@ div.textual-part-message {
 
   article.review > span::after {
     font-size: 60px;
-}
+  }
+
+  #reviews > .review {
+    border: 5px solid black;
+  }
+
+  li.notification-item {
+    border: 5px solid black;
+  }
+
+  .notification-item > a > img {
+    width: 9%;
+  }
+
+  .messages-to-admin > h3 {
+    margin: 4% 5%;
+    font-size: 70px;
+  }
+
+  .message-to-admin {
+    border: 5px solid black;
+    width: 90%;
+  }
+
+  .message-to-admin > img {
+    width: 11%;
+  }
+
+  a.notification-link > img.unread-dot {
+    width: 2%;
+  }
+
+  .general-statistics li, .admin-actions > button {
+    border: 5px solid black;
+  }
+
+  .modal-content {
+    margin-top: 1000px;
+  }
+
+  .textual-part-message > h4 {
+    font-size: 70px;
+  }
+
+  .textual-part-message > small {
+    font-size: 50px;
+  }
+
+  button#new-message-button {
+    width: 60%;
+    font-size: 60px;
+    border: 5px solid black;
+  }
+
+  #explore-now-cart {
+    border: 5px solid black;
+  }
+
+  .filter-sidebar > section > .color-options > .color-option:not(:last-of-type) > label:first-child > input:checked + img {
+    border: 20px solid black;
+    border-radius: 50%;
+  }
+
+  .filter-sidebar > section > .color-options > .color-option:last-of-type > label:first-child > input:checked + img {
+    border: 10px solid white;
+    border-radius: 50%;
+    outline: 10px solid black;
+  }
+
+  header.back-button-and-title {
+    align-items: center;
+  }
+
+  header.back-button-and-title > a {
+    width: 4%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    padding-left: 5%;
+  }
+
+  header.back-button-and-title > a > img {
+    width: 100%;
+  }
+
+  .modal-content > span {
+    font-size: 150px;
+    margin-right: 3%;
+  }
+
+  .modal-content {
+    padding: 3%;
+  }
+
+  .modal-content > .message-details > header > div > p.timestamp {
+    font-size: 50px;
+  }
+
+  .modal-content > .message-details > header > img {
+    width: 10%;
+  }
+
+  .message-details > header > div > h4 {
+    font-size: 70px;
+  }
+
+  .modal-content > .message-details > footer > button {
+    font-size: 50px;
+    width: 30%;
+    margin-bottom: 0%;
+    margin-right: 0%;
+  }
+
+  .modal-content > .message-details > .message-body > h5 {
+    font-size: 60px;
+  }
+
+  .authentication-typed-label {
+    font-size: 60px;
+  }
+
+  .authentication-typed-input {
+    font-size: 60px;
+    border: 5px solid black;
+  }
+
+  span.password-and-visibility-switch > span {
+    border: 5px solid black;
+    border-left: none;
+  }
+
+  .full-button-black, .full-button-white, .half-button-white {
+    font-size: 60px;
+  }
+
+  .half-button-white {
+    width: 29%;
+    margin: 0 1%;
+    padding: 1.2% 0;
+    margin-bottom: 4%;
+    font-family: 'Beatrice Headline Trial', sans-serif;
+    background-color: white;
+    color: black;
+    border: 5px solid black;
+  }
+
+  .full-button-white {
+    border: 5px solid black;
+  }
+
+  .error-message {
+    font-size: 60px;
+    color: red;
+    text-align: center;
+  }
+
+  .choice-login-registration > input[name="authentication"]:not(:checked) + label {
+    border-bottom: 5px solid #c1c1c1;
+  }
+
+  .choice-login-registration > input[name="authentication"]:checked + label {
+    border-bottom: 5px solid black;
+  }
+
+  #forgot-password-link {
+    font-size: 50px;
+    padding-top: 1%;
+  }
+
+  input#newsletter-register, input#terms-privacy-register {
+    transform: scale(5);
+    margin-left: 2%;
+  }
+
+  form#registration-form > section#section-register > ul.authentication-inputs > li:nth-child(7),
+  form#registration-form > section#section-register > ul.authentication-inputs > li:nth-child(8) {
+    display: inline-flex;
+  }
+
+  input#phone-register {
+    padding-left: 15%;
+  }
+
+  .iti__selected-flag > .iti__arrow {
+    transform: scale(7);
+    margin-left: 30%;
+  }
+
+  .iti__selected-flag > .iti__flag {
+    transform: scale(5);
+    margin-left: 30%;
+  }
+
+  .iti__flag-container > .iti__country-list {
+    transform: scale(4);
+    position: relative;
+  }
+
+  div.product-image {
+    width: 2500px;
+    height: 3000px;
+    padding-bottom: 10%;
+  }
+
+  .track {
+    height: 90%;
+  }
+
+  .track > ul {
+    height: 100%;
+  }
+
+  .track ul li {
+    height: 100%;
+    width: 100%;
+    padding-top: 15%;
+  }
+
+  .track ul li img {
+    object-fit: contain;
+    border-radius: 8%;
+  }
+
+  .product-image .slides {
+    position: relative;
+    grid-gap: 80px;
+    padding: 0 20%;
+  }
+
+  .product-image > .slides,
+  .product-image > .slides > a,
+  .product-image > .slides > a > img {
+    height: auto;
+  }
+
+  .product-image > .slides > a {
+    border-radius: 20%;
+  }
+
+  .price-reviews-preview {
+    padding-bottom: 0%;
+  }
+
+  #description > h3 {
+    margin-top: 0%;
+  }
+
+  .slides a img {
+    object-fit: contain;
+  }
+
+  .slides a:hover {
+    border: 5px solid black;
+  }
+
+  .filter-sidebar > footer > input,
+  .size-options > .size-option,
+  .sort-sidebar > fieldset > input:checked + label {
+    border: 5px solid black;
+  }
+
+  .success {
+    font-size: 60px;
+    text-align: center;
+  }
+
+  button.mark-all-as-read ~ section button {
+    text-align: right;
+    margin-bottom: 0%;
+    font-size: 40px;
+    margin-left: 80%;
+    width: 20%;
+    text-align: center;
+  }
+
+  li.otp > div.otp-inputs > input {
+    border: 5px solid black;
+    font-size: 60px;
+    padding: 2rem 0.5rem;
+    width: 10rem;
+    margin-right: 1%;
+  }
+
+  .message-thread > .message-reply {
+    margin-left: 20%;
+    border-left: 15px solid #007bff;
+    padding-left: 10px;
+    width: 75%;
+  }
+
+  .product-admin {
+    border: 7px solid black;
+  }
+
+  .product-admin > h3 {
+    font-size: 70px;
+  }
+
+  .product-admin > .product-icons img {
+    width: 14%;
+    margin-right: 7%;
+  }
+
+  main > .a-orders-section h3 {
+    margin: 4% 5%;
+    font-size: 70px;
+  }
+
+  main > form > div.search > input#search {
+    padding-left: 0%;
+  }
+
+  main > header + h3 {
+    font-size: 70px;
+  }
+
+  .fields-product-admin label,
+  .fields-product-admin > fieldset > legend,
+  table#quantity-size-color > caption {
+    font-size: 60px;
+    padding-left: 0%;
+    padding-bottom: 0%;
+  }
+
+  .fields-product-admin > input, .fields-product-admin > span > input, .fields-product-admin > select, .fields-product-admin > textarea, .fields-product-admin > fieldset > label {
+    padding: 3%;
+    margin-bottom: 4%;
+    font-size: 60px;
+  }
+
+  .fields-product-admin > fieldset:first-of-type > label,
+  .fields-product-admin > fieldset > label {
+    padding: 1% 5%;
+  }
+
+  input[type=file]::file-selector-button {
+    background-color: white;
+    border: 1px solid #444;
+    padding: 1% 5%;
+    margin-right: 2%;
+  }
+
+  #admin-add-product-form > span,
+  #admin-edit-product-form > span,
+  #admin-delete-product-form > span,
+  body > main > div.fields-product-admin > span,
+  table#quantity-size-color,
+  table#quantity-size-color > tbody > tr > td > input {
+    font-size: 60px;
+  }
+
+  table#quantity-size-color > tbody > tr:first-child > th,
+  table#quantity-size-color > tbody > tr:not(:first-child) > td {
+    width: 12%;
+  }
+
+  table#quantity-size-color > tbody > tr:first-child > th > img {
+    width: 40%;
+  }
+  
+  table#quantity-size-color > caption {
+    margin-bottom: 2%;
+  }
+
+  .images-product-to-edit img,
+  .images-product-to-add img,
+  .images-product-to-delete img {
+    width: 20%;
+  }
 }
 
 /********************************************************
@@ -4186,10 +4605,12 @@ div.textual-part-message {
 *********************/
 
 .message-reply {
-  margin-left: 40px;
+  margin-left: 20%;
   border-left: 3px solid #007bff;
   padding-left: 10px;
+  width: 77%;
 }
+
 .timestamp {
   color: #666;
   font-size: 0.8em;

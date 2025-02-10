@@ -52,7 +52,7 @@ foreach ($groupedNotifications as $date => $dayNotifications): ?>
                 <?php if ($isAdminMessage): ?>
                 <div class="message-content hidden">
                     <p class="message-body"></p>
-                    <a href="contact_us.php" class="reply-btn">Reply</a>
+                    <button onclick="location.href='contact_us.php'" class="reply-btn half-button-black">Reply</a>
                 </div>
                 <?php endif; ?>
             </li>

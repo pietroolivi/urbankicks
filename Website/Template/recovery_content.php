@@ -26,7 +26,7 @@
                 <input class="authentication-typed-input" type="email" id="email-forgot2" name="email" readonly>
             </li>
             <li class="otp authentication-typed-label-input" id="otp">
-                <p>Code Received</p>
+                <p class="authentication-typed-label">Code Received</p>
                 <div class="otp-inputs">
                     <input type="text" id="otp-digit1" class="otp-input" maxlength="1" required/>
                     <input type="text" id="otp-digit2" class="otp-input" maxlength="1" required/>

@@ -45,14 +45,14 @@
                         $reply['Corpo'];
                 ?>
                     <div class="message-to-admin message-reply" onclick="expandMessage(
-                        'CSS/Images/Icons/admin.svg',
+                        'CSS/Images/Icons/user_review.svg',
                         '<?php echo htmlspecialchars($reply['Nome'] . ' ' . $reply['Cognome']); ?>', 
                         '<?php echo htmlspecialchars($reply['Email']); ?>', 
                         '<?php echo htmlspecialchars($reply['Oggetto']); ?>', 
                         '<?php echo htmlspecialchars($reply['Corpo']); ?>', 
                         '<?php echo $reply['Timestamp_Invio']; ?>'
                         )">
-                        <img src="CSS/Images/Icons/admin.svg" alt="Admin profile photo" />
+                        <img src="CSS/Images/Icons/user_review.svg" alt="Admin profile photo" />
                         <div class="textual-part-message">
                             <h4><?php echo htmlspecialchars($reply['Nome'] . ' ' . $reply['Cognome']); ?></h4>
                             <p><?php echo htmlspecialchars($replyPreview); ?></p>

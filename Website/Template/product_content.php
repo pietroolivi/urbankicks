@@ -162,11 +162,15 @@ foreach ($variants as $variant) {
 <aside id="reviews">
     <header class="reviews-header">
         <h3>Reviews</h3>
+        <?php if(!empty($reviews)): 
+            $avgRating = array_sum(array_column($reviews, 'Punteggio')) / count($reviews);
+        ?>
         <div class="reviews-preview">
-            <p>(4)</p>
-            <span id="average-stars2" style="--rating:4.5"></span>
-            <p><a href="#reviews">4.5</a></p>
+            <p>(<?php echo count($reviews); ?>)</p>
+            <span id="average-stars2" class="star-reviews" style="--rating:<?php echo $avgRating; ?>"></span>
+            <p><a class="number-reviews" href="#reviews"><?php echo number_format($avgRating, 1); ?></a></p>
         </div>
+        <?php endif; ?>
     </header>
 
     <p id="review-error"></p>

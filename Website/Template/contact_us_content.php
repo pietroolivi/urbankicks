@@ -24,7 +24,7 @@
         <input style="margin-bottom: 3%;" class="authentication-typed-input" id="email-contact" name="email" type="email" value="<?php echo($_SESSION["user_email"])?>" readonly/>
 
         <label class="authentication-typed-label" for="message-contact">Message</label>
-        <textarea style="width: 100%;" id="margin-contact" name="message" placeholder="Type your concerns here (max 400 characters)." maxlength="400" rows="10" cols="40" required></textarea>
+        <textarea class="authentication-typed-input" style="width: 100%;" id="margin-contact" name="message" placeholder="Type your concerns here (max 400 characters)." maxlength="400" rows="10" cols="40" required></textarea>
     </form>
     <button form="client-contact-form" class="full-button-black" type="submit">Submit</button>
 </div>
